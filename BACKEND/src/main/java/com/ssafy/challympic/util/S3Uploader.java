@@ -1,5 +1,6 @@
 package com.ssafy.challympic.util;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
@@ -30,7 +31,9 @@ import java.util.UUID;
 @Component
 public class S3Uploader {
 
-    private final AmazonS3Client amazonS3Client;
+//    private final AmazonS3Client amazonS3Client;
+
+    private final AmazonS3 amazonS3Client;
 
     @Value("${cloud.aws.s3.bucket}")
     public String bucket;

@@ -253,6 +253,10 @@ public class PostApiController {
     public Result create(@PathVariable("challengeNo") int challengeNo, PostRequest postRequest) throws IOException {
 
         log.info("Create Post");
+        log.info(String.valueOf(challengeNo));
+        log.info(postRequest.getFile().getName());
+
+
 
         // 플로우 시작
         Media media = null;

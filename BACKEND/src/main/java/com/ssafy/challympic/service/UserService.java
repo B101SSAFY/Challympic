@@ -2,6 +2,7 @@ package com.ssafy.challympic.service;
 
 import com.ssafy.challympic.domain.Media;
 import com.ssafy.challympic.domain.User;
+import com.ssafy.challympic.repository.MediaRepository;
 import com.ssafy.challympic.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final MediaRepository mediaRepository;
 
     /**
      * 이메일 중복 감지
@@ -53,8 +55,13 @@ public class UserService {
     @Transactional
     public void updateUser(int user_no, String user_nickname, Media file, String user_title){
         User user = userRepository.findOne(user_no);
+
         if(user_nickname != null) user.setUser_nickname(user_nickname);
-        if(file != null) user.setMedia(file);
+        if(file != null) {
+            user.setMedia(file);
+        } else {
+            mediaRepository.deleteMedia(user.getMedia().getFile_no());
+        }
         if(user_title != null) user.setUser_title(user_title);
     }
 

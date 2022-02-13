@@ -2,8 +2,11 @@
     <v-container>
         <!-- PC -->
         <v-row v-if="!isMobile()" class="profile-wrapper">
-            <v-avatar size="150">
-                <img :src="profileUrl" alt="John" />
+            <v-avatar v-if="userInfo.file_no == 0" size="150">
+                <v-icon size="150">mdi-account-circle-outline</v-icon>
+            </v-avatar>
+            <v-avatar v-else size="150">
+                <img :src='"http://d384sk7z91xokb.cloudfront.net/"+this.userInfo.file_path+"/"+this.userInfo.file_savedname' alt="John" />
             </v-avatar>
             <v-col align-self="center">
                 <v-container>
@@ -12,21 +15,32 @@
                         <v-col align-self="center" class="name-wrapper">
                             <v-list-item-title class="title-wrapper">
                                 <!-- 타이틀이 있을 때만 -->
-                                <img class="medal-icon" src="https://cdn-icons-png.flaticon.com/512/744/744922.png"/>
-                                <div class="header-title font-weight">스쿼트 왕</div>
-                                <div class="user-name font-weight">박싸피</div>
+                                <v-col v-if="userInfo.user_title != null">
+                                    <img class="medal-icon" src="https://cdn-icons-png.flaticon.com/512/744/744922.png"/>
+                                </v-col>
+                                <div class="header-title font-weight">{{userInfo.user_title}}</div>
+                                <div class="user-name font-weight">{{userInfo.user_nickname}}</div>
+                                <v-col v-if="this.who_no != this.login_user">
+                                    <!-- 상대 프로필일 때 -->
+                                    <v-btn v-if="isFollower" @click="follow" color="#3396F4"  class="white--text rounded-xl" small>
+                                        팔로잉취소
+                                    </v-btn>
+                                    <v-btn v-else @click="follow" color="#3396F4" class="rounded-xl" small outlined>
+                                        팔로잉하기
+                                    </v-btn>
+                                </v-col>
                             </v-list-item-title>
                         </v-col>
                         <!-- 팔로잉, 팔로우 명단 props로 잡기(post/FollowLikeModal) -->
                         <v-col md="2" class="follow-wrapper" align-self="center">
                             <div class="font-weight">팔로워</div>
-                            <div class="show-folllow-modal" @click="openFollowerDialog">3</div>
-                            <follow-like-modal v-if="follower" @close-modal="follower=false" type="follower" :users="follows"></follow-like-modal>
+                            <div class="show-folllow-modal" @click="openFollowerDialog">{{followerCnt}}</div>
+                            <follow-like-modal v-if="follower" @close-modal="follower=false" type="follower" :login_user="this.login_user" :who_no="who_no"></follow-like-modal>
                         </v-col>
                         <v-col md="2" class="follow-wrapper" align-self="center">
                             <div class="font-weight">팔로잉</div>
-                            <div class="show-folllow-modal" @click="openFollowingDialog">3</div>
-                            <follow-like-modal v-if="following" @close-modal="following=false" type="following" :users="follows"></follow-like-modal>
+                            <div class="show-folllow-modal" @click="openFollowingDialog">{{followingCnt}}</div>
+                            <follow-like-modal v-if="following" @close-modal="following=false" type="following" :login_user="this.login_user" :who_no="who_no"></follow-like-modal>
                         </v-col>
                     </v-row>
                 </v-container>
@@ -52,15 +66,16 @@
                                     <img class="medal-icon" src="https://cdn-icons-png.flaticon.com/512/744/744922.png"/>
                                     <div class="header-title font-weight">스쿼트 왕</div>
                                 </v-list-item-title>
-                                <div class="bottom-blank font-weight">박싸피</div>
-                                <!-- 상대 프로필일 때
-                                <v-btn v-if="user.isFollowing" @click="follow(user.userNo)" color="#3396F4"  class="white--text rounded-xl" small>
-                                    팔로우
-                                </v-btn>
-                                <v-btn v-else @click="follow(user.userNo)" color="#3396F4" class="rounded-xl" small outlined>
-                                    팔로잉
-                                </v-btn>
-                                -->
+                                <div class="user-name bottom-blank font-weight">박싸피</div>
+                                    <v-col v-if="who_no != login_user">
+                                        <!-- 상대 프로필일 때 -->
+                                        <v-btn v-if="isFollower" @click="follow" color="#3396F4"  class="white--text rounded-xl" small>
+                                            팔로우
+                                        </v-btn>
+                                        <v-btn v-else @click="follow" color="#3396F4" class="rounded-xl" small outlined>
+                                            팔로잉
+                                        </v-btn>
+                                    </v-col>
 							</v-col>
 						</v-row>
                         <!-- 팔로잉, 팔로우 명단 props로 잡기(post/FollowLikeModal) -->
@@ -68,12 +83,12 @@
                             <v-col md="2" class="follow-wrapper" align-self="center">
                             <div class="font-weight">팔로워</div>
                             <div class="show-folllow-modal" @click="openFollowerDialog">3</div>
-                            <follow-like-modal v-if="follower" @close-modal="follower=false" type="follower" :users="follows"></follow-like-modal>
+                            <follow-like-modal v-if="follower" @close-modal="follower=false" type="follower" :users="follows" :login_user="this.login_user"></follow-like-modal>
                         </v-col>
                         <v-col md="2" class="follow-wrapper" align-self="center">
                             <div class="font-weight">팔로잉</div>
                             <div class="show-folllow-modal" @click="openFollowingDialog">3</div>
-                            <follow-like-modal v-if="following" @close-modal="following=false" type="following" :users="follows"></follow-like-modal>
+                            <follow-like-modal v-if="following" @close-modal="following=false" type="following" :users="follows" :login_user="this.login_user"></follow-like-modal>
                         </v-col>
                         </v-row>
 					</v-container>
@@ -84,7 +99,8 @@
 </template>
 
 <script>
-import FollowLikeModal from "@/components/post/FollowLikeModal.vue";
+import FollowLikeModal from "@/components/common/FollowLikeModal.vue";
+import { checkFollow, setFollow, getFollowCnt } from '@/api/feed.js';
 export default {
      name: "UserProfile",
     components: {
@@ -92,32 +108,39 @@ export default {
     },
     props: {
         type: String,
+        who_no: Number,
+        userInfo: Object,
     },
     data() {
         return {
-            profileUrl: "https://cdn.vuetifyjs.com/images/john.jpg",
+            login_user: this.$store.state.userStore.userInfo.user_no,
+            isFollower: false,
+            profileUrl: "",
             follower: false,
             following: false,
-            follows: [
-                {
-                follow: false,
-                avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
-                name: 'Jason Oner',
-                title: '밥 잘먹는'
-                },
-                {
-                follow: false,
-                avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
-                name: 'Mike Carlson',
-                title: '스쿼트 장인'
-                },
-                {
-                follow: false,
-                avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
-                name: 'Cindy Baker',
-                },
-            ],
+            followerCnt: 0,
+            followingCnt: 0,
         }
+    },
+    created(){
+        console.log("this.login_user");
+        console.log(this.login_user);
+        // 유저 번호와 로그인 한 사람의 팔로우 관계
+        checkFollow(
+            this.login_user, 
+            this.who_no,
+            (response) => {
+                this.isFollower = response.data.following;
+            }
+        ),
+        // 유저의 팔로우, 팔로잉 cnt
+        getFollowCnt(
+            this.who_no,
+            (response) => {
+                this.followerCnt = response.data.data.followerCnt;
+                this.followingCnt = response.data.data.followingCnt;
+            }
+        )
     },
     methods: {
         isMobile() {
@@ -139,8 +162,23 @@ export default {
         },
         openFollowingDialog() {
             this.following = !this.following;
+        },
+        follow(){
+            // 팔로우 취소 혹은 저장
+            setFollow(
+                this.login_user,
+                this.who_no,
+                (response) => {
+                    this.isFollower = response.data.following;
+                }
+            )
+            if(this.isFollower){
+                this.followerCnt--;
+            }else{
+                this.followerCnt++;
+            }
         }
-    }
+    },
 }
 </script>
 
@@ -160,20 +198,20 @@ export default {
     margin-right: 6px;
 }
 .header-title {
-    font-size: 16px;
+    font-size: 18px;
     color: rgb(138, 138, 138);
-    justify-items: center;
-    margin: auto;
+    margin-top: 3px;
 }
 .name-wrapper {
     padding-left: 30px;
 }
 .user-name {
-    font-size: 18px;
+    font-size: 20px;
     margin-left: 8px;
 }
 .follow-wrapper {
     text-align: center;
+    font-size: 17px;
 }
 .font-weight {
     font-weight: bold;

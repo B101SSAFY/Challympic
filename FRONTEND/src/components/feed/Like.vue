@@ -4,7 +4,7 @@
       <v-row dense>
         <v-col
           v-for="post in posts"
-          :key="post.challenge"
+          :key="post.post_no"
           :cols="4"
         >
           <v-hover>
@@ -13,9 +13,9 @@
                 class="mx-auto img-frame"
                 max-width="344"
               >
-                <v-img :src="post.src">
+                <v-img :src='"http://d384sk7z91xokb.cloudfront.net/"+post.file_path+"/"+post.file_savedname'>
                   <!-- 비디오일때만 -->
-                  <i v-if="post.isVideo" class='fas fa-play play-btn'></i>
+                  <v-icon v-if="post.video" icon class="play-btn">mdi-play</v-icon>
                 </v-img>
                 <v-fade-transition>
                   <v-overlay
@@ -24,8 +24,8 @@
                     color="#2E2E2E"
                   >
                   <div class="info-wrapper">
-                    <div class="challenge-info info-font"><i class='fas fa-hashtag icon'></i>{{ post.challenge }}</div>
-                    <div><i class='fas fa-heart icon'></i>&nbsp;{{ post.like }} <i class='fas fa-comment-alt icon'></i> {{ post.comment }}</div>
+                    <div class="challenge-info info-font"><v-icon icon class="icon hashtag-icon">mdi-pound</v-icon>{{ post.challenge_title }}</div>
+                    <div><v-icon icon class="icon">mdi-heart</v-icon>{{ post.like_cnt }} <v-icon icon class="icon comment-icon">mdi-comment</v-icon> {{ post.comment_cnt }}</div>
                   </div>
                   </v-overlay>
                 </v-fade-transition>
@@ -38,61 +38,27 @@
 </template>
 
 <script>
+import { getUserLikedPost } from '@/api/feed.js';
+
 export default {
   name: "Like",
+  props: {
+    who_no: Number,
+  },
   data: ()=> ({
-    posts: [
-      {
-        challenge: '운동_챌린지',
-        isVideo: true,
-        like: 20,
-        comment: 130,
-        src: 'https://randomuser.me/api/portraits/women/6.jpg'
-      },
-      {
-        challenge: '코딩_챌린지',
-        isVideo: true,
-        like: 25,
-        comment: 100,
-        src: 'https://randomuser.me/api/portraits/women/7.jpg'
-      },
-      {
-        challenge: '음식_챌린지',
-        isVideo: true,
-        like: 30,
-        comment: 40,
-        src: 'https://randomuser.me/api/portraits/women/8.jpg'
-      },
-      {
-        challenge: '술_챌린지',
-        isVideo: false,
-        like: 10,
-        comment: 30,
-        src: 'https://randomuser.me/api/portraits/women/9.jpg'
-      },
-      {
-        challenge: '아무노래_챌린지',
-        isVideo: true,
-        like: 13,
-        comment: 220,
-        src: 'https://randomuser.me/api/portraits/women/10.jpg'
-      },
-      {
-        challenge: '노트북_챌린지',
-        isVideo: false,
-        like: 10,
-        comment: 30,
-        src: 'https://randomuser.me/api/portraits/women/11.jpg'
-      },
-      {
-        challenge: '귀요미_챌린지',
-        isVideo: true,
-        like: 13,
-        comment: 220,
-        src: 'https://randomuser.me/api/portraits/women/12.jpg'
-      }
-    ],
+    posts: [],
   }),
+  created() {
+    // 유저가 만든 포스트 목록
+    getUserLikedPost(
+      this.who_no,
+      (response) => {
+        console.log("포스트목록");
+        console.log(response.data.data);
+        this.posts = response.data.data;
+      }
+    )
+  }
 }
 </script>
 
@@ -105,9 +71,9 @@ export default {
 }
 .play-btn {
   float: right;
-  width: 22px;
+  width: 40px;
   color: #fff;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 .challenge-info {
   font-size: 20px;
@@ -116,8 +82,13 @@ export default {
   font-weight: 500;
 }
 .icon {
-  margin-top: 8px;
   margin-left: 6px;
   margin-right: 4px;
+}
+.hashtag-icon {
+  margin-top: -4px;
+}
+.comment-icon {
+  margin-right: -1px;
 }
 </style>

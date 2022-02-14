@@ -18,7 +18,7 @@ import java.util.Date;
 public class InitDB {
 
     private final InitService initService;
-//    @PostConstruct
+    @PostConstruct
     public void init(){
         initService.dbInit();
     }
@@ -37,8 +37,8 @@ public class InitDB {
             User testUser = setUser("test01@ssafy.com", "123", "test");
             em.persist(testUser);
 
-//            Challenge challenge1 = makeChallenge(2, "운동챌린지", "#운동 #건강 열심히", new Date(), "VIDEO", "운동왕");
-//            em.persist(challenge1);
+            Challenge challenge1 = makeChallenge(2, "운동챌린지", "#운동 #건강 열심히", new Date(), "VIDEO", "운동왕");
+            em.persist(challenge1);
         }
 
         private Challenge makeChallenge(int user_no, String challenge_title, String challenge_content, Date challenge_end, String challenge_type, String title_name) {

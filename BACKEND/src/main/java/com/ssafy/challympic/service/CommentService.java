@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -34,6 +35,7 @@ public class CommentService {
     public void update(int comment_no, String comment_content){
         Comment findComment = commentRepository.findOne(comment_no);
         findComment.setComment_content(comment_content);
+        findComment.setComment_update(new Date());
     }
 
     public void delete(int comment_no){
@@ -54,5 +56,14 @@ public class CommentService {
             reportCnt += comment.getComment_report();
         }
         return reportCnt;
+    }
+
+    public int postCommentCnt(int post_no) {
+        List<Comment> postList = commentRepository.findByPost(post_no);
+        if(!postList.isEmpty()){
+            return postList.size();
+        }else{
+            return 0;
+        }
     }
 }

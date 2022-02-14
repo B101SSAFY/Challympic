@@ -1,5 +1,6 @@
 package com.ssafy.challympic.api;
 
+import com.ssafy.challympic.api.Dto.CommentDto;
 import com.ssafy.challympic.domain.*;
 import com.ssafy.challympic.service.*;
 import com.ssafy.challympic.util.S3Uploader;
@@ -7,14 +8,16 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.personalizeevents.PersonalizeEventsClient;
+import software.amazon.awssdk.services.personalizeevents.model.PersonalizeEventsException;
+import software.amazon.awssdk.services.personalizeevents.model.PutUsersRequest;
 import software.amazon.awssdk.services.personalizeruntime.PersonalizeRuntimeClient;
-import software.amazon.awssdk.services.personalizeruntime.model.GetPersonalizedRankingRequest;
-import software.amazon.awssdk.services.personalizeruntime.model.GetPersonalizedRankingResponse;
-import software.amazon.awssdk.services.personalizeruntime.model.PersonalizeRuntimeException;
-import software.amazon.awssdk.services.personalizeruntime.model.PredictedItem;
+import software.amazon.awssdk.services.personalizeruntime.model.*;
 
 import java.io.IOException;
 import java.util.*;
@@ -33,7 +36,9 @@ public class PostApiController {
     private final PostLikeService postLikeService;
     private final UserService userService;
     private final TagService tagService;
-
+    private final FollowService followService;
+    private final CommentService commentService;
+    private final CommentLikeService commentLikeService;
     private final S3Uploader s3Uploader;
 
     @Data
@@ -64,8 +69,25 @@ public class PostApiController {
     @Data
     @AllArgsConstructor
     static class PostLikeUserDto{
-        private int userNo;
-        private String userName;
+        private int user_no;
+        private String user_nickname;
+        private String user_title;
+        private int file_no;
+        private String file_path;
+        private String file_savedname;
+        private Boolean isFollowing;
+
+        public PostLikeUserDto(User user, Media media, boolean isFollowing) {
+            this.user_no = user.getUser_no();
+            this.user_nickname = user.getUser_nickname();
+            this.user_title = user.getUser_title();
+            if(media != null){
+                this.file_no = media.getFile_no();
+                this.file_path = media.getFile_path();
+                this.file_savedname = media.getFile_savedname();
+            }
+            this.isFollowing = isFollowing;
+        }
     }
 
     @Data
@@ -94,6 +116,68 @@ public class PostApiController {
 
         // 좋아요 수
         private Integer LikeCnt;
+
+        // 이 유저가 좋아요를 눌렀는지
+        private boolean IsLike = false;
+
+        // 댓글 리스트
+        private List<CommentDto> commentList;
+    }
+
+    @Data
+    static class ChallengePostRequest {
+        private Integer user_no;
+        private Integer challenge_no;
+    }
+
+    @PutMapping("/challenge/personalize/{userNo}")
+    public Result testUser(@PathVariable("userNo") int userNo){
+        // Change to the region where your resources are located
+        Region region = Region.US_WEST_2;
+
+        // Build a personalize events client
+        PersonalizeEventsClient personalizeEventsClient = PersonalizeEventsClient.builder()
+                .region(region)
+                .build();
+        int response = putUsers(personalizeEventsClient, "datasetArn",
+                "user1Id(3)", "user1PropertyName(Age)", "user1PropertyValue(20)");
+        System.out.println("Response code: " + response);
+        personalizeEventsClient.close();
+
+        return new Result(true, HttpStatus.OK.value());
+    }
+
+    public static int putUsers(PersonalizeEventsClient personalizeEventsClient,
+                               String datasetArn,
+                               String user1Id,
+                               String user1PropertyName,
+                               String user1PropertyValue) {
+
+        int responseCode = 0;
+        ArrayList<software.amazon.awssdk.services.personalizeevents.model.User> users = new ArrayList<>();
+
+        try {
+            software.amazon.awssdk.services.personalizeevents.model.User user1 = software.amazon.awssdk.services.personalizeevents.model.User.builder()
+                    .userId(user1Id)
+                    .properties(String.format("{\"%1$s\": \"%2$s\"}",
+                            user1PropertyName, user1PropertyValue))
+                    .build();
+
+            users.add(user1);
+
+            PutUsersRequest putUsersRequest = PutUsersRequest.builder()
+                    .datasetArn(datasetArn)
+                    .users(users)
+                    .build();
+
+            responseCode = personalizeEventsClient.putUsers(putUsersRequest).sdkHttpResponse().statusCode();
+            System.out.println("Response code: " + responseCode);
+            return responseCode;
+
+        } catch (PersonalizeEventsException e) {
+            System.out.println(e.awsErrorDetails().errorMessage());
+        }
+        return responseCode;
     }
 
     @GetMapping("/challenge/personalize/{userNo}")
@@ -120,6 +204,9 @@ public class PostApiController {
         return new Result(true, HttpStatus.OK.value());
     }
 
+    /**
+     *  get PersonalizedRanking
+     * */
     public static List<PredictedItem> getRankedRecs(PersonalizeRuntimeClient personalizeRuntimeClient,
                                                     String campaignArn,
                                                     String userId,
@@ -152,19 +239,46 @@ public class PostApiController {
     }
 
     /**
-     *  챌린지 번호로 포스트 가져오기(챌린지로 확인 예정
-     *
+     *  Get Recommendations
      * */
-    @GetMapping("/challenge/{challengeNo}/post")
-    public Result list(@PathVariable("challengeNo") int challengeNo){
+    public static void getRecs(PersonalizeRuntimeClient personalizeRuntimeClient, String campaignArn, String userId){
+
+        try {
+            GetRecommendationsRequest recommendationsRequest = GetRecommendationsRequest.builder()
+                    .campaignArn(campaignArn)
+                    .numResults(20)
+                    .userId(userId)
+                    .build();
+
+            GetRecommendationsResponse recommendationsResponse = personalizeRuntimeClient.getRecommendations(recommendationsRequest);
+            List<PredictedItem> items = recommendationsResponse.itemList();
+
+            for (PredictedItem item: items) {
+                System.out.println("Item Id is : "+item.itemId());
+                System.out.println("Item score is : "+item.score());
+            }
+        } catch (AwsServiceException e) {
+            System.err.println(e.awsErrorDetails().errorMessage());
+            System.exit(1);
+        }
+    }
+
+    /**
+     *  챌린지 번호로 포스트 가져오기(챌린지로 확인 예정
+     * */
+    @PostMapping("/challenge/post")
+    public Result list(@RequestBody ChallengePostRequest request){
         Result result = null;
 
+        log.info("challenge_no : " + request.getChallenge_no());
+        log.info("user_no : " + request.getUser_no());
+
         // 챌린지 정보
-        Challenge challenge = challengeService.findChallengeByChallengeNo(challengeNo);
+        Challenge challenge = challengeService.findChallengeByChallengeNo(request.getChallenge_no());
         if(challenge == null) return new Result(false, HttpStatus.BAD_REQUEST.value());
         String type = challenge.getChallenge_type().name().toLowerCase();
         // 포스트 리스트
-        List<Post> postList = postService.getPostList(challengeNo);
+        List<Post> postList = postService.getPostList(request.getChallenge_no());
 
         List<PostDto> collect = new ArrayList<>();
 
@@ -203,6 +317,18 @@ public class PostApiController {
                 postDto.setLikeCnt(postLikeList.size());
             }
 
+            boolean isLike = postService.getPostLikeByUserNo(request.getUser_no());
+            postDto.setIsLike(isLike);
+
+            List<Comment> comments = commentService.findByPost(post.getPost_no());
+            List<CommentDto> commentList = comments.stream()
+                            .map(c -> {
+                                boolean IsLiked = commentLikeService.findIsLikeByUser(request.user_no, c.getComment_no());
+                                return new CommentDto(c, IsLiked);
+                            })
+                    .collect(Collectors.toList());
+            postDto.setCommentList(commentList);
+
             collect.add(postDto);
         }
 
@@ -221,8 +347,8 @@ public class PostApiController {
      *      - 유저 번호와 유저 닉네임만 전달받을 수도 있음
      *      - 현재 번호만 가져옴
      * */
-    @GetMapping("/post/{postNo}/like")
-    public Result likeList(@PathVariable("postNo") int postNo){
+    @GetMapping("/post/{postNo}/like/{userNo}")
+    public Result likeList(@PathVariable("postNo") int postNo, @PathVariable("userNo") int userNo){
 
         // PostLike에서 게시글이 post인 것 추출
 
@@ -233,7 +359,8 @@ public class PostApiController {
         List<PostLikeUserDto> userList = new ArrayList<>();
         for(PostLike postLike : postLikeList){
             User user = userService.findUser(postLike.getUser_no());
-            userList.add(new PostLikeUserDto(user.getUser_no(), user.getUser_nickname()));
+            boolean follow = followService.follow(userNo, user.getUser_no());
+            userList.add(new PostLikeUserDto(user, user.getMedia(), follow));
         }
 
         return new Result(true, HttpStatus.OK.value(), userList);
@@ -327,6 +454,16 @@ public class PostApiController {
             // 포스트 등록
             Post post = new Post();
 
+            for(String str : splitSharp) {
+                if(str.startsWith("#")) {
+                    PostTag postTag = new PostTag();
+                    postTag.setPost(post);
+                    Tag tag = tagService.findTagByTagContent(str);
+                    postTag.setTag(tag);
+                    tagService.savePostTag(postTag);
+                }
+            }
+
             // 수정 필요
             post.setChallenge_no(challengeNo);  // 포스트가 속한 챌린지 정보
 
@@ -407,6 +544,20 @@ public class PostApiController {
         // 포스트 업데이트
         int postId = postService.update(postNo, _post);
 
+        String content = postRequest.getPost_content();
+        String[] splitSharp = content.split(" ");
+
+        for(String str : splitSharp){
+            if(str.startsWith("#")){
+                Tag tag = tagService.findTagByTagContent(str);
+                PostTag postTag = new PostTag();
+                postTag.setPost(_post);
+                postTag.setTag(tag);
+                tagService.savePostTag(postTag);
+            }
+        }
+
+
         if(postId != 0)
             return new Result(true, HttpStatus.OK.value());
 
@@ -444,7 +595,7 @@ public class PostApiController {
         // 포스트 라이크 테이블에서 해당 유저번호와 해당 게시글에 해당하는 엔티티가 있는지 검색
         List<PostLike> postLike = postLikeService.getPostLikeByUserNoPostNo(postNo, userNo);
 
-        if(!postLike.isEmpty()){
+        if(postLike.size() != 0){
             // 좋아요 누른 정보가 있으면
             // delete
             postLikeService.delete(postNo, userNo);
@@ -463,6 +614,46 @@ public class PostApiController {
         }
 
         return new Result(true, HttpStatus.OK.value());
+    }
+
+    @GetMapping("/post/{userNo}")
+    public Result postByUser(@PathVariable("userNo") int user_no){
+        List<Post> postListByUserNo = postService.getPostListByUserNo(user_no);
+        List<PostResponse> collect = new ArrayList<>();
+        if(!postListByUserNo.isEmpty()){
+            collect = postListByUserNo.stream()
+                    .map(p -> {
+                        int challenge_no = p.getChallenge_no();
+                        Challenge challenge = challengeService.findChallengeByChallengeNo(challenge_no);
+                        int like_cnt = postLikeService.postLikeCnt(p.getPost_no());
+                        int comment_cnt = commentService.postCommentCnt(p.getPost_no());
+                        return new PostResponse(p, challenge, like_cnt, comment_cnt);
+                    }).collect(Collectors.toList());
+        }
+        return new Result(true, HttpStatus.OK.value(), collect);
+    }
+
+    @Data
+    static class PostResponse{
+        private int challenge_no;
+        private int post_no;
+        private int file_no;
+        private String file_path;
+        private String file_savedname;
+        private String challenge_title;
+        private int like_cnt;
+        private int comment_cnt;
+
+        public PostResponse(Post post, Challenge challenge, int like_cnt, int comment_cnt) {
+            this.challenge_no = post.getChallenge_no();
+            this.post_no = post.getPost_no();
+            this.file_no = post.getMedia().getFile_no();
+            this.file_path = post.getMedia().getFile_path();
+            this.file_savedname = post.getMedia().getFile_savedname();
+            this.challenge_title = challenge.getChallenge_title();
+            this.like_cnt = like_cnt;
+            this.comment_cnt = comment_cnt;
+        }
     }
 
     /**

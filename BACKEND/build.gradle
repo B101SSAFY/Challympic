@@ -46,6 +46,11 @@ dependencies {
 // AWS Personalize 설정
 	// https://mvnrepository.com/artifact/software.amazon.awssdk/personalizeruntime
 	implementation group: 'software.amazon.awssdk', name: 'personalizeruntime', version: '2.17.121'
+// https://mvnrepository.com/artifact/software.amazon.awssdk/aws-sdk-java
+	compileOnly group: 'software.amazon.awssdk', name: 'aws-sdk-java', version: '2.17.121'
+// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-personalize
+	implementation group: 'com.amazonaws', name: 'aws-java-sdk-personalize', version: '1.12.150'
+
 
 
 }

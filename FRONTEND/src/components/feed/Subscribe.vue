@@ -2,8 +2,8 @@
     <v-container fluid>
       <v-row dense>
         <v-col
-          v-for="post in posts"
-          :key="post.challenge"
+          v-for="challenge in challenges"
+          :key="challenge.challenge_no"
           :cols="4"
         >
           <v-hover>
@@ -12,9 +12,9 @@
                 class="mx-auto img-frame"
                 max-width="344"
               >
-                <v-img :src="post.src">
+                <v-img :src='"http://d384sk7z91xokb.cloudfront.net/"+challenge.file_path+"/"+challenge.file_savedname'>
                   <!-- 비디오일때만 -->
-                  <i v-if="post.isVideo" class='fas fa-play play-btn'></i>
+                  <v-icon v-if="challenge.video" icon class="play-btn">mdi-play</v-icon>
                 </v-img>
                 <v-fade-transition>
                   <v-overlay
@@ -23,8 +23,8 @@
                     color="#2E2E2E"
                   >
                   <div class="info-wrapper">
-                    <div class="challenge-info"><i class='fas fa-hashtag icon'></i>{{ post.challenge }}</div>
-                    <div class="participated-info"><i class='fas fa-user-plus icon'></i>{{ post.participated }}<v-icon icon class="icon bookmark-icon">mdi-bookmark</v-icon>{{ post.subscribe }}</div>
+                    <div class="challenge-info"><v-icon icon class="icon hashtag-icon">mdi-pound</v-icon>{{ challenge.challenge_title }}</div>
+                    <div class="participated-info"><v-icon icon class="icon challenger-icon">mdi-account-plus</v-icon>{{ challenge.post_cnt }}<v-icon icon class="icon bookmark-icon">mdi-bookmark</v-icon>{{ challenge.subscription_cnt }}</div>
                   </div>
                   </v-overlay>
                 </v-fade-transition>
@@ -37,40 +37,26 @@
 </template>
 
 <script>
+import { getUserSubscriptionChallenge } from '@/api/feed.js';
+
 export default {
   name: "Subscribe",
+  props: {
+    who_no: Number,
+  },
   data: ()=> ({
-    posts: [
-      {
-        challenge: '운동_챌린지',
-        isVideo: false,
-        participated: 20,
-        subscribe: 1,
-        src: 'https://randomuser.me/api/portraits/men/3.jpg'
-      },
-      {
-        challenge: '코딩_챌린지',
-        isVideo: false,
-        participated: 25,
-        subscribe: 5,
-        src: 'https://randomuser.me/api/portraits/men/4.jpg'
-      },
-      {
-        challenge: '음식_챌린지',
-        isVideo: true,
-        participated: 30,
-        subscribe: 11,
-        src: 'https://randomuser.me/api/portraits/men/5.jpg'
-      },
-      {
-        challenge: '술_챌린지',
-        isVideo: false,
-        participated: 10,
-        subscribe: 20,
-        src: 'https://randomuser.me/api/portraits/men/6.jpg'
-      },
-    ],
+    challenges: [],
   }),
+  created() {
+    getUserSubscriptionChallenge(
+      this.who_no,
+      (response) => {
+        console.log("챌린지");
+        console.log(response.data.data);
+        this.challenges = response.data.data;
+      }
+    )
+  }
 }
 </script>
 
@@ -83,9 +69,9 @@ export default {
 }
 .play-btn {
   float: right;
-  width: 22px;
+  width: 40px;
   color: #fff;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 .challenge-info {
   font-size: 20px;
@@ -95,11 +81,14 @@ export default {
   font-size: 18px;
 }
 .icon {
-  margin-top: 8px;
+  margin-top: -2px;
   margin-left: 6px;
   margin-right: 4px;
 }
-.bookmark-icon {
-  margin-top: -2px;
+.hashtag-icon {
+  margin-top: -5px;
+}
+.challenger-icon {
+  margin-right: 9px;
 }
 </style>

@@ -50,8 +50,10 @@
 				</span>
 				<span v-else>
 					<v-btn @click="likeComment(comment.comment_no)" icon>
-						<v-icon :class="{ 'active-like-btn': comment.isLiked }" small>
-							mdi-heart-outline
+						<v-icon
+							:color="comment.isLike ? 'red' : 'grey lighten-3'"
+							size="32"
+						>
 						</v-icon>
 					</v-btn>
 				</span>
@@ -68,19 +70,25 @@
 <script>
 	import ConfirmReport from "../report/ConfirmReport.vue";
 	import { updateComment, deleteComment, commentLike, commentReport } from '@/api/comment.js';
+
 	export default {
 		components: { ConfirmReport },
 		name: "CommentList",
 		props: {
-			comments: Array,
+			// comments: Array,
 			post_no: Number,
 		},
 		data() {
 			return {
+				liked: false,
 				nickname: "박싸피",
 				confirmReportDialog: false,
 				alert: false,
+				comments: [],
 			};
+		},
+		created() {
+			this.comments = this.$store.state.postList[this.post_no].commentList
 		},
 		watch: {},
 		methods: {
@@ -92,7 +100,7 @@
 					comment_content,
 					this.post_no,
 					(response) => {
-						this.comments = response.data
+						this.comments = response.data.data
 					}
 				)
 			},
@@ -103,7 +111,7 @@
 					comment_no,
 					this.post_no,
 					(response) => {
-						this.comments = response.data
+						this.comments = response.data.data
 					}
 				)
 			},
@@ -115,6 +123,7 @@
 					comment_no,
 					(response) => {
 						console.log(response)
+						this.liked = response.data.liked;
 					}
 				)
 			},

@@ -22,7 +22,24 @@ const postStore = {
     },
     SET_LIKE_LIST(state, likeList) {
       state.likeList = likeList;
-    }
+    },
+    ADD_COMMENT(state, newComment) {
+      state.comments.push(newComment)
+      state.commentCnt = state.comments.length;
+    },
+    UPDATE_COMMENT(state, targetComment) {
+      state.comments = state.comments.map(comment => {
+        if(comment.id === targetComment.id) {
+          return targetComment
+        } else {
+          return comment
+        }
+      })
+    },
+    DELETE_COMMENT(state, targetComment) {
+      state.comments.splice(state.comments.indexOf(targetComment), 1)
+      state.commentCnt -= 1
+    },
   },
   actions: {
     getPostList({ commit }, { challengeNo, userNo }) {

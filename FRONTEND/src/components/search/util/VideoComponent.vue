@@ -2,7 +2,7 @@
   <div>
     <video-player
       vjs-default-skin
-      class="video-player-box"
+      class="video-player-box vjs-big-play-centered"
       ref="videoPlayer"
       :playsinline="true"
       :options="playerOptions"
@@ -40,7 +40,6 @@ export default {
         },
       ],
     };
-    //console.log(this.playerOptions.sources.src);
   },
 };
 </script>

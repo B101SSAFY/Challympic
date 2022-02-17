@@ -52,7 +52,6 @@
 				}
 			},
 			keyword: function () {
-				this.onlyChallenge();
 				this.keyword = "#" + this.$router.currentRoute.path.substring(8);
 			},
 		},

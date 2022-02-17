@@ -7,7 +7,7 @@
 				'items-per-page-options': [5, 10, 15, 20],
 			}"
 			:items-per-page="6"
-		>
+		>	
 			<template v-slot:default="props">
 				<v-row>
 					<v-col
@@ -190,7 +190,7 @@
 				challenge.subscription = !challenge.subscription;
 				setSubscription(
 					challenge.challenge_no,
-					challenge.user_no,
+					this.$store.state.userStore.userInfo ? user_no : 0,
 					(response) => {
 						console.log(response);
 					},
@@ -217,7 +217,7 @@
 
 			postLikeList(
 				post.post_no,
-				post.user_no,
+				this.$store.state.userStore.userInfo.user_no,
 				() => {
 				// console.log(response);
 				},
@@ -230,12 +230,13 @@
 		created() {
 			const user_no = this.$store.state.userStore.userInfo ?  this.$store.state.userStore.userInfo.user_no : 0;
 			const tag_content = this.search.substring(1);
+
 			searchTagList(
 				{ user_no, tag_content },
 				(response) => {
 					this.challenges = response.data.data.challengeList;
-					// console.log(this.challenges);
 					// console.log("created");
+					// console.log(this.challenges);
 					// console.log(this.searchKey);
 				},
 				() => {

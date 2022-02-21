@@ -48,22 +48,33 @@ public class SearchService {
         List<Challenge> searchedChallenges = searchRepository.findChallengeByTrend();
         List<Challenge> allChallenge = challengeRepository.findAll();
         int challengeSize = allChallenge.size();
-        int[][] challengeCount = new int[challengeSize + 1][2];
-        for(int i = 1; i <= challengeSize; i++) challengeCount[i][0] = i;
+        List<int[]> challengeCount = new ArrayList<>();
+
         for(Challenge c : searchedChallenges) {
-            challengeCount[c.getChallenge_no()][1]++;
+            boolean isFind = false;
+            for(int[] count : challengeCount) {
+                if(count[0] == c.getChallenge_no()) {
+                    count[1]++;
+                    isFind = true;
+                }
+            }
+            if(!isFind) {
+                challengeCount.add(new int[]{c.getChallenge_no(), 0});
+            }
         }
-        Arrays.sort(challengeCount, new Comparator<int[]>() {
+
+        challengeCount.sort(new Comparator<int[]>() {
             @Override
             public int compare(int[] o1, int[] o2) {
-                return o1[1] - o2[1];
+                return o2[1] - o1[1];
             }
         });
 
         List<Challenge> trendChallenge = new ArrayList<>();
-        for(int i = 0; i <= (Math.min(challengeSize, 4)); i++) {
-            int challengeNo = challengeCount[i][0];
-            if(challengeCount[i][1] != 0) trendChallenge.add(challengeRepository.findByChallengeNo(challengeNo));
+        System.out.println(challengeSize);
+        for(int i = 0; i <= (Math.min(challengeSize-1, 4)); i++) {
+            int challengeNo = challengeCount.get(i)[0];
+            trendChallenge.add(challengeRepository.findByChallengeNo(challengeNo));
         }
 
         return trendChallenge;

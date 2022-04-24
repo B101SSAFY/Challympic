@@ -30,7 +30,7 @@ public class User {
 
     @Column(columnDefinition = "varchar(100) default 'USER'")
     @Enumerated(EnumType.STRING)
-    private UserAuthEnum user_auth = UserAuthEnum.USER;
+    private UserAuthEnum user_auth = UserAuthEnum.ROLE_USER;
 
     @Column(columnDefinition = "TIMESTAMP default CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)

@@ -9,7 +9,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import java.util.Date;
 
@@ -63,7 +62,7 @@ public class InitDB {
             // local 환경 동작 시 DB User 테이블 UTF-8 설정이 되어있지 않다면 에러가 발생함 -> 영어로 변경
             user.setUser_nickname(user_nickname);
             if(user_nickname.equals("ADMIN")){
-                user.setUser_auth(UserAuthEnum.ADMIN);
+                user.setUser_auth(UserAuthEnum.ROLE_ADMIN);
             }
             return user;
         }

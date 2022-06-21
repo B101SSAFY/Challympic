@@ -74,7 +74,7 @@ public class SearchService {
         for(int i = 0; i <= (Math.min(challengeSize-1, 4)); i++) {
             int challengeNo = challengeCount.get(i)[0];
             trendChallenge.add(challengeRepository
-                    .findByChallenge_no(challengeNo));
+                    .findById(challengeNo).get());
         }
 
         return trendChallenge;

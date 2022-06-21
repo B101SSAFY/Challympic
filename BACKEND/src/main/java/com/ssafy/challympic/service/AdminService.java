@@ -66,13 +66,11 @@ public class AdminService {
             }
         }
 
-        List<Challenger> challengerList = challengerRepository.findChallengerByChallengeNo(challenge_no);
+        List<Challenger> challengerList = challengerRepository.findByChallenge_no(challenge_no);
         if(!challengerList.isEmpty()){
-            for (Challenger challenger : challengerList) {
-                challengeRepository.delete(challenger);
-            }
+            challengerRepository.deleteAll(challengerList);
         }
-        Challenge findChallenge = challengeRepository.findByChallenge_no(challenge_no);
+        Challenge findChallenge = challengeRepository.findById(challenge_no).get();
         adminRepository.deleteChallenge(findChallenge);
     }
 

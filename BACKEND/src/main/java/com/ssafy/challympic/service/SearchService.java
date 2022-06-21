@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -74,7 +73,8 @@ public class SearchService {
         System.out.println(challengeSize);
         for(int i = 0; i <= (Math.min(challengeSize-1, 4)); i++) {
             int challengeNo = challengeCount.get(i)[0];
-            trendChallenge.add(challengeRepository.findByChallengeNo(challengeNo));
+            trendChallenge.add(challengeRepository
+                    .findByChallenge_no(challengeNo));
         }
 
         return trendChallenge;

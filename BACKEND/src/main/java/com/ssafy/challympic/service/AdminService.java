@@ -19,6 +19,7 @@ public class AdminService {
     private final AdminRepository adminRepository;
     private final UserRepository userRepository;
     private final ChallengeRepository challengeRepository;
+    private final ChallengerRepository challengerRepository;
     private final TitleRepository titleRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
@@ -65,13 +66,13 @@ public class AdminService {
             }
         }
 
-        List<Challenger> challengerList = challengeRepository.findChallengerList(challenge_no);
+        List<Challenger> challengerList = challengerRepository.findChallengerByChallengeNo(challenge_no);
         if(!challengerList.isEmpty()){
             for (Challenger challenger : challengerList) {
-                challengeRepository.deleteChallenger(challenger);
+                challengeRepository.delete(challenger);
             }
         }
-        Challenge findChallenge = challengeRepository.findOne(challenge_no);
+        Challenge findChallenge = challengeRepository.findByChallenge_no(challenge_no);
         adminRepository.deleteChallenge(findChallenge);
     }
 

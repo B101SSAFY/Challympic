@@ -4,6 +4,7 @@ import com.ssafy.challympic.domain.Challenge;
 import com.ssafy.challympic.domain.ChallengeTag;
 import com.ssafy.challympic.domain.Challenger;
 import com.ssafy.challympic.repository.ChallengeRepository;
+import com.ssafy.challympic.repository.ChallengerRepository;
 import com.ssafy.challympic.repository.PostRepository;
 import com.ssafy.challympic.repository.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,16 +20,17 @@ import java.util.List;
 public class ChallengeService {
 
     private final ChallengeRepository challengeRepository;
+    private final ChallengerRepository challengerRepository;
     private final SubscriptionRepository subscriptionRepository;
     private final PostRepository postRepository;
 
     public List<Challenge> getChallengeByUserNo(int userNo) {
-        return challengeRepository.findByUserNo(userNo);
+        return challengeRepository.findByUser_no(userNo);
     }
 
     // challengeNo로 challenger 가져오기
     public List<Challenger> getChallengerByChallengeNo(int challengeNo){
-        return challengeRepository.findChallengerByChallengeNo(challengeNo);
+        return challengerRepository.findChallengerByChallengeNo(challengeNo);
     }
 
     public List<Challenge> findChallenges() {
@@ -44,7 +46,7 @@ public class ChallengeService {
     }
 
     private void validateDuplicateChallenge(Challenge challenge) {
-        List<Challenge> findChallenges = challengeRepository.findByTitle(challenge.getChallenge_title());
+        List<Challenge> findChallenges = challengeRepository.findByTitleOrderByChallenge_endDesc(challenge.getChallenge_title());
         for(Challenge c : findChallenges) {
             if(c.getChallenge_end().after(new Date())){
                 throw new IllegalStateException("이미 존재하는 챌린지입니다.");
@@ -54,11 +56,11 @@ public class ChallengeService {
 
     @Transactional
     public void saveChallengers(Challenger challenger) {
-        challengeRepository.saveChallenger(challenger);
+        challengeRepository.save(challenger);
     }
 
     public List<Challenge> findChallengeByTitle(String title) {
-        return challengeRepository.findByTitle(title);
+        return challengeRepository.findByTitleOrderByChallenge_endDesc(title);
     }
 
     public List<Challenge> findChallengeBySubscription(int userNo) {
@@ -66,16 +68,16 @@ public class ChallengeService {
     }
 
     public Challenge findChallengeByChallengeNo(int challengeNo) {
-        return challengeRepository.findByChallengeNo(challengeNo);
+        return challengeRepository.findByChallenge_no(challengeNo);
     }
 
     @Transactional
     public void saveChallengeTag(ChallengeTag challengeTag) {
-        challengeRepository.saveChallengeTag(challengeTag);
+        challengeRepository.save(challengeTag);
     }
 
     public int challengeReportCntByUser(int user_no){
-        List<Challenge> findChallengeList = challengeRepository.findByUserNo(user_no);
+        List<Challenge> findChallengeList = challengeRepository.findByUser_no(user_no);
         int reportCnt = 0;
         for (Challenge challenge : findChallengeList) {
             reportCnt += challenge.getChallenge_report();
@@ -92,6 +94,6 @@ public class ChallengeService {
     }
 
     public List<Challenge> findChallengesByTag(String tag_content) {
-        return challengeRepository.findByTagContent(tag_content);
+        return challengeRepository.findByTag_content(tag_content);
     }
 }

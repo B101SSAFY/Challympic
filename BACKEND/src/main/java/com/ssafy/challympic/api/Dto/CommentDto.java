@@ -25,8 +25,8 @@ public class CommentDto {
 
     public CommentDto(Comment comment, boolean IsLiked) {
         this.comment_no = comment.getComment_no();
-        this.user_no = comment.getUser().getUser_no();
-        this.user_nickname = comment.getUser().getUser_nickname();
+        this.user_no = comment.getUser().getNo();
+        this.user_nickname = comment.getUser().getNickname();
         if(comment.getUser().getMedia() != null)
             this.user_profile = comment.getUser().getMedia().getFile_path() +             File.separator
                     + comment.getUser().getMedia().getFile_savedname();

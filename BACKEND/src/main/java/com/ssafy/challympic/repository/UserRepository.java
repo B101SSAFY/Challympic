@@ -2,75 +2,26 @@ package com.ssafy.challympic.repository;
 
 import com.ssafy.challympic.domain.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import java.util.List;
+import java.util.Optional;
 
-@Repository
-@RequiredArgsConstructor
-public class UserRepository {
 
-    private final EntityManager em;
+public interface UserRepository extends JpaRepository<User, Integer> {
 
-    public void save(User user){ em.persist(user); }
 
-    public User login(String user_email, String user_pwd){
-        return em.createQuery("select u from User u where u.user_email = :user_email and u.user_pwd = :user_pwd", User.class)
-            .setParameter("user_email", user_email)
-            .setParameter("user_pwd", user_pwd)
-            .getSingleResult(); }
+    @Query("SELECT u FROM User u WHERE u.no = :email AND u.pwd = :pwd")
+    User login(String email, String pwd);
 
-    public User findOne(int user_no){
-        try{
-            return em.find(User.class, user_no);
-        }catch (NoResultException e){
-            return null;
-        }
-    }
+    Optional<User> findByEmail(String email);
 
-    public List<User> validateEmail(String user_email){
-        return em.createQuery("select u from User u where u.user_email = :user_email", User.class)
-                .setParameter("user_email", user_email)
-                .getResultList();
-    }
+    Optional<User> findByNickname(String nickname);
 
-    public List<User> validateNickname(String user_nickname){
-        return em.createQuery("select u from User u where u.user_nickname = :user_nickname", User.class)
-                .setParameter("user_nickname", user_nickname)
-                .getResultList();
-    }
-
-    public void delete(User user){
-        em.remove(user);
-        em.flush();
-    }
-
-    public User findByEmail(String user_email){
-        try{
-            User user = em.createQuery("select u from User u where u.user_email = :user_email", User.class)
-                    .setParameter("user_email", user_email)
-                    .getSingleResult();
-            return user;
-        }catch (NoResultException e){
-            return null;
-        }
-    }
-
-    public User findByNickname(String user_nickname) {
-        try{
-            User user = em.createQuery("select u from User u where u.user_nickname = :user_nickname", User.class)
-                    .setParameter("user_nickname", user_nickname)
-                    .getSingleResult();
-            return user;
-        }catch (NoResultException e){
-            return null;
-        }
-    }
-
-    public List<User> findAllUser() {
-        return em.createQuery("select u from User u", User.class)
-                .getResultList();
-    }
+    @Query("SELECT u FROM User u")
+    List<User> findAllUser();
 }

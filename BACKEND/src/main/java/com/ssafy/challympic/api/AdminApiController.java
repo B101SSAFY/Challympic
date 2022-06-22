@@ -30,9 +30,9 @@ public class AdminApiController {
         List<UserDto> collect = userList.stream()
                 .map(u -> {
                     UserDto userDto = new UserDto(u);
-                    int post_report = postService.postReportCntByUser(u.getUser_no());
-                    int challenge_report = challengeService.challengeReportCntByUser(u.getUser_no());
-                    int comment_report = commentService.commentReportCntByUser(u.getUser_no());
+                    int post_report = postService.postReportCntByUser(u.getNo());
+                    int challenge_report = challengeService.challengeReportCntByUser(u.getNo());
+                    int comment_report = commentService.commentReportCntByUser(u.getNo());
                     userDto.setReport(post_report+challenge_report+comment_report);
                     return userDto;
                 })
@@ -150,7 +150,7 @@ public class AdminApiController {
 
         public QnADto(QnA qna) {
             this.qna_no = qna.getQna_no();
-            this.user_email = qna.getUser().getUser_email();
+            this.user_email = qna.getUser().getEmail();
             this.qna_title = qna.getQna_title();
             this.qna_question = qna.getQna_question();
             this.qna_answer = qna.getQna_answer();
@@ -190,7 +190,7 @@ public class AdminApiController {
         public ChallengeDto(Challenge challenge) {
             this.challenge_no = challenge.getChallenge_no();
             this.challenge_title = challenge.getChallenge_title();
-            this.user_email = challenge.getUser().getUser_email();
+            this.user_email = challenge.getUser().getEmail();
             this.challenge_start = challenge.getChallenge_start();
             this.challenge_end = challenge.getChallenge_end();
             this.challenge_official = challenge.isChallenge_official();
@@ -207,10 +207,10 @@ public class AdminApiController {
         private int report;
 
         public UserDto(User user) {
-            this.user_no = user.getUser_no();
-            this.user_email = user.getUser_email();
-            this.user_nickname = user.getUser_nickname();
-            this.user_active = user.getUser_active();
+            this.user_no = user.getNo();
+            this.user_email = user.getEmail();
+            this.user_nickname = user.getNickname();
+            this.user_active = user.getActive();
         }
     }
 }

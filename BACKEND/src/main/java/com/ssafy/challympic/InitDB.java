@@ -31,11 +31,11 @@ public class InitDB {
         private final EntityManager em;
         private final BCryptPasswordEncoder bCryptPasswordEncoder;
         public void dbInit(){
-            User user = setUser("admin@ssafy.com", "123", "ADMIN");
-            em.persist(user);
-
-            User testUser = setUser("test01@ssafy.com", "123", "test");
-            em.persist(testUser);
+//            User user = setUser("admin@ssafy.com", "123", "ADMIN");
+//            em.persist(user);
+//
+//            User testUser = setUser("test01@ssafy.com", "123", "test");
+//            em.persist(testUser);
 
 //            Challenge challenge1 = makeChallenge(2, "운동챌린지", "#운동 #건강 열심히", new Date(), "VIDEO", "운동왕");
 //            em.persist(challenge1);
@@ -54,18 +54,18 @@ public class InitDB {
             return challenge;
         }
 
-        private User setUser(String user_email, String user_pwd, String user_nickname) {
-            User user = new User();
-            user.setUser_email(user_email);
-            String rawPwd = user_pwd;
-            String encPwd = bCryptPasswordEncoder.encode(rawPwd);
-            user.setUser_pwd(encPwd);
-            // local 환경 동작 시 DB User 테이블 UTF-8 설정이 되어있지 않다면 에러가 발생함 -> 영어로 변경
-            user.setUser_nickname(user_nickname);
-            if(user_nickname.equals("ADMIN")){
-                user.setUser_auth(UserAuthEnum.ADMIN);
-            }
-            return user;
-        }
+//        private User setUser(String user_email, String user_pwd, String user_nickname) {
+//            User user = new User();
+//            user.setUser_email(user_email);
+//            String rawPwd = user_pwd;
+//            String encPwd = bCryptPasswordEncoder.encode(rawPwd);
+//            user.setUser_pwd(encPwd);
+//            // local 환경 동작 시 DB User 테이블 UTF-8 설정이 되어있지 않다면 에러가 발생함 -> 영어로 변경
+//            user.setUser_nickname(user_nickname);
+//            if(user_nickname.equals("ADMIN")){
+//                user.setUser_auth(UserAuthEnum.ADMIN);
+//            }
+//            return user;
+//        }
     }
 }

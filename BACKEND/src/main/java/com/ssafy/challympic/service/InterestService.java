@@ -30,7 +30,7 @@ public class InterestService {
             return false;
         }else{
             Interest interest = new Interest();
-            interest.setUser(userRepository.findOne(user_no));
+            interest.setUser(userRepository.findById(user_no).get());
             interest.setTag(tagRepository.findOne(tag_no));
             interestRepository.save(interest);
             return true;

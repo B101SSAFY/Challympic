@@ -25,7 +25,7 @@ public class QnAApiController {
 
     @PostMapping("/user/{userNo}/qna")
     public Result question(@PathVariable("userNo") int user_no, @RequestBody QnARequest request){
-        User user = userService.findUser(user_no);
+        User user = userService.findByNo(user_no);
         QnA qnA = new QnA();
         qnA.setUser(user);
         qnA.setQna_title(request.getQna_title());
@@ -66,7 +66,7 @@ public class QnAApiController {
 
         public QnADto(QnA qna) {
             this.qna_no = qna.getQna_no();
-            this.user_nickname = qna.getUser().getUser_nickname();
+            this.user_nickname = qna.getUser().getNickname();
             this.qna_title = qna.getQna_title();
             this.qna_question = qna.getQna_question();
             this.qna_answer = qna.getQna_answer();

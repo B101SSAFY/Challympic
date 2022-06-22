@@ -75,7 +75,7 @@ public class ChallengeApiController {
                 String user_nickname = str;
                 User challengerUser = userService.findByNickname(user_nickname);
                 if(challengerUser == null) return new Result(false, HttpStatus.BAD_REQUEST.value());
-                challengers.add(challengerUser.getUser_no());
+                challengers.add(challengerUser.getNo());
             }
         }
 
@@ -84,7 +84,7 @@ public class ChallengeApiController {
         title.setTitle_name(request.getTitle_name());
         if(title == null) return new Result(false, HttpStatus.FORBIDDEN.value());
 
-        User user = userService.findUser(request.user_no);
+        User user = userService.findByNo(request.user_no);
 
         Challenge challenge = Challenge.createChallenge(
                 user,
@@ -103,14 +103,14 @@ public class ChallengeApiController {
         for(int cr : challengers) {
             Challenger challenger = new Challenger();
             challenger.setChallenge(challenge);
-            User _challenger = userService.findUser(cr);
+            User _challenger = userService.findByNo(cr);
             challenger.setUser(_challenger);
             challengeService.saveChallengers(challenger);
 
             // 태그된사람 알림
             Alert alert = new Alert();
             alert.setUser(_challenger);
-            alert.setAlert_content(user.getUser_nickname() + "님이 챌린지에 초대했습니다.");
+            alert.setAlert_content(user.getNickname() + "님이 챌린지에 초대했습니다.");
             alertService.saveAlert(alert);
 
         }
@@ -198,18 +198,18 @@ public class ChallengeApiController {
     /**
      * 구독추가
      */
-    @PostMapping("/challenge/{challengeNo}/subscribe/{userNo}")
-    public Result addSubscription(@PathVariable int challengeNo, @PathVariable int userNo) {
+    @PostMapping("/challenge/{challengeNo}/subscribe/{no}")
+    public Result addSubscription(@PathVariable int challengeNo, @PathVariable int no) {
         Challenge challenge = challengeService.findChallengeByChallengeNo(challengeNo);
         if(challenge == null) {
             return new Result(false, HttpStatus.BAD_REQUEST.value());
         }
-        User user = userService.findUser(userNo);
+        User user = userService.findByNo(no);
 
-        Subscription findSubscription = subscriptionService.findSubscriptionByChallengeAndUser(challengeNo, userNo);
+        Subscription findSubscription = subscriptionService.findSubscriptionByChallengeAndUser(challengeNo, no);
         if(findSubscription == null){
             subscriptionService.saveSubscription(Subscription.setSubscription(challenge, user));
-            List<Subscription> subscriptionList = subscriptionService.findSubscriptionByUser(userNo);
+            List<Subscription> subscriptionList = subscriptionService.findSubscriptionByUser(no);
             List<SubscriptionDto> subscriptions = new ArrayList<>();
             if(!subscriptionList.isEmpty()){
                 subscriptions = subscriptionList.stream()
@@ -219,7 +219,7 @@ public class ChallengeApiController {
             return new Result(true, HttpStatus.OK.value(), subscriptions);
         }else{
             subscriptionService.deleteSubscription(findSubscription);
-            List<Subscription> subscriptionList = subscriptionService.findSubscriptionByUser(userNo);
+            List<Subscription> subscriptionList = subscriptionService.findSubscriptionByUser(no);
             List<SubscriptionDto> subscriptions = new ArrayList<>();
             if(!subscriptionList.isEmpty()){
                 subscriptions = subscriptionList.stream()
@@ -240,7 +240,7 @@ public class ChallengeApiController {
             if(!challenger.isEmpty()){
                 challengers = challenger.stream()
                         .map(cs -> {
-                            User user = userService.findUser(cs.getUser().getUser_no());
+                            User user = userService.findByNo(cs.getUser().getNo());
                             return new UserDto(user);
                         }).collect(Collectors.toList());
             }
@@ -268,13 +268,13 @@ public class ChallengeApiController {
     /**
      * 구독 취소
      */
-    @DeleteMapping("/challenge/{challengeNo}/subscribe/{userNo}")
-    public Result removeSubscription(@PathVariable int challengeNo, @PathVariable int userNo) {
+    @DeleteMapping("/challenge/{challengeNo}/subscribe/{no}")
+    public Result removeSubscription(@PathVariable int challengeNo, @PathVariable int no) {
         Challenge challenge = challengeService.findChallengeByChallengeNo(challengeNo);
         if(challenge == null) {
             return new Result(false, HttpStatus.BAD_REQUEST.value());
         }
-        User user = userService.findUser(userNo);
+        User user = userService.findByNo(no);
 
         subscriptionService.deleteSubscription(Subscription.setSubscription(challenge, user));
         return new Result(true, HttpStatus.OK.value());

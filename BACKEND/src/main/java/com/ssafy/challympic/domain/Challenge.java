@@ -2,8 +2,9 @@ package com.ssafy.challympic.domain;
 
 import com.ssafy.challympic.domain.defaults.ChallengeAccess;
 import com.ssafy.challympic.domain.defaults.ChallengeType;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
@@ -12,7 +13,8 @@ import java.util.Date;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
-@Getter @Setter
+@Getter
+@NoArgsConstructor
 public class Challenge {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,17 +51,17 @@ public class Challenge {
     @ColumnDefault("0")
     private int challenge_report;
 
-    // 생성 메소드
-    public static Challenge createChallenge(User user, Date challenge_end, ChallengeAccess challenge_access, ChallengeType challenge_type, String challenge_title, String challenge_content) {
-        Challenge challenge = new Challenge();
-        challenge.setUser(user);
-        challenge.setChallenge_start(new Date());
-        challenge.setChallenge_end(challenge_end);
-        challenge.setChallenge_access(challenge_access);
-        challenge.setChallenge_type(challenge_type);
-        challenge.setChallenge_title(challenge_title);
-        challenge.setChallenge_content(challenge_content);
-        return challenge;
+    @Builder
+    public Challenge(int challenge_no, User user, Date challenge_start, Date challenge_end, ChallengeAccess challenge_access, ChallengeType challenge_type, String challenge_title, String challenge_content, boolean challenge_official, int challenge_report) {
+        this.challenge_no = challenge_no;
+        this.user = user;
+        this.challenge_start = challenge_start;
+        this.challenge_end = challenge_end;
+        this.challenge_access = challenge_access;
+        this.challenge_type = challenge_type;
+        this.challenge_title = challenge_title;
+        this.challenge_content = challenge_content;
+        this.challenge_official = challenge_official;
+        this.challenge_report = challenge_report;
     }
-
 }

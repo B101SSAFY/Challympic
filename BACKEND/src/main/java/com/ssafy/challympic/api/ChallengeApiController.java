@@ -33,6 +33,7 @@ public class ChallengeApiController {
      */
     @GetMapping("/challenge")
     public Result challenges() {
+//        List<ChallengeResponseDto> challengeList = challengeService.getChallenges();
         List<Challenge> findChallenges = challengeService.findChallenges();
         List<ChallengeDto> collect = findChallenges.stream()
                 .map(c -> {
@@ -86,14 +87,14 @@ public class ChallengeApiController {
 
         User user = userService.findByNo(request.user_no);
 
-        Challenge challenge = Challenge.createChallenge(
-                user,
-                request.getChallenge_end(),
-                challenge_access,
-                request.getChallenge_type(),
-                request.getChallenge_title(),
-                request.getChallenge_content()
-        );
+        Challenge challenge = Challenge.builder()
+                .user(user)
+                .challenge_end(request.getChallenge_end())
+                .challenge_access(challenge_access)
+                .challenge_type(request.getChallenge_type())
+                .challenge_title(request.getChallenge_title())
+                .challenge_content(request.getChallenge_content())
+                .build();
 
         // 챌린지 엔티티 등록
         challengeService.saveChallenge(challenge);
@@ -101,10 +102,11 @@ public class ChallengeApiController {
 
         // 챌린저 저장
         for(int cr : challengers) {
-            Challenger challenger = new Challenger();
-            challenger.setChallenge(challenge);
             User _challenger = userService.findByNo(cr);
-            challenger.setUser(_challenger);
+            Challenger challenger = Challenger.builder()
+                    .challenge(challenge)
+                    .user(_challenger)
+                    .build();
             challengeService.saveChallengers(challenger);
 
             // 태그된사람 알림
@@ -148,10 +150,12 @@ public class ChallengeApiController {
 
         // 챌린지 태그 저장
         for(String s : tagContentList) {
-            ChallengeTag challengeTag = new ChallengeTag();
-            challengeTag.setTag(tagService.findTagByTagContent(s));
-            challengeTag.setChallenge(challenge);
-            challengeService.saveChallengeTag(challengeTag);
+            ChallengeTag challengeTag
+                    = ChallengeTag.builder()
+                        .tag(tagService.findTagByTagContent(s))
+                        .challenge(challenge)
+                        .build();
+                challengeService.saveChallengeTag(challengeTag);
         }
 
         // title 등록

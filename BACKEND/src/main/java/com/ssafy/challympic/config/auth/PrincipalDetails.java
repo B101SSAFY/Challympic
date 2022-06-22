@@ -22,18 +22,18 @@ public class PrincipalDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(() -> user.getUser_auth().toString());
+        authorities.add(() -> user.getAuth().toString());
         return authorities;
     }
 
     @Override
     public String getPassword() {
-        return user.getUser_pwd();
+        return user.getPwd();
     }
 
     @Override
     public String getUsername() {
-        return user.getUser_email();
+        return user.getEmail();
     }
 
     @Override

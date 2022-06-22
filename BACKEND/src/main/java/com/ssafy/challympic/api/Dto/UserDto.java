@@ -16,8 +16,8 @@ public class UserDto {
     private String user_nickname;
 
     public UserDto(User user) {
-        this.user_no = user.getUser_no();
-        this.user_email = user.getUser_email();
-        this.user_nickname = user.getUser_nickname();
+        this.user_no = user.getNo();
+        this.user_email = user.getEmail();
+        this.user_nickname = user.getNickname();
     }
 }

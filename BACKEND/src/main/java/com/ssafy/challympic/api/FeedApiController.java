@@ -169,7 +169,7 @@ public class FeedApiController {
         if(user_no == 0){
             return new Result(false, HttpStatus.NO_CONTENT.value());
         }
-        User findUser = userService.findUser(user_no);
+        User findUser = userService.findByNo(user_no);
         if(findUser == null){
             return new Result(false, HttpStatus.BAD_REQUEST.value());
         }else{
@@ -187,9 +187,9 @@ public class FeedApiController {
         private String file_savedname;
 
         public UserDto(User user) {
-            this.user_no = user.getUser_no();
-            this.user_nickname = user.getUser_nickname();
-            this.user_title = user.getUser_title();
+            this.user_no = user.getNo();
+            this.user_nickname = user.getNickname();
+            this.user_title = user.getTitle();
             if(user.getMedia() !=  null){
                 this.file_no = user.getMedia().getFile_no();
                 this.file_path = user.getMedia().getFile_path();

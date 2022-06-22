@@ -45,7 +45,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             // 로그인 시도시 토큰 생성
             UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(user.getUser_email(), user.getUser_pwd());
+                    new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPwd());
 
             // 토큰으로 로그인 시도
             // PrincipalDetailsService의 loadUerByUsername() 실행
@@ -83,12 +83,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String jwtToken = JWT.create()
                 .withSubject(principalDetails.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPORATION_TIME))
-                .withClaim("user_no", principalDetails.getUser().getUser_no()) // 넣고 싶은 key value 값
-                .withClaim("user_name", principalDetails.getUser().getUser_email())
+                .withClaim("user_no", principalDetails.getUser().getNo()) // 넣고 싶은 key value 값
+                .withClaim("user_name", principalDetails.getUser().getEmail())
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET)); // secrete 값
 
         response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX +jwtToken); // 헤더에 담겨 사용자에게 응답
-        Result result = new Result(true, HttpStatus.OK.value(), new UserDto(principalDetails.getUser().getUser_no(), principalDetails.getUser().getUser_email()));
+        Result result = new Result(true, HttpStatus.OK.value(), new UserDto(principalDetails.getUser().getNo(), principalDetails.getUser().getEmail()));
         String json = new ObjectMapper().writeValueAsString(result);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
@@ -121,8 +121,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         private String user_email;
 
         public UserDto(User user) {
-            this.user_no = user.getUser_no();
-            this.user_email = user.getUser_email();
+            this.user_no = user.getNo();
+            this.user_email = user.getEmail();
         }
     }
 }

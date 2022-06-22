@@ -24,8 +24,10 @@ public class FollowService {
         Follow follow = followRepository.findOne(following_no, follower_no);
         if(follow == null ){
             follow = new Follow();
-            User following = userRepository.findOne(following_no);
-            User follower = userRepository.findOne(follower_no);
+            User following = userRepository.findById(following_no)
+                    .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다. "));
+            User follower = userRepository.findById(follower_no)
+                    .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다. "));
             follow.setFollow_following_no(following);
             follow.setFollow_follower_no(follower);
             followRepository.save(follow);
@@ -45,7 +47,8 @@ public class FollowService {
         List<Follow> following = followRepository.findUserFollowing(user_no);
         List<User> followingList = following.stream()
                 .map(f ->
-                        userRepository.findOne(f.getFollow_follower_no().getUser_no()))
+                        userRepository.findById(f.getFollow_follower_no().getNo())
+                                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다. ")))
                 .collect(Collectors.toList());
         return followingList;
     }
@@ -59,7 +62,8 @@ public class FollowService {
         List<Follow> follower = followRepository.findUserFollower(user_no);
         List<User> followerList = follower.stream()
                 .map(f ->
-                    userRepository.findOne(f.getFollow_following_no().getUser_no()))
+                        userRepository.findById(f.getFollow_follower_no().getNo())
+                                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다. ")))
                 .collect(Collectors.toList());
         return followerList;
     }

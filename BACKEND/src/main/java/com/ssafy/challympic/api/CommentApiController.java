@@ -25,7 +25,7 @@ public class CommentApiController {
 
     @PostMapping("/comment")
     public Result save(@RequestBody CommentRequest request){
-        User findUser = userService.findUser(request.user_no);
+        User findUser = userService.findByNo(request.user_no);
         Post findPost = postService.getPost(request.post_no);
         if(findUser == null || findPost == null){
             return new Result(false, HttpStatus.BAD_REQUEST.value());
@@ -41,7 +41,7 @@ public class CommentApiController {
         Alert commentAlert = new Alert();
         User writer = findPost.getUser();   // 포스트 작성자
         commentAlert.setUser(writer);
-        commentAlert.setAlert_content(findUser.getUser_nickname() + "님이 댓글을 작성했습니다.");
+        commentAlert.setAlert_content(findUser.getNickname() + "님이 댓글을 작성했습니다.");
         alertService.saveAlert(commentAlert);
 
         Alert tagAlert = new Alert();
@@ -52,7 +52,7 @@ public class CommentApiController {
                 User tagUser = userService.findByNickname(str.substring(1));    // 태그된 사람
                 if(tagUser == null) continue;
                 tagAlert.setUser(tagUser);
-                tagAlert.setAlert_content(findUser.getUser_nickname() + "님이 댓글에서 태그했습니다.");
+                tagAlert.setAlert_content(findUser.getNickname() + "님이 댓글에서 태그했습니다.");
                 alertService.saveAlert(tagAlert);
             }
         }
@@ -95,7 +95,7 @@ public class CommentApiController {
             commentLikeService.delete(request.user_no, request.comment_no);
             return new Result(true, HttpStatus.OK.value(), null, false);
         }else{
-            User user = userService.findUser(request.user_no);
+            User user = userService.findByNo(request.user_no);
             Comment comment = commentService.findOne(request.comment_no);
             if(user == null || comment == null){
                 return new Result(true, HttpStatus.OK.value(), "유저나 코멘트가 이상", true);
@@ -150,8 +150,8 @@ public class CommentApiController {
             this.comment_report = comment.getComment_report();
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             this.comment_regdate = formatter.format(comment.getComment_regdate());
-            this.user_no = comment.getUser().getUser_no();
-            this.user_nickname = comment.getUser().getUser_nickname();
+            this.user_no = comment.getUser().getNo();
+            this.user_nickname = comment.getUser().getNickname();
             if(comment.getUser().getMedia() != null){
                 this.user_profile = comment.getUser().getMedia().getFile_path()+File.separator+comment.getUser().getMedia().getFile_savedname();
             }

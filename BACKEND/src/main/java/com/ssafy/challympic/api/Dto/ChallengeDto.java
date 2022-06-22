@@ -30,7 +30,7 @@ public class ChallengeDto {
 
     public ChallengeDto(Challenge challenge) {
         this.challenge_no = challenge.getChallenge_no();
-        this.user_no = challenge.getUser().getUser_no();
+        this.user_no = challenge.getUser().getNo();
         this.challenge_start = challenge.getChallenge_start();
         this.challenge_end = challenge.getChallenge_end();
         this.challenge_access = challenge.getChallenge_access();
@@ -43,7 +43,7 @@ public class ChallengeDto {
 
     public ChallengeDto(Challenge challenge, List<UserDto> challengers) {
         this.challenge_no = challenge.getChallenge_no();
-        this.user_no = challenge.getUser().getUser_no();
+        this.user_no = challenge.getUser().getNo();
         this.challenge_start = challenge.getChallenge_start();
         this.challenge_end = challenge.getChallenge_end();
         this.challenge_access = challenge.getChallenge_access();
@@ -57,7 +57,7 @@ public class ChallengeDto {
 
     public ChallengeDto(Challenge challenge, boolean isSubscription) {
         this.challenge_no = challenge.getChallenge_no();
-        this.user_no = challenge.getUser().getUser_no();
+        this.user_no = challenge.getUser().getNo();
         this.challenge_start = challenge.getChallenge_start();
         this.challenge_end = challenge.getChallenge_end();
         this.challenge_access = challenge.getChallenge_access();
@@ -71,7 +71,7 @@ public class ChallengeDto {
 
     public ChallengeDto(Challenge challenge, List<PostDto> postList, boolean isSubscription) {
         this.challenge_no = challenge.getChallenge_no();
-        this.user_no = challenge.getUser().getUser_no();
+        this.user_no = challenge.getUser().getNo();
         this.challenge_start = challenge.getChallenge_start();
         this.challenge_end = challenge.getChallenge_end();
         this.challenge_access = challenge.getChallenge_access();

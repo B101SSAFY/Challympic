@@ -25,7 +25,7 @@ public class AlertApiController {
     @PostMapping("/alert")
     public Result saveAlert(@RequestBody AlertRequest request){
         Alert alert = new Alert();
-        alert.setUser(userService.findUser(request.getUser_no()));
+        alert.setUser(userService.findByNo(request.getUser_no()));
         alert.setAlert_content(request.alert_content);
         alertService.saveAlert(alert);
         return new Result(true, HttpStatus.OK.value());
@@ -35,7 +35,7 @@ public class AlertApiController {
     public Result getAlert(@PathVariable int userNo) {
         List<Alert> alerts = alertService.findAlertByUserNo(userNo);
         List<AlertDto> alertList = alerts.stream()
-                .map(a -> new AlertDto(a.getUser().getUser_no(), a.getAlert_content(), a.isAlert_confirm(), a.getAlert_regDate()))
+                .map(a -> new AlertDto(a.getUser().getNo(), a.getAlert_content(), a.isAlert_confirm(), a.getAlert_regDate()))
                 .collect(Collectors.toList());
         return new Result(true, HttpStatus.OK.value(), alertList);
     }

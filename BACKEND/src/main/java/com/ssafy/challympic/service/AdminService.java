@@ -32,15 +32,19 @@ public class AdminService {
     }
 
     @Transactional
-    public void updateUserActive(int user_no){
-        User findUser = userRepository.findOne(user_no);
-        findUser.setUser_active(UserActive.INACTIVE);
+    public void updateUserActive(int no){
+        User findUser = userRepository.findById(no)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
+
+        //findUser.setUser_active(UserActive.INACTIVE);
     }
 
     @Transactional
-    public void deleteUser(int user_no){
-        User findUser = userRepository.findOne(user_no);
-        userRepository.delete(findUser);
+    public void deleteUser(int no){
+        User findUser = userRepository.findById(no)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
+
+        //userRepository.delete(findUser);
     }
 
     public List<Challenge> challengeList(){

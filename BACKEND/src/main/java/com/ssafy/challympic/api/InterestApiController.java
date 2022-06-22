@@ -54,7 +54,7 @@ public class InterestApiController {
         User user = userService.findByEmail(request.getUser_email());
 
         for (Integer t : request.getInterests()) {
-            interestService.save(user.getUser_no(), t);
+            interestService.save(user.getNo(), t);
         }
         return new Result(true, HttpStatus.OK.value());
     }

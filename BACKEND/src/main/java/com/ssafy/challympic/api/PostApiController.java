@@ -72,9 +72,9 @@ public class PostApiController {
         private Boolean isFollowing;
 
         public PostLikeUserDto(User user, Media media, boolean isFollowing) {
-            this.user_no = user.getUser_no();
-            this.user_nickname = user.getUser_nickname();
-            this.user_title = user.getUser_title();
+            this.user_no = user.getNo();
+            this.user_nickname = user.getNickname();
+            this.user_title = user.getTitle();
             if(media != null){
                 this.file_no = media.getFile_no();
                 this.file_path = media.getFile_path();
@@ -156,9 +156,9 @@ public class PostApiController {
             postDto.setPost_regdate(post.getPost_regdate());
 
             // 유저 타입
-            postDto.setUser_no(user.getUser_no());
-            postDto.setUser_nickname(user.getUser_nickname());
-            postDto.setUser_title(user.getUser_title());
+            postDto.setUser_no(user.getNo());
+            postDto.setUser_nickname(user.getNickname());
+            postDto.setUser_title(user.getTitle());
             if(user.getMedia() != null)
                 postDto.setUser_profile(user.getMedia().getFile_path() + File.separator + user.getMedia().getFile_savedname());
             else
@@ -234,9 +234,9 @@ public class PostApiController {
             postDto.setPost_regdate(post.getPost_regdate());
 
             // 유저 타입
-            postDto.setUser_no(user.getUser_no());
-            postDto.setUser_nickname(user.getUser_nickname());
-            postDto.setUser_title(user.getUser_title());
+            postDto.setUser_no(user.getNo());
+            postDto.setUser_nickname(user.getNickname());
+            postDto.setUser_title(user.getTitle());
             if(user.getMedia() != null)
                 postDto.setUser_profile(user.getMedia().getFile_path() + File.separator + user.getMedia().getFile_savedname());
             else
@@ -299,8 +299,8 @@ public class PostApiController {
         // 좋아요 누른 유저 정보만 가져오기
         List<PostLikeUserDto> userList = new ArrayList<>();
         for(PostLike postLike : postLikeList){
-            User user = userService.findUser(postLike.getUser_no());
-            boolean follow = followService.isFollow(userNo, user.getUser_no());
+            User user = userService.findByNo(postLike.getUser_no());
+            boolean follow = followService.isFollow(userNo, user.getNo());
             userList.add(new PostLikeUserDto(user, user.getMedia(), follow));
         }
 
@@ -329,7 +329,7 @@ public class PostApiController {
 
         // 챌린저 목록 가져옴
         List<Challenger> challengerList = challengeService.getChallengerByChallengeNo(challengeNo);
-        User _user = userService.findUser(postRequest.getUser_no());
+        User _user = userService.findByNo(postRequest.getUser_no());
         boolean isChallenger = false;
 
         // 챌린저 목록이 지정되어 있거나 포스트 작성자가 챌린지 작성자인 경우
@@ -341,7 +341,7 @@ public class PostApiController {
                 }
             }
 
-            if(postRequest.getUser_no() == challenge.getUser().getUser_no())
+            if(postRequest.getUser_no() == challenge.getUser().getNo())
                 isChallenger = true;
 
             if(!isChallenger)
@@ -404,7 +404,7 @@ public class PostApiController {
             // 수정 필요
             post.setChallenge_no(challengeNo);  // 포스트가 속한 챌린지 정보
 
-            post.setUser(userService.findUser(postRequest.getUser_no()));  // 포스트 작성 유저 정보
+            post.setUser(userService.findByNo(postRequest.getUser_no()));  // 포스트 작성 유저 정보
             post.setPost_content(postRequest.getPost_content());  // 포스트 본문
             post.setPost_report(0); // 신고횟수 초기값 0
             post.setMedia(media);
@@ -424,8 +424,8 @@ public class PostApiController {
                         continue;
                     }
                     alert.setUser(user);
-                    User writer = userService.findUser(postRequest.getUser_no());
-                    alert.setAlert_content(writer.getUser_nickname() + "님이 태그했습니다.");
+                    User writer = userService.findByNo(postRequest.getUser_no());
+                    alert.setAlert_content(writer.getNickname() + "님이 태그했습니다.");
                     alertService.saveAlert(alert);
                 }
             }
@@ -549,7 +549,7 @@ public class PostApiController {
             Alert alert = new Alert();
             User writer = postService.getPost(postNo).getUser();
             alert.setUser(writer);
-            alert.setAlert_content(userService.findUser(userNo).getUser_nickname() + "님이 포스트에 좋아요를 눌렀습니다.");
+            alert.setAlert_content(userService.findByNo(userNo).getNickname() + "님이 포스트에 좋아요를 눌렀습니다.");
             alertService.saveAlert(alert);
         }
 

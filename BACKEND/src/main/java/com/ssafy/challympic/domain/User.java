@@ -20,7 +20,6 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동 생성 전략. AUTO_INCREMENT0
-    @Column(name = "user_no")
     private int no;
 
     @Column(nullable = false)
@@ -78,6 +77,7 @@ public class User {
         this.email = email;
         this.pwd = pwd;
         this.nickname = nickname;
+        this.title = "도전자";
     }
 
     // 수정

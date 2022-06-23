@@ -71,7 +71,7 @@ public class PostRepository {
 
     public List<Post> findPostByTag(String tag_content) {
         return em.createQuery("select p from Post p where p.post_no = (" +
-                "select pt.post.post_no from PostTag pt where pt.tag.tag_content = :tag_content)", Post.class)
+                "select pt.post.post_no from PostTag pt where pt.tag.content = :tag_content)", Post.class)
                 .setParameter("tag_content", tag_content)
                 .getResultList();
     }

@@ -9,7 +9,7 @@ public class SubscriptionListResponse {
 
     public SubscriptionListResponse(Subscription subscription) {
         this.subscription_no = subscription.getSubscription_no();
-        this.challenge_no = subscription.getChallenge().getChallenge_no();
-        this.challenge_title = subscription.getChallenge().getChallenge_title();
+        this.challenge_no = subscription.getChallenge().getNo();
+        this.challenge_title = subscription.getChallenge().getTitle();
     }
 }

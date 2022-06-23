@@ -42,14 +42,14 @@ public class SubscriptionRepository {
     }
 
     public List<Subscription> findSubscriptionByChallenge(int challenge_no){
-        return em.createQuery("select s from Subscription s where s.challenge.challenge_no = :challenge_no", Subscription.class)
+        return em.createQuery("select s from Subscription s where s.challenge.no = :challenge_no", Subscription.class)
                 .setParameter("challenge_no", challenge_no)
                 .getResultList();
     }
 
     public Subscription findSubscriptionByChallengeAndUser(int challengeNo, int userNo) {
         try{
-            return em.createQuery("select s from Subscription s where s.challenge.challenge_no = :challengeNo and s.user.user_no = :userNo", Subscription.class)
+            return em.createQuery("select s from Subscription s where s.challenge.no = :challengeNo and s.user.user_no = :userNo", Subscription.class)
                     .setParameter("challengeNo", challengeNo)
                     .setParameter("userNo", userNo)
                     .getSingleResult();

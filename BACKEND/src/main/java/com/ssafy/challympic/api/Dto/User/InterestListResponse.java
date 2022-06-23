@@ -9,7 +9,7 @@ public class InterestListResponse {
 
     public InterestListResponse(Interest interest) {
         this.interest_no = interest.getInterest_no();
-        this.tag_no = interest.getTag().getTag_no();
-        this.tag_content = interest.getTag().getTag_content();
+        this.tag_no = interest.getTag().getNo();
+        this.tag_content = interest.getTag().getContent();
     }
 }

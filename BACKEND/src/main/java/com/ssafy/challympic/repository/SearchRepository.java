@@ -30,7 +30,7 @@ public class SearchRepository {
     }
 
     public List<Tag> findTagListByTagContent(String tag_content) {
-        return em.createQuery("select t from Tag t where t.tag_content = :tag_content", Tag.class)
+        return em.createQuery("select t from Tag t where t.content = :tag_content", Tag.class)
                 .setParameter("tag_content", tag_content)
                 .getResultList();
     }
@@ -43,8 +43,8 @@ public class SearchRepository {
 
     public List<Challenge> findChallengeByTagContent(String tag) {
         return em.createQuery(
-                "select ct.challenge from ChallengeTag ct where ct.tag.tag_no = " +
-                        "(select t.tag_no from Tag t where t.tag_content = :tag)", Challenge.class)
+                "select ct.challenge from ChallengeTag ct where ct.tag.no = " +
+                        "(select t.no from Tag t where t.content = :tag)", Challenge.class)
                 .setParameter("tag", tag)
                 .getResultList();
     }
@@ -52,7 +52,7 @@ public class SearchRepository {
     public List<Post> findPostByTagContent(String tag) {
         return em.createQuery(
                 "select pt.post from PostTag pt where pt.tag = " +
-                        "(select t from Tag t where t.tag_content = :tag)", Post.class)
+                        "(select t from Tag t where t.content = :tag)", Post.class)
                 .setParameter("tag", tag)
                 .getResultList();
     }

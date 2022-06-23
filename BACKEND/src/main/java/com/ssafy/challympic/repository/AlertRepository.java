@@ -2,24 +2,17 @@ package com.ssafy.challympic.repository;
 
 import com.ssafy.challympic.domain.Alert;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 
 @Repository
-@RequiredArgsConstructor
-public class AlertRepository {
+public interface AlertRepository extends JpaRepository<Alert, Integer> {
 
-    private final EntityManager em;
-
-    public void saveAlert(Alert alert) {
-        em.persist(alert);
-    }
-
-    public List<Alert> findAlertByUserNo(int userNo) {
-        return em.createQuery("select a from Alert a where a.user.user_no = :userNo", Alert.class)
-                .setParameter("userNo", userNo)
-                .getResultList();
-    }
+    @Query("select a from Alert a where a.user.no = :userNo")
+    List<Alert> findAlertByUserNo(@Param("userNo") int userNo);
 }

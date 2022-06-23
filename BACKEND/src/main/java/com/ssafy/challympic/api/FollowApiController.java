@@ -28,11 +28,12 @@ public Result follow(@PathVariable("userNo") int user_no, @RequestBody FollowReq
     boolean follow = followService.follow(user_no, request.getFollow_follower_no());
 
     // 팔로우했을때 알림
-    Alert alert = new Alert();
     User writer = userService.findByNo(request.follow_follower_no);
     User follower = userService.findByNo(user_no);
-    alert.setUser(writer);
-    alert.setAlert_content(follower.getNickname() + "님이 팔로우합니다.");
+    Alert alert = Alert.builder()
+                    .user(writer)
+                    .content(follower.getNickname() + "님이 팔로우합니다.")
+                    .build();
     alertService.saveAlert(alert);
 
     return new Result(true, HttpStatus.OK.value(), null, follow);

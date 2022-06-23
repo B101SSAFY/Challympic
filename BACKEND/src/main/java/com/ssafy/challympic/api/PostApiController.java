@@ -8,7 +8,6 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
-import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -166,9 +165,9 @@ public class PostApiController {
 
 
             // 챌린지 타입
-            postDto.setChallenge_type(challenge.getChallenge_type().name().toLowerCase());
+            postDto.setChallenge_type(challenge.getType().name().toLowerCase());
             postDto.setChallenge_no(post.getChallenge_no());
-            postDto.setChallenge_name(challengeService.findChallengeByChallengeNo(post.getChallenge_no()).getChallenge_title());
+            postDto.setChallenge_name(challengeService.findChallengeByChallengeNo(post.getChallenge_no()).getTitle());
 
             // 미디어 정보
             postDto.setFile_no(post.getMedia().getFile_no());
@@ -217,7 +216,7 @@ public class PostApiController {
         // 챌린지 정보
         Challenge challenge = challengeService.findChallengeByChallengeNo(request.getChallenge_no());
         if(challenge == null) return new Result(false, HttpStatus.BAD_REQUEST.value());
-        String type = challenge.getChallenge_type().name().toLowerCase();
+        String type = challenge.getType().name().toLowerCase();
         // 포스트 리스트
         List<Post> postList = postService.getPostList(request.getChallenge_no());
 
@@ -362,7 +361,7 @@ public class PostApiController {
                 // 지원하지 않는 확장자
                 return new Result(false, HttpStatus.OK.value());
             
-            if(!fileType.equals(challenge.getChallenge_type().name())){
+            if(!fileType.equals(challenge.getType().name())){
                 // 챌린지와 확장자 명이 다름
                 return new Result(false, HttpStatus.OK.value());
             }
@@ -423,9 +422,12 @@ public class PostApiController {
                     if(user == null) {
                         continue;
                     }
-                    alert.setUser(user);
+
                     User writer = userService.findByNo(postRequest.getUser_no());
-                    alert.setAlert_content(writer.getNickname() + "님이 태그했습니다.");
+                    alert = Alert.builder()
+                                    .user(user)
+                                    .content(writer.getNickname() + "님이 태그했습니다.")
+                            .build();
                     alertService.saveAlert(alert);
                 }
             }
@@ -546,10 +548,11 @@ public class PostApiController {
             postLikeService.save(_postLike);
 
             // 좋아요를 눌렀을때 알림 설정
-            Alert alert = new Alert();
             User writer = postService.getPost(postNo).getUser();
-            alert.setUser(writer);
-            alert.setAlert_content(userService.findByNo(userNo).getNickname() + "님이 포스트에 좋아요를 눌렀습니다.");
+            Alert alert = Alert.builder()
+                            .user(writer)
+                            .content(userService.findByNo(userNo).getNickname() + "님이 포스트에 좋아요를 눌렀습니다.")
+                    .build();
             alertService.saveAlert(alert);
         }
 
@@ -590,7 +593,7 @@ public class PostApiController {
             this.file_no = post.getMedia().getFile_no();
             this.file_path = post.getMedia().getFile_path();
             this.file_savedname = post.getMedia().getFile_savedname();
-            this.challenge_title = challenge.getChallenge_title();
+            this.challenge_title = challenge.getTitle();
             this.like_cnt = like_cnt;
             this.comment_cnt = comment_cnt;
         }
@@ -636,10 +639,10 @@ public class PostApiController {
      * */
     private boolean fileTypeValidate(int challengeNo, String fileType){
         // 챌린지 번호로 챌린지 정보 가져오기
-        Challenge challenge = challengeService.findChallenges().get(challengeNo);
+        Challenge challenge = challengeService.findAllChallenge().get(challengeNo);
 
         //입력받은 파일의 타입과 챌린지 타입 비교
-        if(fileType.equals(challenge.getChallenge_type())){
+        if(fileType.equals(challenge.getType())){
             return true;
         }
         return false;

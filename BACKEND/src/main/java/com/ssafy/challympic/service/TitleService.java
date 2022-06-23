@@ -17,7 +17,7 @@ public class TitleService {
 
     @Transactional
     public void saveTitles(Title title) {
-        titleRepository.saveTitle(title);
+        titleRepository.save(title);
     }
 
     public List<Title> findTitlesByUserNo(int user_no) {return titleRepository.findTitleByUserNo(user_no);}

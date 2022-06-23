@@ -4,7 +4,6 @@ import com.ssafy.challympic.domain.*;
 import com.ssafy.challympic.service.ActivityService;
 import com.ssafy.challympic.service.SearchService;
 import com.ssafy.challympic.service.TagService;
-import com.ssafy.challympic.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -38,8 +37,8 @@ public class ActivityApiController {
         private String tag_content;
 
         public TagDto(Tag tag) {
-            this.tag_no = tag.getTag_no();
-            this.tag_content = tag.getTag_content();
+            this.tag_no = tag.getNo();
+            this.tag_content = tag.getContent();
         }
     }
 
@@ -110,7 +109,7 @@ public class ActivityApiController {
 
         for(int i = 0; i < maxTag; i++) tagCount[i][0] = i + 1;
         for(Tag tag : tagAll) {
-            tagCount[tag.getTag_no() - 1][1]++;
+            tagCount[tag.getNo() - 1][1]++;
         }
 
         Arrays.sort(tagCount, (int[] o1, int[] o2) -> {

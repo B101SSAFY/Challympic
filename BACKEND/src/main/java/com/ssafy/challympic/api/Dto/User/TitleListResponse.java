@@ -6,6 +6,6 @@ public class TitleListResponse {
     private String title_name;
 
     public TitleListResponse(Title title) {
-        this.title_name = title.getTitle_name();
+        this.title_name = title.getName();
     }
 }

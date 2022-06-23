@@ -19,7 +19,7 @@ public class Challenge {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "challenge_no")
-    private int challenge_no;
+    private int no;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_no")
@@ -27,41 +27,41 @@ public class Challenge {
 
     @Column(columnDefinition = "TIMESTAMP default CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date challenge_start;
+    private Date start;
 
     @Column(columnDefinition = "TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date challenge_end;
+    private Date end;
 
     @Column(columnDefinition = "varchar(10) default 'PUBLIC'")
     @Enumerated(EnumType.STRING)
-    private ChallengeAccess challenge_access;
+    private ChallengeAccess access;
 
-    private ChallengeType challenge_type;
-
-    @Column(nullable = false)
-    private String challenge_title;
+    private ChallengeType type;
 
     @Column(nullable = false)
-    private String challenge_content;
+    private String title;
+
+    @Column(nullable = false)
+    private String content;
 
     @Column(nullable = true)
-    private boolean challenge_official;
+    private boolean official;
 
     @ColumnDefault("0")
-    private int challenge_report;
+    private int report;
 
     @Builder
-    public Challenge(int challenge_no, User user, Date challenge_start, Date challenge_end, ChallengeAccess challenge_access, ChallengeType challenge_type, String challenge_title, String challenge_content, boolean challenge_official, int challenge_report) {
-        this.challenge_no = challenge_no;
+    public Challenge(int no, User user, Date start, Date end, ChallengeAccess access, ChallengeType type, String title, String content, boolean official, int report) {
+        this.no = no;
         this.user = user;
-        this.challenge_start = challenge_start;
-        this.challenge_end = challenge_end;
-        this.challenge_access = challenge_access;
-        this.challenge_type = challenge_type;
-        this.challenge_title = challenge_title;
-        this.challenge_content = challenge_content;
-        this.challenge_official = challenge_official;
-        this.challenge_report = challenge_report;
+        this.start = start;
+        this.end = end;
+        this.access = access;
+        this.type = type;
+        this.title = title;
+        this.content = content;
+        this.official = official;
+        this.report = report;
     }
 }

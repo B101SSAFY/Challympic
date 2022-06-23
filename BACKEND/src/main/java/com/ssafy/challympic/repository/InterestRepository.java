@@ -26,7 +26,7 @@ public class InterestRepository {
 
     public Interest findOne(int user_no, int tag_no){
         try{
-            Interest interest = em.createQuery("select i from Interest i where i.user.user_no = :user_no and i.tag.tag_no = :tag_no", Interest.class)
+            Interest interest = em.createQuery("select i from Interest i where i.user.user_no = :user_no and i.tag.no = :tag_no", Interest.class)
                     .setParameter("user_no", user_no)
                     .setParameter("tag_no", tag_no)
                     .getSingleResult();

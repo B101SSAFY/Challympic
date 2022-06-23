@@ -1,25 +1,19 @@
 package com.ssafy.challympic.api;
 
-import com.ssafy.challympic.api.Dto.ChallengeDto;
-import com.ssafy.challympic.api.Dto.PostDto;
 import com.ssafy.challympic.domain.Challenge;
 import com.ssafy.challympic.domain.Post;
 import com.ssafy.challympic.domain.Result;
 import com.ssafy.challympic.domain.User;
-import com.ssafy.challympic.domain.defaults.ChallengeAccess;
 import com.ssafy.challympic.domain.defaults.ChallengeType;
 import com.ssafy.challympic.service.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.apache.tools.ant.taskdefs.condition.Http;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,10 +37,10 @@ public class FeedApiController {
         List<Challenge> challenges = challengeService.getChallengeByUserNo(userNo);
         List<ChallengeResponse> collect = challenges.stream()
                 .map(c -> {
-                    List<Post> postList = postService.getPostList(c.getChallenge_no());
+                    List<Post> postList = postService.getPostList(c.getNo());
                     Post firstPost = postList.get(0);
-                    int post_cnt = challengeService.findPostCnt(c.getChallenge_no());
-                    int subscription_cnt = challengeService.findSubscriptionCnt(c.getChallenge_no());
+                    int post_cnt = challengeService.findPostCnt(c.getNo());
+                    int subscription_cnt = challengeService.findSubscriptionCnt(c.getNo());
                     return new ChallengeResponse(firstPost, c, post_cnt, subscription_cnt);
                 })
                 .collect(Collectors.toList());
@@ -67,12 +61,12 @@ public class FeedApiController {
 
         public ChallengeResponse(Post post, Challenge challenge, int post_cnt, int subscription_cnt) {
             this.challenge_no = post.getChallenge_no();
-            if(challenge.getChallenge_type() == ChallengeType.VIDEO) this.isVideo = true;
+            if(challenge.getType() == ChallengeType.VIDEO) this.isVideo = true;
             this.post_no = post.getPost_no();
             this.file_no = post.getMedia().getFile_no();
             this.file_path = post.getMedia().getFile_path();
             this.file_savedname = post.getMedia().getFile_savedname();
-            this.challenge_title = challenge.getChallenge_title();
+            this.challenge_title = challenge.getTitle();
             this.post_cnt = post_cnt;
             this.subscription_cnt = subscription_cnt;
         }
@@ -92,12 +86,12 @@ public class FeedApiController {
 
         public PostResponse(Post post, Challenge challenge, int like_cnt, int comment_cnt) {
             this.challenge_no = post.getChallenge_no();
-            if(challenge.getChallenge_type() == ChallengeType.VIDEO) this.isVideo = true;
+            if(challenge.getType() == ChallengeType.VIDEO) this.isVideo = true;
             this.post_no = post.getPost_no();
             this.file_no = post.getMedia().getFile_no();
             this.file_path = post.getMedia().getFile_path();
             this.file_savedname = post.getMedia().getFile_savedname();
-            this.challenge_title = challenge.getChallenge_title();
+            this.challenge_title = challenge.getTitle();
             this.like_cnt = like_cnt;
             this.comment_cnt = comment_cnt;
         }
@@ -114,10 +108,10 @@ public class FeedApiController {
         if(challenges == null) return new Result(false, HttpStatus.NOT_FOUND.value());
         List<ChallengeResponse> collect = challenges.stream()
                 .map(c -> {
-                    List<Post> postList = postService.getPostList(c.getChallenge_no());
+                    List<Post> postList = postService.getPostList(c.getNo());
                     Post firstPost = postList.get(0);
-                    int post_cnt = challengeService.findPostCnt(c.getChallenge_no());
-                    int subscription_cnt = challengeService.findSubscriptionCnt(c.getChallenge_no());
+                    int post_cnt = challengeService.findPostCnt(c.getNo());
+                    int subscription_cnt = challengeService.findSubscriptionCnt(c.getNo());
                     return new ChallengeResponse(firstPost, c, post_cnt, subscription_cnt);
                 })
                 .collect(Collectors.toList());

@@ -52,8 +52,8 @@ public class TagApiController {
         private String tag_content;
 
         public TagDto(Tag tag) {
-            this.tag_no = tag.getTag_no();
-            this.tag_content = tag.getTag_content();
+            this.tag_no = tag.getNo();
+            this.tag_content = tag.getContent();
         }
     }
 

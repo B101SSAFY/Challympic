@@ -58,9 +58,9 @@ public class AdminApiController {
         List<ChallengeDto> collect = challengeList.stream()
                 .map(c -> {
                     ChallengeDto challengeDto = new ChallengeDto(c);
-                    int post_cnt = postService.postCntByChallenge(c.getChallenge_no());
+                    int post_cnt = postService.postCntByChallenge(c.getNo());
                     challengeDto.setPost_cnt(post_cnt);
-                    int subscription_cnt = subscriptionService.findSubscriptionByChallenge(c.getChallenge_no());
+                    int subscription_cnt = subscriptionService.findSubscriptionByChallenge(c.getNo());
                     challengeDto.setSubscription_cnt(subscription_cnt);
                     return challengeDto;
                 }).collect(Collectors.toList());
@@ -188,13 +188,13 @@ public class AdminApiController {
         private int challenge_report;
 
         public ChallengeDto(Challenge challenge) {
-            this.challenge_no = challenge.getChallenge_no();
-            this.challenge_title = challenge.getChallenge_title();
+            this.challenge_no = challenge.getNo();
+            this.challenge_title = challenge.getTitle();
             this.user_email = challenge.getUser().getEmail();
-            this.challenge_start = challenge.getChallenge_start();
-            this.challenge_end = challenge.getChallenge_end();
-            this.challenge_official = challenge.isChallenge_official();
-            this.challenge_report = challenge.getChallenge_report();
+            this.challenge_start = challenge.getStart();
+            this.challenge_end = challenge.getEnd();
+            this.challenge_official = challenge.isOfficial();
+            this.challenge_report = challenge.getReport();
         }
     }
 

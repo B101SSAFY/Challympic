@@ -2,12 +2,14 @@ package com.ssafy.challympic.service;
 
 import com.ssafy.challympic.domain.PostTag;
 import com.ssafy.challympic.domain.Tag;
+import com.ssafy.challympic.repository.PostTagRepository;
 import com.ssafy.challympic.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @Transactional(readOnly = true)
@@ -15,17 +17,18 @@ import java.util.List;
 public class TagService {
 
     private final TagRepository tagRepository;
+    private final PostTagRepository postTagRepository;
 
     /**
      * 태그 저장
      */
     @Transactional
     public void saveTag(String tag_content){
-        Tag isTag = tagRepository.validateTagContent(tag_content);
+        Tag isTag = tagRepository.findByTagContent(tag_content);
         if(isTag != null) return;
         Tag tag = new Tag();
-        tag.setTag_content(tag_content);
-        tagRepository.saveTag(tag);
+        tag.setContent(tag_content);
+        tagRepository.save(tag);
     }
 
     /**
@@ -33,46 +36,42 @@ public class TagService {
      */
     @Transactional
     public void saveTag(String challenge_title, boolean isTitle){
-        Tag isTag = tagRepository.validateTagContent(challenge_title);
+        Tag isTag = tagRepository.findByTagContent(challenge_title);
         if(isTag != null) return;
         Tag tag = new Tag();
-        tag.setTag_content(challenge_title);
+        tag.setContent(challenge_title);
         if(isTitle) tag.setIsChallenge("challenge");
-        tagRepository.saveTag(tag);
+        tagRepository.save(tag);
     }
 
     /**
      * 태그 선택
      */
     public Tag findOne(int tag_no){
-        return tagRepository.findOne(tag_no);
+        return tagRepository.findById(tag_no).orElseThrow(() -> new NoSuchElementException("존재하지 않는 태그입니다."));
     }
 
     public Tag findTagByTagContent(String tagContent) {
-        Tag tag = tagRepository.findTagByTagContent(tagContent);
+        Tag tag = tagRepository.findByTagContent(tagContent);
         return tag;
     }
 
     public void savePostTag(PostTag postTag) {
-        tagRepository.savePostTag(postTag);
+        postTagRepository.save(postTag);
     }
 
-    public void deletePostTag(PostTag postTag){ tagRepository.deletePostTag(postTag);}
-
-    public List<Tag> findPostTagListByPostNo(int postNo) {
-        return tagRepository.findPostTagListByPostNo(postNo);
-    }
+    public void deletePostTag(PostTag postTag){ postTagRepository.delete(postTag);}
 
     public List<PostTag> findPostTagList(int post_no) {
-        return tagRepository.findPostTagList(post_no);
+        return postTagRepository.findAllByPostNo(post_no);
     }
 
     public List<Tag> findAllTagList() {
-        return tagRepository.findAllTagList();
+        return tagRepository.findAll();
     }
 
     public List<Tag> findRecentAllTagList() {
-        return tagRepository.findRecentAllTagList();
+        return tagRepository.findAllByIdDesc();
     }
 
 }

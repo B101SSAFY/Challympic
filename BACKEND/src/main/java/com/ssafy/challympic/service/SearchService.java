@@ -52,13 +52,13 @@ public class SearchService {
         for(Challenge c : searchedChallenges) {
             boolean isFind = false;
             for(int[] count : challengeCount) {
-                if(count[0] == c.getChallenge_no()) {
+                if(count[0] == c.getNo()) {
                     count[1]++;
                     isFind = true;
                 }
             }
             if(!isFind) {
-                challengeCount.add(new int[]{c.getChallenge_no(), 0});
+                challengeCount.add(new int[]{c.getNo(), 0});
             }
         }
 
@@ -86,13 +86,13 @@ public class SearchService {
 
     @Transactional
     public void saveSearchRecord(String search_content, User user) {
-        Tag tag = tagRepository.findTagByTagContent(search_content);
+        Tag tag = tagRepository.findByTagContent(search_content);
         Search search = new Search();
         search.setSearch_content(search_content);
         search.setUser(user);
         if(tag != null) {
-            search.setTag_no(tag.getTag_no());
-            search.setTag_content(tag.getTag_content());
+            search.setTag_no(tag.getNo());
+            search.setTag_content(tag.getContent());
         }
         searchRepository.saveSearchRecord(search);
     }

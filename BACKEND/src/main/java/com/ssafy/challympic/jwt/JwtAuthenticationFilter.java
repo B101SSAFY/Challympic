@@ -117,12 +117,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @AllArgsConstructor
     @NoArgsConstructor
     static class UserDto{
-        private int user_no;
-        private String user_email;
+        private int no;
+        private String email;
 
         public UserDto(User user) {
-            this.user_no = user.getNo();
-            this.user_email = user.getEmail();
+            this.no = user.getNo();
+            this.email = user.getEmail();
         }
     }
 }

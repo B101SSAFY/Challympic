@@ -1,6 +1,7 @@
 package com.ssafy.challympic.service;
 
 import com.ssafy.challympic.api.Dto.User.UserJoinRequest;
+import com.ssafy.challympic.api.Dto.User.UserUpdatePwdRequest;
 import com.ssafy.challympic.api.Dto.User.UserUpdateRequest;
 import com.ssafy.challympic.domain.*;
 import com.ssafy.challympic.repository.UserRepository;
@@ -21,7 +22,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final S3Uploader s3Uploader;
     private final MediaService mediaService;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
     /**
@@ -45,7 +46,11 @@ public class UserService {
      */
     @Transactional
     public int join(UserJoinRequest request){
-        return userRepository.save(request.toEntity()).getNo();
+        return userRepository.save(User.builder()
+                .email(request.getUser_email())
+                .nickname(request.getUser_nickname())
+                .pwd(bCryptPasswordEncoder.encode(request.getUser_pwd()))
+                .build()).getNo();
     }
 
 
@@ -116,13 +121,16 @@ public class UserService {
     }
 
     @Transactional
-    public int updatePwd(int no, UserUpdateRequest request){
+    public int updatePwd(int no, UserUpdatePwdRequest request){
         User user = userRepository.findById(no)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
 
-        if(!bCryptPasswordEncoder.matches(request.getUser_pwd(), user.getPwd())){ return 0;}
+        if(!bCryptPasswordEncoder.matches(request.getUser_pwd(), user.getPwd())){
+            new IllegalArgumentException("기존 비밀번호가 일치하지 않습니다.");
+            return 0;
+        }
 
-        user.updatePwd(bCryptPasswordEncoder.encode(request.getUser_pwd()));
+        user.updatePwd(bCryptPasswordEncoder.encode(request.getUser_newpwd()));
 
         return no;
     }

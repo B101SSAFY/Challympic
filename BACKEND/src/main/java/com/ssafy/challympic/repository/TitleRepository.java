@@ -34,7 +34,7 @@ public class TitleRepository {
     }
 
     public List<Title> findTitleByUserNo(int user_no) {
-        return em.createQuery("select t from Title t where t.user.user_no = :user_no", Title.class)
+        return em.createQuery("select t from Title t where t.user.no = :user_no", Title.class)
                 .setParameter("user_no", user_no)
                 .getResultList();
     }

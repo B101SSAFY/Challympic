@@ -27,18 +27,13 @@ public class UserApiController {
         List<Interest> interests = byNo.getInterest();
         List<Subscription> subscriptions = byNo.getSubscription();
 
-
-        if(byNo != null) {
-            return new Result(true, HttpStatus.OK.value(), new UserResponse(byNo, titles, interests, subscriptions));
-        }else{
-            return new Result(false, HttpStatus.BAD_REQUEST.value());
-        }
+        return new Result(true, HttpStatus.OK.value(), new UserResponse(byNo, titles, interests, subscriptions));
     }
 
     @PostMapping("/join")
     public Result join(@RequestBody UserJoinRequest request){
-
         int join_no = userService.join(request); // 바로 반환할 수 있는데 수정하면 좋겠다.. front
+
         return new Result(true, HttpStatus.OK.value());
     }
 
@@ -47,49 +42,41 @@ public class UserApiController {
      */
     @PutMapping("/user/account/{userNo}")
     public Result updateUser(@PathVariable("userNo") int no, UserUpdateRequest request){
-
         int returnNo = userService.updateUser(no, request);
-
         User byNo = userService.findByNo(returnNo);
         List<Title> titles = titleService.findTitlesByUserNo(no);
         List<Interest> interests = byNo.getInterest();
         List<Subscription> subscriptions = byNo.getSubscription();
 
-        if(byNo != null) {
-            return new Result(true, HttpStatus.OK.value(), new UserResponse(byNo, titles, interests, subscriptions));
-        }else{
-            return new Result(false, HttpStatus.BAD_REQUEST.value());
-        }
+        return new Result(true, HttpStatus.OK.value(), new UserResponse(byNo, titles, interests, subscriptions));
     }
 
     @PutMapping("/user/account/{userNo}/pwd")
-    public Result updatePwd(@PathVariable("userNo") int no, @RequestBody UserUpdateRequest request){
-
+    public Result updatePwd(@PathVariable("userNo") int no, @RequestBody UserUpdatePwdRequest request){
         int returnNo = userService.updatePwd(no, request);
         User byNo = userService.findByNo(returnNo);
 
-        if(byNo != null) {
-            return new Result(true, HttpStatus.OK.value(), new UserResponse(byNo));
-        }else{
-            return new Result(false, HttpStatus.BAD_REQUEST.value());
-        }
+        return new Result(true, HttpStatus.OK.value(), new UserResponse(byNo));
     }
 
     @DeleteMapping("/user/account/{userNo}")
     public Result deleteUser(@PathVariable("userNo") int user_no){
         userService.deleteUser(user_no);
+
         return new Result(true, HttpStatus.OK.value());
     }
 
     @PostMapping("/confirm/email")
     public Result confirmEmail(@RequestBody UserConfirmRequest request){
         boolean result = userService.validateDuplicateEmail(request.getUser_email());
+
         return new Result(true, HttpStatus.OK.value(), result);
     }
 
     @PostMapping("/confirm/nickname")
     public Result confirmNickname(@RequestBody UserConfirmRequest request){
         boolean result = userService.validateDuplicateNickname(request.getUser_nickname());
+
         return new Result(true, HttpStatus.OK.value(), result);
     }
 
@@ -139,13 +126,5 @@ public class UserApiController {
             return new Result(true, HttpStatus.OK.value(), userList.subList(0,5));
         }
     }
-
-
-    @Data
-    static class loginUserRequest{
-        private String user_email;
-        private String user_pwd;
-    }
-
 
 }

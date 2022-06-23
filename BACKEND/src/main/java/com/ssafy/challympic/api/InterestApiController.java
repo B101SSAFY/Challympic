@@ -2,13 +2,11 @@ package com.ssafy.challympic.api;
 
 import com.ssafy.challympic.domain.Interest;
 import com.ssafy.challympic.domain.Result;
-import com.ssafy.challympic.domain.Tag;
 import com.ssafy.challympic.domain.User;
 import com.ssafy.challympic.service.InterestService;
 import com.ssafy.challympic.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -95,8 +93,8 @@ public class InterestApiController {
 
         public InterestDto(Interest interest) {
             this.interest_no = interest.getInterest_no();
-            this.tag_no = interest.getTag().getTag_no();
-            this.tag_content = interest.getTag().getTag_content();
+            this.tag_no = interest.getTag().getNo();
+            this.tag_content = interest.getTag().getContent();
         }
     }
 

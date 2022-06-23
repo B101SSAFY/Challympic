@@ -42,16 +42,14 @@ public class InitDB {
         }
 
         private Challenge makeChallenge(int user_no, String challenge_title, String challenge_content, Date challenge_end, String challenge_type, String title_name) {
-            Challenge challenge = new Challenge();
-            challenge.setUser(em.find(User.class, user_no));
-            challenge.setChallenge_title(challenge_title);
-            challenge.setChallenge_content(challenge_content);
-            challenge.setChallenge_end(challenge_end);
-            if(challenge_type.equals("VIDEO")) challenge.setChallenge_type(ChallengeType.VIDEO);
-            else challenge.setChallenge_type(ChallengeType.IMAGE);
-            challenge.setChallenge_title(title_name);
-
-            return challenge;
+            return Challenge.builder()
+                    .user(em.find(User.class, user_no))
+                    .title(challenge_title)
+                    .content(challenge_content)
+                    .end(challenge_end)
+                    .type(challenge_type.equals("VIDEO")?ChallengeType.VIDEO:ChallengeType.IMAGE)
+                    .title(challenge_title)
+                    .build();
         }
 
 //        private User setUser(String user_email, String user_pwd, String user_nickname) {

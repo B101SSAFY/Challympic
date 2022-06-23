@@ -16,7 +16,7 @@ public class AlertService {
     private final AlertRepository alertRepository;
 
     public void saveAlert(Alert alert) {
-        alertRepository.saveAlert(alert);
+        alertRepository.save(alert);
     }
 
     public List<Alert> findAlertByUserNo(int userNo) {

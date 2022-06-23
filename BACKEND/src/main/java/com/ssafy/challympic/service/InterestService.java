@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,7 +32,7 @@ public class InterestService {
         }else{
             Interest interest = new Interest();
             interest.setUser(userRepository.findById(user_no).get());
-            interest.setTag(tagRepository.findOne(tag_no));
+            interest.setTag(tagRepository.findById(tag_no).orElseThrow(() -> new NoSuchElementException("존재하지 않는 태그입니다.")));
             interestRepository.save(interest);
             return true;
         }

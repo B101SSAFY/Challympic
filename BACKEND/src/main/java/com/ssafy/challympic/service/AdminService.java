@@ -19,11 +19,13 @@ public class AdminService {
     private final AdminRepository adminRepository;
     private final UserRepository userRepository;
     private final ChallengeRepository challengeRepository;
+    private final ChallengerRepository challengerRepository;
     private final TitleRepository titleRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final QnARepository qnaRepository;
     private final MediaRepository mediaRepository;
+    private final ChallengeTagRepository challengeTagRepository;
 
     private final S3Uploader s3Uploader;
 
@@ -56,22 +58,18 @@ public class AdminService {
     @Transactional
     public void deleteChallenge(int challenge_no){
         Title findTitle = titleRepository.findByChallenge(challenge_no);
-        titleRepository.deleteTitle(findTitle);
+        titleRepository.delete(findTitle);
 
-        List<ChallengeTag> challengeTags = tagRepository.findChallengeTagByChallengeNo(challenge_no);
+        List<ChallengeTag> challengeTags = challengeTagRepository.findByChallengeNo(challenge_no);
         if(!challengeTags.isEmpty()){
-            for(ChallengeTag ct : challengeTags) {
-                tagRepository.deleteChallengeTag(ct);
-            }
+            challengeTagRepository.deleteAll(challengeTags);
         }
 
-        List<Challenger> challengerList = challengeRepository.findChallengerList(challenge_no);
+        List<Challenger> challengerList = challengerRepository.findByChallenge_no(challenge_no);
         if(!challengerList.isEmpty()){
-            for (Challenger challenger : challengerList) {
-                challengeRepository.deleteChallenger(challenger);
-            }
+            challengerRepository.deleteAll(challengerList);
         }
-        Challenge findChallenge = challengeRepository.findOne(challenge_no);
+        Challenge findChallenge = challengeRepository.findById(challenge_no).get();
         adminRepository.deleteChallenge(findChallenge);
     }
 

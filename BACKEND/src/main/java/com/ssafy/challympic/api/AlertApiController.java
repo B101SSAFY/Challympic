@@ -3,12 +3,10 @@ package com.ssafy.challympic.api;
 import com.ssafy.challympic.api.Dto.AlertDto;
 import com.ssafy.challympic.domain.Alert;
 import com.ssafy.challympic.domain.Result;
-import com.ssafy.challympic.domain.User;
 import com.ssafy.challympic.service.AlertService;
 import com.ssafy.challympic.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.apache.tools.ant.taskdefs.condition.Http;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,9 +22,10 @@ public class AlertApiController {
 
     @PostMapping("/alert")
     public Result saveAlert(@RequestBody AlertRequest request){
-        Alert alert = new Alert();
-        alert.setUser(userService.findByNo(request.getUser_no()));
-        alert.setAlert_content(request.alert_content);
+        Alert alert = Alert.builder()
+                        .user(userService.findByNo(request.getUser_no()))
+                        .content(request.alert_content)
+                        .build();
         alertService.saveAlert(alert);
         return new Result(true, HttpStatus.OK.value());
     }
@@ -35,7 +34,7 @@ public class AlertApiController {
     public Result getAlert(@PathVariable int userNo) {
         List<Alert> alerts = alertService.findAlertByUserNo(userNo);
         List<AlertDto> alertList = alerts.stream()
-                .map(a -> new AlertDto(a.getUser().getNo(), a.getAlert_content(), a.isAlert_confirm(), a.getAlert_regDate()))
+                .map(a -> new AlertDto(a.getUser().getNo(), a.getContent(), a.isConfirm(), a.getRegDate()))
                 .collect(Collectors.toList());
         return new Result(true, HttpStatus.OK.value(), alertList);
     }

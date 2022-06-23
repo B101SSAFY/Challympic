@@ -2,8 +2,9 @@ package com.ssafy.challympic.domain;
 
 import com.ssafy.challympic.domain.defaults.ChallengeAccess;
 import com.ssafy.challympic.domain.defaults.ChallengeType;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
@@ -12,12 +13,13 @@ import java.util.Date;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
-@Getter @Setter
+@Getter
+@NoArgsConstructor
 public class Challenge {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "challenge_no")
-    private int challenge_no;
+    private int no;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_no")
@@ -25,41 +27,41 @@ public class Challenge {
 
     @Column(columnDefinition = "TIMESTAMP default CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date challenge_start;
+    private Date start;
 
     @Column(columnDefinition = "TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date challenge_end;
+    private Date end;
 
     @Column(columnDefinition = "varchar(10) default 'PUBLIC'")
     @Enumerated(EnumType.STRING)
-    private ChallengeAccess challenge_access;
+    private ChallengeAccess access;
 
-    private ChallengeType challenge_type;
-
-    @Column(nullable = false)
-    private String challenge_title;
+    private ChallengeType type;
 
     @Column(nullable = false)
-    private String challenge_content;
+    private String title;
+
+    @Column(nullable = false)
+    private String content;
 
     @Column(nullable = true)
-    private boolean challenge_official;
+    private boolean official;
 
     @ColumnDefault("0")
-    private int challenge_report;
+    private int report;
 
-    // 생성 메소드
-    public static Challenge createChallenge(User user, Date challenge_end, ChallengeAccess challenge_access, ChallengeType challenge_type, String challenge_title, String challenge_content) {
-        Challenge challenge = new Challenge();
-        challenge.setUser(user);
-        challenge.setChallenge_start(new Date());
-        challenge.setChallenge_end(challenge_end);
-        challenge.setChallenge_access(challenge_access);
-        challenge.setChallenge_type(challenge_type);
-        challenge.setChallenge_title(challenge_title);
-        challenge.setChallenge_content(challenge_content);
-        return challenge;
+    @Builder
+    public Challenge(int no, User user, Date start, Date end, ChallengeAccess access, ChallengeType type, String title, String content, boolean official, int report) {
+        this.no = no;
+        this.user = user;
+        this.start = start;
+        this.end = end;
+        this.access = access;
+        this.type = type;
+        this.title = title;
+        this.content = content;
+        this.official = official;
+        this.report = report;
     }
-
 }

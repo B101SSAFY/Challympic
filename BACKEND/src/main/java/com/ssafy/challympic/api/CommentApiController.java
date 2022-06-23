@@ -38,21 +38,24 @@ public class CommentApiController {
         commentService.save(comment);
 
         // 댓글 작성시 알람 설정
-        Alert commentAlert = new Alert();
         User writer = findPost.getUser();   // 포스트 작성자
-        commentAlert.setUser(writer);
-        commentAlert.setAlert_content(findUser.getNickname() + "님이 댓글을 작성했습니다.");
+        Alert commentAlert = Alert.builder()
+                .user(writer)
+                .content(findUser.getNickname() + "님이 댓글을 작성했습니다.")
+                .build();
         alertService.saveAlert(commentAlert);
 
-        Alert tagAlert = new Alert();
+        Alert tagAlert = null;
         String content = request.comment_content;
         String[] splitSharp = content.split(" ");
         for(String str : splitSharp) {
             if(str.startsWith("@")) {
                 User tagUser = userService.findByNickname(str.substring(1));    // 태그된 사람
                 if(tagUser == null) continue;
-                tagAlert.setUser(tagUser);
-                tagAlert.setAlert_content(findUser.getNickname() + "님이 댓글에서 태그했습니다.");
+                tagAlert = Alert.builder()
+                                .user(tagUser)
+                                .content(findUser.getNickname() + "님이 댓글에서 태그했습니다.")
+                                .build();
                 alertService.saveAlert(tagAlert);
             }
         }

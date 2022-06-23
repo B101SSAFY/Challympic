@@ -15,9 +15,9 @@ public class Tag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int tag_no;
+    private int no;
 
-    private String tag_content;
+    private String content;
 
     private String isChallenge;
 

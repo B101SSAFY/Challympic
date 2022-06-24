@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Getter
+@NoArgsConstructor
 public class UserJoinRequest {
 
     private String user_email;

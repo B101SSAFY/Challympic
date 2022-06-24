@@ -2,43 +2,23 @@ package com.ssafy.challympic.repository;
 
 import com.ssafy.challympic.domain.Interest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import java.util.List;
+import java.util.Optional;
 
-@Repository
-@RequiredArgsConstructor
-public class InterestRepository {
+public interface InterestRepository extends JpaRepository<Interest, Integer> {
 
-    private final EntityManager em;
+    @Query("SELECT i FROM Interest i WHERE i.user.no = :userNo")
+    List<Interest> findAllByUser(@Param("userNo") int userNo);
 
-    public void save(Interest interest){
-        em.persist(interest);
-    }
-
-    public List<Interest> findByUser(int user_no){
-        return em.createQuery("select i from Interest i where i.user.user_no = :user_no", Interest.class)
-                .setParameter("user_no", user_no)
-                .getResultList();
-    }
-
-    public Interest findOne(int user_no, int tag_no){
-        try{
-            Interest interest = em.createQuery("select i from Interest i where i.user.user_no = :user_no and i.tag.no = :tag_no", Interest.class)
-                    .setParameter("user_no", user_no)
-                    .setParameter("tag_no", tag_no)
-                    .getSingleResult();
-            return interest;
-        }catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    public void delete(Interest interest){
-        em.remove(interest);
-        em.flush();
-    }
+    @Query("SELECT i FROM Interest i WHERE i.user.no = :userNo AND i.tag.no = :tagNo")
+    Optional<Interest> findByUserAndTag(@Param("userNo") int userNo, @Param("tagNo") int tagNo);
 
 }

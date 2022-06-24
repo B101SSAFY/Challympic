@@ -1,14 +1,14 @@
 package com.ssafy.challympic.service;
 
 import com.ssafy.challympic.domain.Interest;
+import com.ssafy.challympic.domain.Tag;
+import com.ssafy.challympic.domain.User;
 import com.ssafy.challympic.repository.InterestRepository;
 import com.ssafy.challympic.repository.TagRepository;
 import com.ssafy.challympic.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -25,25 +25,30 @@ public class InterestService {
     /**
      * 관심 저장
      */
-    public boolean save(int user_no, int tag_no){
-        Interest findInterest = interestRepository.findOne(user_no, tag_no);
-        if(findInterest != null){
-            return false;
-        }else{
-            Interest interest = new Interest();
-            interest.setUser(userRepository.findById(user_no).get());
-            interest.setTag(tagRepository.findById(tag_no).orElseThrow(() -> new NoSuchElementException("존재하지 않는 태그입니다.")));
-            interestRepository.save(interest);
-            return true;
-        }
+    @Transactional
+    public void save(int userNo, int tagNo){
+
+        User user = userRepository.findById(userNo)
+                .orElseThrow(() -> new NoSuchElementException());
+        Tag tag = tagRepository.findById(tagNo)
+                .orElseThrow(() -> new NoSuchElementException());
+
+        Interest interest = Interest.builder()
+                .user(user)
+                .tag(tag)
+                .build();
+
+        interestRepository.save(interest);
     }
 
-    public List<Interest> findByUser(int user_no){
-        return interestRepository.findByUser(user_no);
+    public List<Interest> findByUser(int userNo){
+        return interestRepository.findAllByUser(userNo);
     }
 
-    public void deleteInterest(int user_no, int tag_no){
-        Interest interest = interestRepository.findOne(user_no, tag_no);
+    @Transactional
+    public void delete(int userNo, int tagNo){
+        Interest interest = interestRepository.findByUserAndTag(userNo, tagNo)
+                        .orElseThrow(() -> new NoSuchElementException());
         interestRepository.delete(interest);
     }
 }

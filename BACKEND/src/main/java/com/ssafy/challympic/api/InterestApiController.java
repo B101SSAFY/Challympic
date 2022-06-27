@@ -1,11 +1,13 @@
 package com.ssafy.challympic.api;
 
+import com.ssafy.challympic.api.Dto.Interest.InterestListResponse;
+import com.ssafy.challympic.api.Dto.Interest.InterestListSaveRequest;
+import com.ssafy.challympic.api.Dto.Interest.InterestSaveRequest;
 import com.ssafy.challympic.domain.Interest;
 import com.ssafy.challympic.domain.Result;
 import com.ssafy.challympic.domain.User;
 import com.ssafy.challympic.service.InterestService;
 import com.ssafy.challympic.service.UserService;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,78 +25,57 @@ public class InterestApiController {
     private final UserService userService;
 
     @PostMapping("/user/interest/{userNo}")
-    public Result save(@PathVariable("userNo") int user_no, @RequestBody interestRequest request){
-        boolean saveOk = interestService.save(user_no, request.getTag_no());
-        List<Interest> interestList = interestService.findByUser(user_no);
-        List<InterestDto> interests = new ArrayList<>();
-        if(!interestList.isEmpty()) {
-            interests = interestList.stream()
-                    .map(i -> new InterestDto(i))
-                    .collect(Collectors.toList());
-        }
+    public Result save(@PathVariable("userNo") int userNo, @RequestBody InterestSaveRequest request){
 
-        if(saveOk){
+        try{
+            interestService.save(userNo, request.getTag_no());
+            List<Interest> byUser = interestService.findByUser(userNo);
+            List<InterestListResponse> interests = byUser.stream()
+                    .map(i -> new InterestListResponse(i))
+                    .collect(Collectors.toList());
+
             return new Result(true, HttpStatus.OK.value(), interests);
-        }else{
+
+        }catch (Exception e){
             return new Result(false, HttpStatus.BAD_REQUEST.value());
         }
     }
 
-    @Data
-    static class JoinAfterInterest{
-        private String user_email;
-        private List<Integer> interests;
-    }
+    @PostMapping("/user/setInterests")
+    public Result saves(@RequestBody InterestListSaveRequest request){
 
-    @PostMapping("/setInterests")
-    public Result saves(@RequestBody JoinAfterInterest request){
-
-        User user = userService.findByEmail(request.getUser_email());
-
-        for (Integer t : request.getInterests()) {
-            interestService.save(user.getNo(), t);
+        try{
+            User user = userService.findByEmail(request.getUser_email());
+            for (Integer t : request.getInterests()) {
+                interestService.save(user.getNo(), t);
+            }
+            return new Result(true, HttpStatus.OK.value());
+        }catch (Exception e){
+            return new Result(true, HttpStatus.BAD_REQUEST.value());
         }
-        return new Result(true, HttpStatus.OK.value());
     }
 
     @GetMapping("/interest/{userNo}")
-    public Result interestList(@PathVariable("userNo") int user_no){
-        List<Interest> interestList = interestService.findByUser(user_no);
-        List<InterestDto> collect = interestList.stream()
-                .map(m -> new InterestDto(m))
+    public Result interestList(@PathVariable("userNo") int userNo){
+        List<Interest> byUser = interestService.findByUser(userNo);
+        List<InterestListResponse> interests = byUser.stream()
+                .map(i -> new InterestListResponse(i))
                 .collect(Collectors.toList());
-        return new Result(true, HttpStatus.OK.value(), collect);
-    }
-
-    @DeleteMapping("/user/interest/{userNo}/{tagNo}")
-    public Result delete(@PathVariable("userNo") int user_no, @PathVariable("tagNo") int tag_no){
-        interestService.deleteInterest(user_no, tag_no);
-        List<Interest> interestList = interestService.findByUser(user_no);
-        List<InterestDto> interests = new ArrayList<>();
-        if(!interestList.isEmpty()) {
-            interests = interestList.stream()
-                    .map(i -> new InterestDto(i))
-                    .collect(Collectors.toList());
-        }
         return new Result(true, HttpStatus.OK.value(), interests);
     }
 
-    @Data
-    static class interestRequest{
-        private int tag_no;
-    }
+    @DeleteMapping("/user/interest/{userNo}/{tagNo}")
+    public Result delete(@PathVariable("userNo") int userNo, @PathVariable("tagNo") int tagNo){
 
-    @Data
-    @AllArgsConstructor
-    static class InterestDto{
-        private int interest_no;
-        private int tag_no;
-        private String tag_content;
-
-        public InterestDto(Interest interest) {
-            this.interest_no = interest.getInterest_no();
-            this.tag_no = interest.getTag().getNo();
-            this.tag_content = interest.getTag().getContent();
+        try {
+            interestService.delete(userNo, tagNo);
+            List<Interest> byUser = interestService.findByUser(userNo);
+            List<InterestListResponse> interests = byUser.stream()
+                    .map(i -> new InterestListResponse(i))
+                    .collect(Collectors.toList());
+            return new Result(true, HttpStatus.OK.value(), interests);
+        }catch (Exception e){
+            return new Result(true, HttpStatus.BAD_REQUEST.value());
         }
     }
 

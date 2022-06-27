@@ -22,6 +22,4 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     Optional<User> findByNickname(String nickname);
 
-    @Query("SELECT u FROM User u")
-    List<User> findAllUser();
 }

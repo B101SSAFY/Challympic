@@ -1,5 +1,6 @@
 package com.ssafy.challympic.api.Dto.User;
 
+import com.ssafy.challympic.api.Dto.Interest.InterestListResponse;
 import com.ssafy.challympic.domain.Interest;
 import com.ssafy.challympic.domain.Subscription;
 import com.ssafy.challympic.domain.Title;

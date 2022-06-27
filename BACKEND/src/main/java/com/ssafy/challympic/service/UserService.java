@@ -152,7 +152,7 @@ public class UserService {
     }
 
     public List<User> findAllUser() {
-        return userRepository.findAllUser();
+        return userRepository.findAll();
     }
 
     public User findByEmail(String email) {

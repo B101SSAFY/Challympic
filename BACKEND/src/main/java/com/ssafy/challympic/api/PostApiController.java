@@ -2,6 +2,7 @@ package com.ssafy.challympic.api;
 
 import com.ssafy.challympic.api.Dto.CommentDto;
 import com.ssafy.challympic.api.Dto.Post.*;
+import com.ssafy.challympic.api.Dto.User.UserShortListResponse;
 import com.ssafy.challympic.domain.*;
 import com.ssafy.challympic.service.*;
 import com.ssafy.challympic.util.S3Uploader;
@@ -31,87 +32,6 @@ public class PostApiController {
     private final FollowService followService;
     private final CommentService commentService;
     private final CommentLikeService commentLikeService;
-
-    @Data
-    @AllArgsConstructor
-    static class Result<T>{
-        private boolean isSuccess;
-        private int code;
-        private T data;
-
-        public Result(boolean isSuccess, int code) {
-            this.isSuccess = isSuccess;
-            this.code = code;
-        }
-    }
-
-
-    @Data
-    @AllArgsConstructor
-    static class PostLikeUserDto{
-        private int user_no;
-        private String user_nickname;
-        private String user_title;
-        private int file_no;
-        private String file_path;
-        private String file_savedname;
-        private Boolean isFollowing;
-
-        public PostLikeUserDto(User user, Media media, boolean isFollowing) {
-            this.user_no = user.getNo();
-            this.user_nickname = user.getNickname();
-            this.user_title = user.getTitle();
-            if(media != null){
-                this.file_no = media.getFile_no();
-                this.file_path = media.getFile_path();
-                this.file_savedname = media.getFile_savedname();
-            }
-            this.isFollowing = isFollowing;
-        }
-    }
-
-    @Data
-    @Setter @Getter
-    static class PostDto{
-        // 포스트 정보
-        private int post_no;
-        private String post_content;
-        private int post_report;
-        private Date post_regdate;
-        private Date post_update;
-
-        // 유저 타입
-        private int user_no;
-        private String user_nickname;
-        private String user_title;
-        private String user_profile;
-
-        // 챌린지 타입
-        private String challenge_type;
-        private String challenge_name;
-        private int challenge_no;
-
-        // 미디어 정보
-        private int file_no;
-        private String file_path;
-        private String file_savedname;
-
-        // 좋아요 수
-        private Integer LikeCnt;
-
-        // 이 유저가 좋아요를 눌렀는지
-        private boolean IsLike = false;
-
-        // 댓글 리스트
-        private List<CommentDto> commentList;
-    }
-
-    @Data
-    @Setter @Getter
-    static class CreateResult{
-        private Media media;
-        private Integer post_no;
-    }
 
     @GetMapping("/main/recent/post")
     public Result getRecentPosts(@RequestParam(required = false) Integer userNo){
@@ -148,7 +68,6 @@ public class PostApiController {
                     .build());
         }
 
-
         return new Result(true, HttpStatus.OK.value(), collect);
     }
 
@@ -157,53 +76,49 @@ public class PostApiController {
      * */
     @PostMapping("/challenge/post")
     public Result list(@RequestBody PostListRequest request){
-        Result result = null;
 
-        // 챌린지 정보
-        Challenge challenge = challengeService.findChallengeByChallengeNo(request.getChallenge_no());
-        if(challenge == null) return new Result(false, HttpStatus.BAD_REQUEST.value());
-        String type = challenge.getType().name().toLowerCase();
-        // 포스트 리스트
-        List<Post> postList = postService.getPostList(request.getChallenge_no());
+        try{
+            // 챌린지 정보
+            Challenge challenge = challengeService.findChallengeByChallengeNo(request.getChallenge_no());
+            if(challenge == null) return new Result(false, HttpStatus.BAD_REQUEST.value());
+            String type = challenge.getType().name().toLowerCase();
+            // 포스트 리스트
+            List<Post> postList = postService.getPostList(request.getChallenge_no());
 
-        List<PostListResponse> collect = new ArrayList<>();
+            List<PostListResponse> collect = new ArrayList<>();
 
-        for(Post post : postList){
-            List<PostLike> postLikeList = postLikeService.getPostLikeListByPostNo(post.getNo());
-            int likeCnt = 0;
-            // 좋아요 수
-            if(postLikeList.size() != 0){
-                likeCnt = postLikeList.size();
+            for(Post post : postList){
+                List<PostLike> postLikeList = postLikeService.getPostLikeListByPostNo(post.getNo());
+                int likeCnt = 0;
+                // 좋아요 수
+                if(postLikeList.size() != 0){
+                    likeCnt = postLikeList.size();
+                }
+
+                boolean isLike = false;
+                if(request.getUser_no() != null) {
+                    isLike = postLikeService.getPostLikeByUserNoPostNo(post.getNo(), request.getUser_no());
+                }
+
+                List<Comment> comments = commentService.findByPost(post.getNo());
+                List<CommentDto> commentList = comments.stream()
+                        .map(c -> {
+                boolean IsLiked = commentLikeService.findIsLikeByUser(request.getUser_no(), c.getComment_no());
+                return new CommentDto(c, IsLiked);
+            })
+                        .collect(Collectors.toList());
+
+                collect.add(PostListResponse.builder()
+                        .post(post)
+                        .isLike(isLike)
+                        .likeCnt(likeCnt)
+                        .commentList(commentList)
+                        .build());
             }
-
-            boolean isLike = false;
-            if(request.getUser_no() != null) {
-                isLike = postLikeService.getPostLikeByUserNoPostNo(post.getNo(), request.getUser_no());
-            }
-
-            List<Comment> comments = commentService.findByPost(post.getNo());
-            List<CommentDto> commentList = comments.stream()
-                    .map(c -> {
-                        boolean IsLiked = commentLikeService.findIsLikeByUser(request.getUser_no(), c.getComment_no());
-                        return new CommentDto(c, IsLiked);
-                    })
-                    .collect(Collectors.toList());
-
-            collect.add(PostListResponse.builder()
-                    .post(post)
-                    .isLike(isLike)
-                    .likeCnt(likeCnt)
-                    .commentList(commentList)
-                    .build());
+            return new Result(true, HttpStatus.OK.value(), collect);
+        }catch (Exception e){
+            return new Result(false, HttpStatus.BAD_REQUEST.value());
         }
-
-        if(postList != null){
-            result = new Result(true, HttpStatus.OK.value(), collect);
-        } else {
-            result = new Result(false, HttpStatus.OK.value());
-        }
-
-        return result;
     }
 
     /** 
@@ -221,11 +136,11 @@ public class PostApiController {
         List<PostLike> postLikeList = postLikeService.getPostLikeListByPostNo(postNo);
 
         // 좋아요 누른 유저 정보만 가져오기
-        List<PostLikeUserDto> userList = new ArrayList<>();
+        List<UserShortListResponse> userList = new ArrayList<>();
         for(PostLike postLike : postLikeList){
             User user = userService.findByNo(postLike.getUser().getNo());
             boolean follow = followService.isFollow(userNo, user.getNo());
-            userList.add(new PostLikeUserDto(user, user.getMedia(), follow));
+            userList.add(new UserShortListResponse(user, user.getMedia(), follow));
         }
 
         return new Result(true, HttpStatus.OK.value(), userList);

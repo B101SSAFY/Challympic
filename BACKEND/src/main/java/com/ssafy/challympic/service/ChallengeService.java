@@ -183,7 +183,8 @@ public class ChallengeService {
     }
 
     public Challenge findChallengeByChallengeNo(int challengeNo) {
-        return challengeRepository.findById(challengeNo).get();
+        return challengeRepository.findById(challengeNo)
+                .orElseThrow(() -> new IllegalArgumentException("해당 챌린지가 없습니다."));
     }
 
     @Transactional

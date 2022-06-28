@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Integer> {
 
-//    @Query("SELECT p FROM Post p WHERE p.challenge.no = :challengeNo")
     List<Post> findByChallengeNo(int challengeNo);
 
     List<Post> findTop50ByOrderByNoDesc();

@@ -237,6 +237,11 @@ public class PostService {
             tagService.deletePostTag(pt);
         }
 
+        List<PostLike> byPost_no = postLikeRepository.findByPost_No(postNo);
+        for (PostLike postLike : byPost_no) {
+            postLikeRepository.delete(postLike);
+        }
+
         postRepository.delete(post);
     }
 

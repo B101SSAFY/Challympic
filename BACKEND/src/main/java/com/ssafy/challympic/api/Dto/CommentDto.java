@@ -30,7 +30,7 @@ public class CommentDto {
         if(comment.getUser().getMedia() != null)
             this.user_profile = comment.getUser().getMedia().getFile_path() +             File.separator
                     + comment.getUser().getMedia().getFile_savedname();
-        this.post_no = comment.getPost().getPost_no();
+        this.post_no = comment.getPost().getNo();
         this.comment_content = comment.getComment_content();
         this.comment_regdate = comment.getComment_regdate();
         this.comment_update = comment.getComment_update();

@@ -1,32 +1,29 @@
 package com.ssafy.challympic.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
+@Getter
+@NoArgsConstructor
 @Entity
-@Getter @Setter
 public class PostLike {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int like_no;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int no;
 
-    private Integer post_no;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_no")
+    private Post post;
 
-    private Integer user_no;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_no")
+    private User user;
 
-    public PostLike(int like_no, Integer post_no, Integer user_no){
-        this.like_no = like_no;
-        this.post_no = post_no;
-        this.user_no = user_no;
+    @Builder
+    public PostLike(Post post, User user) {
+        this.post = post;
+        this.user = user;
     }
-
-    public PostLike(Integer post_no, Integer user_no){
-        this.post_no = post_no;
-        this.user_no = user_no;
-    }
-
-    public PostLike() {}
 }

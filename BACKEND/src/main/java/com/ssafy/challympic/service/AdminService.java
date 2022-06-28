@@ -65,7 +65,7 @@ public class AdminService {
             challengeTagRepository.deleteAll(challengeTags);
         }
 
-        List<Challenger> challengerList = challengerRepository.findByChallenge_no(challenge_no);
+        List<Challenger> challengerList = challengerRepository.findByChallengeNo(challenge_no);
         if(!challengerList.isEmpty()){
             challengerRepository.deleteAll(challengerList);
         }
@@ -79,7 +79,7 @@ public class AdminService {
 
     @Transactional
     public void deletePost(Post post){
-        postRepository.deleteByPostNo(post.getPost_no());
+        postRepository.delete(post);
     }
 
     public List<Comment> commentList(){
@@ -94,13 +94,13 @@ public class AdminService {
 
     @Transactional
     public void deletePostByChallenge(int challenge_no) {
-        List<Post> postList = postRepository.findByChallengNo(challenge_no);
+        List<Post> postList = postRepository.findByChallengeNo(challenge_no);
         if(!postList.isEmpty()){
             for (Post post : postList) {
                 Media media = post.getMedia();
                 s3Uploader.deleteS3(media.getFile_path());
                 mediaRepository.deleteMedia(media.getFile_no());
-                postRepository.deleteByPostNo(post.getPost_no());
+                postRepository.delete(post);
             }
         }
     }

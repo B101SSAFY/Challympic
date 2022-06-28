@@ -28,11 +28,11 @@ public class PostDto{
     private boolean IsLike = false;
 
     public PostDto(Post post, String challengeTitle, int postLikeCount, int postCommentCount, boolean isLike) {
-        this.post_no = post.getPost_no();
+        this.post_no = post.getNo();
         this.user_no = post.getUser().getNo();
         this.user_nickname = post.getUser().getNickname();
         this.user_title = post.getUser().getTitle();
-        this.challenge_no = post.getChallenge_no();
+        this.challenge_no = post.getChallenge().getNo();
         this.chalenge_title = challengeTitle;
         this.file_no = post.getMedia().getFile_no();
         this.file_path = post.getMedia().getFile_path();

@@ -1,58 +1,22 @@
 package com.ssafy.challympic.repository;
 
 import com.ssafy.challympic.domain.PostLike;
-import com.ssafy.challympic.domain.User;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.query.Param;
 
-import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
-@Repository
-@RequiredArgsConstructor
-public class PostLikeRepository {
+public interface PostLikeRepository extends JpaRepository<PostLike, Integer> {
 
-    private final EntityManager em;
+    List<PostLike> findByPost_No(int postNo);
 
-    @Transactional
-    public List<PostLike> findByPostNo(Integer postNo){
-        return em.createQuery("select pl from PostLike pl where pl.post_no = :postNo", PostLike.class)
-                .setParameter("postNo", postNo)
-                .getResultList();
-    }
+    int countByPost_No(int postNo);
 
-    @Transactional
-    public List<PostLike> findPostLikeByUserNoPostNo(Integer postNo, Integer userNo){
+//    @Query("SELECT pl FROM PostLike pl WHERE pl.user.no = :userNo")
+    List<PostLike> findByUser_No(int userNo);
 
-        List<PostLike> postLike = em.createQuery("select pl from PostLike pl where pl.post_no = :postNo and pl.user_no = :userNo", PostLike.class)
-                .setParameter("postNo", postNo)
-                .setParameter("userNo", userNo)
-                .getResultList();
-        return postLike;
-    }
+//    @Query("SELECT pl FROM PostLike pl WHERE pl.post.no = :postNo AND pl.user.no = :userNo")
+    Optional<PostLike> findByPost_NoAndUser_No(int postNo, int userNo);
 
-    @Transactional
-    public void deleteByPostUser(Integer postNo, Integer userNo){
-        List<PostLike> postLikeList = findPostLikeByUserNoPostNo(postNo, userNo);
-        for(PostLike postLike : postLikeList){
-            em.remove(postLike);
-        }
-    }
-
-    @Transactional
-    public void save(PostLike postLike){
-        em.persist(postLike);
-    }
-
-    public int postLikeCnt(int post_no) {
-        List<PostLike> postLikeByPost = em.createQuery("select pl from PostLike pl where pl.post_no = :post_no", PostLike.class)
-                .setParameter("post_no", post_no)
-                .getResultList();
-        if(!postLikeByPost.isEmpty()){
-            return postLikeByPost.size();
-        }else{
-            return 0;
-        }
-    }
 }

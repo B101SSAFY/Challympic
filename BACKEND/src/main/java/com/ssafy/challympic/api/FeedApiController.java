@@ -60,9 +60,9 @@ public class FeedApiController {
         private int subscription_cnt;
 
         public ChallengeResponse(Post post, Challenge challenge, int post_cnt, int subscription_cnt) {
-            this.challenge_no = post.getChallenge_no();
+            this.challenge_no = post.getChallenge().getNo();
             if(challenge.getType() == ChallengeType.VIDEO) this.isVideo = true;
-            this.post_no = post.getPost_no();
+            this.post_no = post.getNo();
             this.file_no = post.getMedia().getFile_no();
             this.file_path = post.getMedia().getFile_path();
             this.file_savedname = post.getMedia().getFile_savedname();
@@ -85,9 +85,9 @@ public class FeedApiController {
         private int comment_cnt;
 
         public PostResponse(Post post, Challenge challenge, int like_cnt, int comment_cnt) {
-            this.challenge_no = post.getChallenge_no();
+            this.challenge_no = post.getChallenge().getNo();
             if(challenge.getType() == ChallengeType.VIDEO) this.isVideo = true;
-            this.post_no = post.getPost_no();
+            this.post_no = post.getNo();
             this.file_no = post.getMedia().getFile_no();
             this.file_path = post.getMedia().getFile_path();
             this.file_savedname = post.getMedia().getFile_savedname();
@@ -128,10 +128,10 @@ public class FeedApiController {
         if(!posts.isEmpty()){
             collect = posts.stream()
                     .map(p -> {
-                        int challenge_no = p.getChallenge_no();
+                        int challenge_no = p.getChallenge().getNo();
                         Challenge challenge = challengeService.findChallengeByChallengeNo(challenge_no);
-                        int like_cnt = postLikeService.postLikeCnt(p.getPost_no());
-                        int comment_cnt = commentService.postCommentCnt(p.getPost_no());
+                        int like_cnt = postLikeService.postLikeCnt(p.getNo());
+                        int comment_cnt = commentService.postCommentCnt(p.getNo());
                         return new PostResponse(p, challenge, like_cnt, comment_cnt);
                     }).collect(Collectors.toList());
         }
@@ -148,10 +148,10 @@ public class FeedApiController {
         if(!postListByUserNo.isEmpty()){
             collect = postListByUserNo.stream()
                     .map(p -> {
-                        int challenge_no = p.getChallenge_no();
+                        int challenge_no = p.getChallenge().getNo();
                         Challenge challenge = challengeService.findChallengeByChallengeNo(challenge_no);
-                        int like_cnt = postLikeService.postLikeCnt(p.getPost_no());
-                        int comment_cnt = commentService.postCommentCnt(p.getPost_no());
+                        int like_cnt = postLikeService.postLikeCnt(p.getNo());
+                        int comment_cnt = commentService.postCommentCnt(p.getNo());
                         return new PostResponse(p, challenge, like_cnt, comment_cnt);
                     }).collect(Collectors.toList());
         }

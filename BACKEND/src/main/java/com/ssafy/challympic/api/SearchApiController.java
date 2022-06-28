@@ -91,7 +91,7 @@ public class SearchApiController {
         List<Post> tagContainPost = postService.getPostByTag(request.tag_content);
         for(Post p : tagContainPost) {
             Activity activity = new Activity();
-            activity.setPost_no(p.getPost_no());
+            activity.setPost_no(p.getNo());
             activity.setUser_no(request.getUser_no());
             activityService.saveActivity(activity);
         }
@@ -102,10 +102,10 @@ public class SearchApiController {
     private List<PostDto> postToDto(List<Post> posts, Integer userNo) {
         return posts.stream()
                 .map(p -> {
-                    String challengeTitle = challengeService.findChallengeByChallengeNo(p.getChallenge_no()).getTitle();
-                    List<PostLike> postLikeList = postLikeService.getPostLikeListByPostNo(p.getPost_no());
-                    int commentCount = commentService.postCommentCnt(p.getPost_no());
-                    boolean isLike = postService.getPostLikeByPostNoAndUserNo(p.getPost_no(), userNo);
+                    String challengeTitle = challengeService.findChallengeByChallengeNo(p.getChallenge().getNo()).getTitle();
+                    List<PostLike> postLikeList = postLikeService.getPostLikeListByPostNo(p.getNo());
+                    int commentCount = commentService.postCommentCnt(p.getNo());
+                    boolean isLike = postService.getPostLikeByPostNoAndUserNo(p.getNo(), userNo);
                     return new PostDto(p,challengeTitle, postLikeList.size(), commentCount, isLike);
                 })
                 .collect(Collectors.toList());

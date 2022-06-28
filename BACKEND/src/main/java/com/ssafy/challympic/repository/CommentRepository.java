@@ -18,7 +18,7 @@ public class CommentRepository {
     }
 
     public List<Comment> findByPost(int post_no){
-        return em.createQuery("select c from Comment c where c.post.post_no = :post_no", Comment.class)
+        return em.createQuery("select c from Comment c where c.post.no = :post_no", Comment.class)
                 .setParameter("post_no", post_no)
                 .getResultList();
     }
@@ -33,7 +33,7 @@ public class CommentRepository {
     }
 
     public List<Comment> findByUser(int user_no){
-        return em.createQuery("select c from Comment c where c.user.user_no = :user_no", Comment.class)
+        return em.createQuery("select c from Comment c where c.user.no = :user_no", Comment.class)
                 .setParameter("user_no", user_no)
                 .getResultList();
     }

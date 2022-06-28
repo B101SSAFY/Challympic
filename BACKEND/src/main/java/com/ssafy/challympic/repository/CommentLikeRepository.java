@@ -50,4 +50,10 @@ public class CommentLikeRepository {
             return false;
         }
     }
+
+//    public List<CommentLike> findPostLikeByPostNo(int post_no) {
+//        return em.createQuery("select cl from CommentLike cl where cl.comment.post.post_no = :post_no", CommentLike.class)
+//                .setParameter("post_no", post_no)
+//                .getResultList();
+//    }
 }

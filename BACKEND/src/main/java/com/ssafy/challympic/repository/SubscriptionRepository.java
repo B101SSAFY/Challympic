@@ -11,12 +11,10 @@ import java.util.List;
 @Repository
 public interface SubscriptionRepository extends JpaRepository<Subscription, Integer> {
 
-    @Query("select s from Subscription s where s.challenge.no = :challengeNo")
-    List<Subscription> findByChallengeNo(@Param("challengeNo") int challengeNo);
+    List<Subscription> findByChallenge_No(int challengeNo);
 
     @Query("select s from Subscription s where s.challenge.no = :challengeNo and s.user.no = :userNo")
     Subscription findByChallengeNoAndUserNo(@Param("challengeNo") int challengeNo, @Param("userNo") int userNo);
 
-    @Query("select s from Subscription s where s.user.no = :userNo")
-     List<Subscription> findByUserNo(int userNo);
+     List<Subscription> findByUser_No(int userNo);
 }

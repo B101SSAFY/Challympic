@@ -11,16 +11,16 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Subscription {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "no")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int no;
 
     @ManyToOne
-    @JoinColumn(name = "no")
+    @JoinColumn(name = "challenge_no")
     private Challenge challenge;
 
     @ManyToOne
-    @JoinColumn(name = "no")
+    @JoinColumn(name = "user_no")
     private User user;
 
     @Builder

@@ -71,7 +71,7 @@ public class TagService {
     }
 
     public List<Tag> findRecentAllTagList() {
-        return tagRepository.findAllByIdDesc();
+        return tagRepository.findAllDesc();
     }
 
 }

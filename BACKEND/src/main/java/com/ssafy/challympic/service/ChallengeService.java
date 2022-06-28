@@ -35,11 +35,11 @@ public class ChallengeService {
     private final TitleRepository titleRepository;
 
     public List<Challenge> getChallengeByUserNo(int userNo) {
-        return challengeRepository.findByUserNo(userNo);
+        return challengeRepository.findByUser_No(userNo);
     }
 
     public List<Challenger> getChallengerByChallengeNo(int challengeNo){
-        return challengerRepository.findByChallengeNo(challengeNo);
+        return challengerRepository.findByChallenge_No(challengeNo);
     }
 
     public List<Challenge> findAllChallenge() {
@@ -194,7 +194,7 @@ public class ChallengeService {
     }
 
     private List<SubscriptionDto> getSubscriptionDtoList(int userNo) {
-        List<Subscription> subscriptionList = subscriptionRepository.findByUserNo(userNo);
+        List<Subscription> subscriptionList = subscriptionRepository.findByUser_No(userNo);
         List<SubscriptionDto> subscriptionDtoList = new ArrayList<>();
         if(!subscriptionList.isEmpty()) {
             subscriptionDtoList = subscriptionList.stream()
@@ -214,7 +214,7 @@ public class ChallengeService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 챌린지가 없습니다."));
     }
     public int challengeReportCntByUser(int user_no){
-        List<Challenge> findChallengeList = challengeRepository.findByUserNo(user_no);
+        List<Challenge> findChallengeList = challengeRepository.findByUser_No(user_no);
         int reportCnt = 0;
         for (Challenge challenge : findChallengeList) {
             reportCnt += challenge.getReport();
@@ -223,7 +223,7 @@ public class ChallengeService {
     }
 
     public int findSubscriptionCnt(int challenge_no) {
-        return subscriptionRepository.findByChallengeNo(challenge_no).size();
+        return subscriptionRepository.findByChallenge_No(challenge_no).size();
     }
 
     public int findPostCnt(int challenge_no) {
@@ -243,7 +243,7 @@ public class ChallengeService {
     public ChallengeDto getChallengeInfo(int challengeNo) {
         Challenge challenge = challengeRepository.findById(challengeNo)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 챌린지입니다."));
-        List<Challenger> challengerList = challengerRepository.findByChallengeNo(challengeNo);
+        List<Challenger> challengerList = challengerRepository.findByChallenge_No(challengeNo);
         List<UserDto> challengers = new ArrayList<>();
         challengers = challengerList.stream()
                 .map(cs -> {

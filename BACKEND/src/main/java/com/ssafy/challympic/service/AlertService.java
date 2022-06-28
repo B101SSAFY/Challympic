@@ -20,6 +20,6 @@ public class AlertService {
     }
 
     public List<Alert> findAlertByUserNo(int userNo) {
-        return alertRepository.findAlertByUserNo(userNo);
+        return alertRepository.findAlertByUser_No(userNo);
     }
 }

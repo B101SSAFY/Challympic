@@ -18,6 +18,6 @@ public interface TagRepository extends JpaRepository<Tag, Integer> {
             "(select pt.tag.no from PostTag pt where pt.post.no = :postNo)")
     List<Tag> findAllByPostNo(@Param("postNo") int postNo);
 
-    @Query("select t from Tag t order by t.no DESC")
-    List<Tag> findAllByIdDesc();
+    @Query("select t from Tag t order by t.no desc")
+    List<Tag> findAllDesc();
 }

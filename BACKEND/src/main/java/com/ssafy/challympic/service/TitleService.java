@@ -20,6 +20,6 @@ public class TitleService {
         titleRepository.save(title);
     }
 
-    public List<Title> findTitlesByUserNo(int user_no) {return titleRepository.findTitleByUserNo(user_no);}
+    public List<Title> findTitlesByUserNo(int user_no) {return titleRepository.findByUser_No(user_no);}
 
 }

@@ -56,15 +56,15 @@ public class AdminService {
 
     @Transactional
     public void deleteChallenge(int challenge_no){
-        Title findTitle = titleRepository.findByChallenge(challenge_no);
+        Title findTitle = titleRepository.findByChallenge_No(challenge_no);
         titleRepository.delete(findTitle);
 
-        List<ChallengeTag> challengeTags = challengeTagRepository.findByChallengeNo(challenge_no);
+        List<ChallengeTag> challengeTags = challengeTagRepository.findByChallenge_No(challenge_no);
         if(!challengeTags.isEmpty()){
             challengeTagRepository.deleteAll(challengeTags);
         }
 
-        List<Challenger> challengerList = challengerRepository.findByChallengeNo(challenge_no);
+        List<Challenger> challengerList = challengerRepository.findByChallenge_No(challenge_no);
         if(!challengerList.isEmpty()){
             challengerRepository.deleteAll(challengerList);
         }

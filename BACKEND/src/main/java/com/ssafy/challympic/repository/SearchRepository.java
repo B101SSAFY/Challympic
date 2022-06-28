@@ -36,7 +36,7 @@ public class SearchRepository {
     }
 
     public List<Search> findTagListByUserNo(int userNo) {
-        return em.createQuery("select s from Search s where s.user.user_no = :userNo", Search.class)
+        return em.createQuery("select s from Search s where s.user.no = :userNo", Search.class)
                 .setParameter("userNo", userNo)
                 .getResultList();
     }

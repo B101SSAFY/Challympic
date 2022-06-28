@@ -1,7 +1,6 @@
 package com.ssafy.challympic.service;
 
 import com.ssafy.challympic.domain.*;
-import com.ssafy.challympic.domain.defaults.UserActive;
 import com.ssafy.challympic.repository.*;
 import com.ssafy.challympic.util.S3Uploader;
 import lombok.RequiredArgsConstructor;

@@ -10,5 +10,6 @@ import java.util.List;
 @Repository
 public interface ChallengerRepository extends JpaRepository<Challenger, Integer> {
 
-    List<Challenger> findByChallengeNo(int challengeNo);
+    @Query("select c from Challenger c where c.challenge = :challenge_no")
+    List<Challenger> findByChallengeNo(int challenge_no);
 }

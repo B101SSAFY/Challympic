@@ -3,11 +3,13 @@ package com.ssafy.challympic.service;
 import com.ssafy.challympic.api.Dto.Challenge.ChallengeResponseDto;
 import com.ssafy.challympic.api.Dto.Challenge.ChallengeTitleCheckRequsetDto;
 import com.ssafy.challympic.api.Dto.Challenge.CreateChallengeRequset;
+import com.ssafy.challympic.api.Dto.ChallengeDto;
+import com.ssafy.challympic.api.Dto.SubscriptionDto;
+import com.ssafy.challympic.api.Dto.UserDto;
 import com.ssafy.challympic.domain.*;
 import com.ssafy.challympic.domain.defaults.ChallengeAccess;
 import com.ssafy.challympic.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -167,31 +169,50 @@ public class ChallengeService {
             throw new NoSuchElementException("챌린지가 없습니다.");
         }
 
+        for(Challenge c : challenges) {
+            if(c.getEnd().after(new Date())) throw new NoSuchElementException("진행중인 챌린지가 없습니다.");
+        }
     }
 
     @Transactional
-    public void saveChallengers(Challenger challenger) {
-        challengerRepository.save(challenger);
+    public List<SubscriptionDto> addSubscription(int challengeNo, int userNo) {
+        Challenge challenge = challengeRepository.findById(challengeNo)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 챌린지입니다."));
+        User user = userRepository.findById(userNo)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
+
+        Subscription subscription = subscriptionRepository.findByChallengeNoAndUserNo(challenge.getNo(), user.getNo());
+        if(subscription == null) {
+            subscriptionRepository.save(Subscription.builder()
+                    .challenge(challenge)
+                    .user(user)
+                    .build());
+        } else {
+            subscriptionRepository.delete(subscription);
+        }
+        return getSubscriptionDtoList(userNo);
     }
 
-    public List<Challenge> findChallengeByTitle(String title) {
-        return challengeRepository.findByTitleOrderByEndDesc(title);
+    private List<SubscriptionDto> getSubscriptionDtoList(int userNo) {
+        List<Subscription> subscriptionList = subscriptionRepository.findByUserNo(userNo);
+        List<SubscriptionDto> subscriptionDtoList = new ArrayList<>();
+        if(!subscriptionList.isEmpty()) {
+            subscriptionDtoList = subscriptionList.stream()
+                    .map(s -> new SubscriptionDto(s))
+                    .collect(Collectors.toList());
+        }
+        return subscriptionDtoList;
     }
+
 
     public List<Challenge> findChallengeBySubscription(int userNo) {
-        return subscriptionRepository.findChallengeByUserNoFromSubs(userNo);
+        return challengeRepository.findByUserNoFromSubscription(userNo);
     }
 
     public Challenge findChallengeByChallengeNo(int challengeNo) {
         return challengeRepository.findById(challengeNo)
                 .orElseThrow(() -> new IllegalArgumentException("해당 챌린지가 없습니다."));
     }
-
-    @Transactional
-    public void saveChallengeTag(ChallengeTag challengeTag) {
-        challengeTagRepository.save(challengeTag);
-    }
-
     public int challengeReportCntByUser(int user_no){
         List<Challenge> findChallengeList = challengeRepository.findByUserNo(user_no);
         int reportCnt = 0;
@@ -202,7 +223,7 @@ public class ChallengeService {
     }
 
     public int findSubscriptionCnt(int challenge_no) {
-        return subscriptionRepository.findSubscriptionByChallenge(challenge_no).size();
+        return subscriptionRepository.findByChallengeNo(challenge_no).size();
     }
 
     public int findPostCnt(int challenge_no) {
@@ -218,4 +239,21 @@ public class ChallengeService {
                 .map(c -> new ChallengeResponseDto(c))
                 .collect(Collectors.toList());
     }
+
+    public ChallengeDto getChallengeInfo(int challengeNo) {
+        Challenge challenge = challengeRepository.findById(challengeNo)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 챌린지입니다."));
+        List<Challenger> challengerList = challengerRepository.findByChallengeNo(challengeNo);
+        List<UserDto> challengers = new ArrayList<>();
+        challengers = challengerList.stream()
+                .map(cs -> {
+                    User user = userRepository.findById(cs.getUser().getNo())
+                            .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
+                    return new UserDto(user);
+                })
+                .collect(Collectors.toList());
+        return new ChallengeDto(challenge, challengers);
+    }
+
+
 }

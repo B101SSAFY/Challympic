@@ -15,7 +15,7 @@ public interface TagRepository extends JpaRepository<Tag, Integer> {
     Tag findByTagContent(@Param("tagContent") String tagContent);
 
     @Query("select t from Tag t where t.no = " +
-            "(select pt.tag.no from PostTag pt where pt.post.post_no = :postNo)")
+            "(select pt.tag.no from PostTag pt where pt.post.no = :postNo)")
     List<Tag> findAllByPostNo(@Param("postNo") int postNo);
 
     @Query("select t from Tag t order by t.no DESC")

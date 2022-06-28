@@ -37,7 +37,7 @@ public class ChallengeService {
     }
 
     public List<Challenger> getChallengerByChallengeNo(int challengeNo){
-        return challengerRepository.findByChallenge_no(challengeNo);
+        return challengerRepository.findByChallengeNo(challengeNo);
     }
 
     public List<Challenge> findAllChallenge() {
@@ -183,7 +183,8 @@ public class ChallengeService {
     }
 
     public Challenge findChallengeByChallengeNo(int challengeNo) {
-        return challengeRepository.findById(challengeNo).get();
+        return challengeRepository.findById(challengeNo)
+                .orElseThrow(() -> new IllegalArgumentException("해당 챌린지가 없습니다."));
     }
 
     @Transactional
@@ -205,7 +206,7 @@ public class ChallengeService {
     }
 
     public int findPostCnt(int challenge_no) {
-        return postRepository.findByChallengNo(challenge_no).size();
+        return postRepository.findByChallengeNo(challenge_no).size();
     }
 
     public List<Challenge> findChallengesByTag(String tag_content) {

@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface PostTagRepository extends JpaRepository<PostTag, Integer> {
 
-    @Query("select pt from PostTag pt where pt.post.post_no = :postNo")
+    @Query("select pt from PostTag pt where pt.post.no = :postNo")
     List<PostTag> findAllByPostNo(@Param("postNo") int postNo);
 }

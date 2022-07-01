@@ -28,26 +28,21 @@ public class InterestApiController {
     public Result save(@PathVariable("userNo") int userNo, @RequestBody InterestSaveRequest request){
 
         try{
-            interestService.save(userNo, request.getTag_no());
-            List<Interest> byUser = interestService.findByUser(userNo);
-            List<InterestListResponse> interests = byUser.stream()
-                    .map(i -> new InterestListResponse(i))
-                    .collect(Collectors.toList());
-
-            return new Result(true, HttpStatus.OK.value(), interests);
-
+            int interestNo = interestService.save(userNo, request.getTag_no());
+            List<InterestListResponse> interestList = interestService.findByUser(userNo);
+            return new Result(true, HttpStatus.OK.value(), interestList);
         }catch (Exception e){
             return new Result(false, HttpStatus.BAD_REQUEST.value());
         }
     }
 
     @PostMapping("/user/setInterests")
-    public Result saves(@RequestBody InterestListSaveRequest request){
+    public Result saveList(@RequestBody InterestListSaveRequest request){
 
         try{
             User user = userService.findByEmail(request.getUser_email());
             for (Integer t : request.getInterests()) {
-                interestService.save(user.getNo(), t);
+                int interestNo = interestService.save(user.getNo(), t);
             }
             return new Result(true, HttpStatus.OK.value());
         }catch (Exception e){
@@ -57,11 +52,8 @@ public class InterestApiController {
 
     @GetMapping("/interest/{userNo}")
     public Result interestList(@PathVariable("userNo") int userNo){
-        List<Interest> byUser = interestService.findByUser(userNo);
-        List<InterestListResponse> interests = byUser.stream()
-                .map(i -> new InterestListResponse(i))
-                .collect(Collectors.toList());
-        return new Result(true, HttpStatus.OK.value(), interests);
+        List<InterestListResponse> interestList = interestService.findByUser(userNo);
+        return new Result(true, HttpStatus.OK.value(), interestList);
     }
 
     @DeleteMapping("/user/interest/{userNo}/{tagNo}")
@@ -69,11 +61,8 @@ public class InterestApiController {
 
         try {
             interestService.delete(userNo, tagNo);
-            List<Interest> byUser = interestService.findByUser(userNo);
-            List<InterestListResponse> interests = byUser.stream()
-                    .map(i -> new InterestListResponse(i))
-                    .collect(Collectors.toList());
-            return new Result(true, HttpStatus.OK.value(), interests);
+            List<InterestListResponse> interestList = interestService.findByUser(userNo);
+            return new Result(true, HttpStatus.OK.value(), interestList);
         }catch (Exception e){
             return new Result(true, HttpStatus.BAD_REQUEST.value());
         }

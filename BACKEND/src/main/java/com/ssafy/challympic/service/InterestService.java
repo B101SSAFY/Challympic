@@ -1,5 +1,6 @@
 package com.ssafy.challympic.service;
 
+import com.ssafy.challympic.api.Dto.Interest.InterestListResponse;
 import com.ssafy.challympic.domain.Interest;
 import com.ssafy.challympic.domain.Tag;
 import com.ssafy.challympic.domain.User;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -26,7 +28,7 @@ public class InterestService {
      * 관심 저장
      */
     @Transactional
-    public void save(int userNo, int tagNo){
+    public int save(int userNo, int tagNo){
 
         User user = userRepository.findById(userNo)
                 .orElseThrow(() -> new NoSuchElementException());
@@ -38,16 +40,22 @@ public class InterestService {
                 .tag(tag)
                 .build();
 
-        interestRepository.save(interest);
+        return interestRepository.save(interest).getNo();
     }
 
-    public List<Interest> findByUser(int userNo){
-        return interestRepository.findAllByUser(userNo);
+    public List<InterestListResponse> findByUser(int userNo){
+
+        List<Interest> allByUser_no = interestRepository.findAllByUser_No(userNo);
+        List<InterestListResponse> interests = allByUser_no.stream()
+                .map(i -> new InterestListResponse(i))
+                .collect(Collectors.toList());
+
+        return interests;
     }
 
     @Transactional
     public void delete(int userNo, int tagNo){
-        Interest interest = interestRepository.findByUserAndTag(userNo, tagNo)
+        Interest interest = interestRepository.findByUser_NoAndTag_No(userNo, tagNo)
                         .orElseThrow(() -> new NoSuchElementException());
         interestRepository.delete(interest);
     }

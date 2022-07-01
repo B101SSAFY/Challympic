@@ -63,7 +63,7 @@ public class FeedApiController {
             this.challenge_no = post.getChallenge().getNo();
             if(challenge.getType() == ChallengeType.VIDEO) this.isVideo = true;
             this.post_no = post.getNo();
-            this.file_no = post.getMedia().getFile_no();
+            this.file_no = post.getMedia().getNo();
             this.file_path = post.getMedia().getFile_path();
             this.file_savedname = post.getMedia().getFile_savedname();
             this.challenge_title = challenge.getTitle();
@@ -88,7 +88,7 @@ public class FeedApiController {
             this.challenge_no = post.getChallenge().getNo();
             if(challenge.getType() == ChallengeType.VIDEO) this.isVideo = true;
             this.post_no = post.getNo();
-            this.file_no = post.getMedia().getFile_no();
+            this.file_no = post.getMedia().getNo();
             this.file_path = post.getMedia().getFile_path();
             this.file_savedname = post.getMedia().getFile_savedname();
             this.challenge_title = challenge.getTitle();
@@ -185,7 +185,7 @@ public class FeedApiController {
             this.user_nickname = user.getNickname();
             this.user_title = user.getTitle();
             if(user.getMedia() !=  null){
-                this.file_no = user.getMedia().getFile_no();
+                this.file_no = user.getMedia().getNo();
                 this.file_path = user.getMedia().getFile_path();
                 this.file_savedname = user.getMedia().getFile_savedname();
             }

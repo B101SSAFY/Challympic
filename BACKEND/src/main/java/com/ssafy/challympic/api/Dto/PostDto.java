@@ -34,7 +34,7 @@ public class PostDto{
         this.user_title = post.getUser().getTitle();
         this.challenge_no = post.getChallenge().getNo();
         this.chalenge_title = challengeTitle;
-        this.file_no = post.getMedia().getFile_no();
+        this.file_no = post.getMedia().getNo();
         this.file_path = post.getMedia().getFile_path();
         this.file_savedname = post.getMedia().getFile_savedname();
         this.post_content = post.getPost_content();

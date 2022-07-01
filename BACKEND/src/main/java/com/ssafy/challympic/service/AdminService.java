@@ -99,7 +99,7 @@ public class AdminService {
             for (Post post : postList) {
                 Media media = post.getMedia();
                 s3Uploader.deleteS3(media.getFile_path());
-                mediaRepository.deleteMedia(media.getFile_no());
+                mediaRepository.delete(media);
                 postRepository.delete(post);
             }
         }

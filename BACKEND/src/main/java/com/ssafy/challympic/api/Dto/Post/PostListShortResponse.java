@@ -18,7 +18,7 @@ public class PostListShortResponse {
     public PostListShortResponse(Post post, Challenge challenge, int like_cnt, int comment_cnt) {
         this.challenge_no = post.getChallenge().getNo();
         this.post_no = post.getNo();
-        this.file_no = post.getMedia().getFile_no();
+        this.file_no = post.getMedia().getNo();
         this.file_path = post.getMedia().getFile_path();
         this.file_savedname = post.getMedia().getFile_savedname();
         this.challenge_title = challenge.getTitle();

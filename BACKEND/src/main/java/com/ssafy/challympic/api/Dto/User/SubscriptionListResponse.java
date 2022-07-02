@@ -8,7 +8,7 @@ public class SubscriptionListResponse {
     private String challenge_title;
 
     public SubscriptionListResponse(Subscription subscription) {
-        this.subscription_no = subscription.getSubscription_no();
+        this.subscription_no = subscription.getNo();
         this.challenge_no = subscription.getChallenge().getNo();
         this.challenge_title = subscription.getChallenge().getTitle();
     }

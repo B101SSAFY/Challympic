@@ -2,39 +2,17 @@ package com.ssafy.challympic.repository;
 
 import com.ssafy.challympic.domain.Comment;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
-@Repository
-@RequiredArgsConstructor
-public class CommentRepository {
+public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
-    private final EntityManager em;
+    List<Comment> findByPost_No(int postNo);
 
-    public void save(Comment comment){
-        em.persist(comment);
-    }
+    List<Comment> findByUser_No(int userNo);
 
-    public List<Comment> findByPost(int post_no){
-        return em.createQuery("select c from Comment c where c.post.no = :post_no", Comment.class)
-                .setParameter("post_no", post_no)
-                .getResultList();
-    }
-
-    public Comment findOne(int comment_no){
-        return em.find(Comment.class, comment_no);
-    }
-
-    public void delete(Comment comment){
-        em.remove(comment);
-        em.flush();
-    }
-
-    public List<Comment> findByUser(int user_no){
-        return em.createQuery("select c from Comment c where c.user.no = :user_no", Comment.class)
-                .setParameter("user_no", user_no)
-                .getResultList();
-    }
 }

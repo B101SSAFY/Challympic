@@ -1,5 +1,6 @@
 package com.ssafy.challympic.api;
 
+import com.ssafy.challympic.api.Dto.Comment.*;
 import com.ssafy.challympic.domain.*;
 import com.ssafy.challympic.service.*;
 import lombok.*;
@@ -19,69 +20,44 @@ public class CommentApiController {
 
     private final CommentService commentService;
     private final UserService userService;
-    private final PostService postService;
     private final CommentLikeService commentLikeService;
-    private final AlertService alertService;
 
     @PostMapping("/comment")
-    public Result save(@RequestBody CommentRequest request){
-        User findUser = userService.findByNo(request.user_no);
-        Post findPost = postService.getPost(request.post_no);
-        if(findUser == null || findPost == null){
+    public Result save(@RequestBody CommentSaveRequest request){
+        try{
+            CommentResponse comment = commentService.save(request);
+            return new Result(true, HttpStatus.OK.value(), comment);
+        }catch (Exception e){
             return new Result(false, HttpStatus.BAD_REQUEST.value());
         }
-        Comment comment = new Comment();
-        comment.setUser(findUser);
-        comment.setPost(findPost);
-        comment.setComment_content(request.getComment_content());
-        comment.setComment_regdate(new Date());
-        commentService.save(comment);
-
-        // 댓글 작성시 알람 설정
-        User writer = findPost.getUser();   // 포스트 작성자
-        Alert commentAlert = Alert.builder()
-                .user(writer)
-                .content(findUser.getNickname() + "님이 댓글을 작성했습니다.")
-                .build();
-        alertService.saveAlert(commentAlert);
-
-        Alert tagAlert = null;
-        String content = request.comment_content;
-        String[] splitSharp = content.split(" ");
-        for(String str : splitSharp) {
-            if(str.startsWith("@")) {
-                User tagUser = userService.findByNickname(str.substring(1));    // 태그된 사람
-                if(tagUser == null) continue;
-                tagAlert = Alert.builder()
-                                .user(tagUser)
-                                .content(findUser.getNickname() + "님이 댓글에서 태그했습니다.")
-                                .build();
-                alertService.saveAlert(tagAlert);
-            }
-        }
-
-        CommentDto result = new CommentDto(comment);
-
-        return new Result(true, HttpStatus.OK.value(), result);
     }
 
     @PutMapping("/comment")
-    public Result update(@RequestBody CommentRequest request){
-        commentService.update(request.comment_no, request.comment_content);
-        List<Comment> commentList = commentService.findByPost(request.post_no);
-        List<CommentDto> comments = new ArrayList<>();
-        if(!commentList.isEmpty()){
-            comments = commentList.stream()
-                    .map(c -> new CommentDto(c))
-                    .collect(Collectors.toList());
+    public Result update(@RequestBody CommentUpdateRequest request){
+        try {
+            commentService.update(request);
+            return getResult(request.getPost_no());
+        }catch (Exception e){
+            return new Result(false, HttpStatus.BAD_REQUEST.value());
         }
-        return new Result(true, HttpStatus.OK.value(), comments);
     }
 
     @DeleteMapping("/comment")
-    public Result delete(@RequestBody CommentRequest request){
-        commentService.delete(request.comment_no);
-        List<Comment> commentList = commentService.findByPost(request.post_no);
+    public Result delete(@RequestBody CommentDeleteRequest request){
+        try {
+            commentService.delete(request.getComment_no());
+            return getResult(request.getPost_no());
+        }catch (Exception e){
+            return new Result(false, HttpStatus.BAD_REQUEST.value());
+        }
+    }
+
+    /**
+     * 프론트 수정 필요!
+     * 업데이트, 삭제시 리스트 전체를 반환할 필요는 없어보임.
+     */
+    private Result getResult(int post) {
+        List<Comment> commentList = commentService.findByPost(post);
         List<CommentDto> comments = new ArrayList<>();
         if(!commentList.isEmpty()){
             comments = commentList.stream()
@@ -112,29 +88,14 @@ public class CommentApiController {
     }
 
     @PutMapping("/report/comment")
-    public Result report(@RequestBody CommentRequest request){
-        commentService.report(request.comment_no);
-        return new Result(true, HttpStatus.OK.value());
+    public Result report(@RequestBody CommentReportRequest request){
+        try {
+            commentService.report(request.getComment_no());
+            return new Result(true, HttpStatus.OK.value());
+        }catch (Exception e){
+            return new Result(false, HttpStatus.BAD_REQUEST.value());
+        }
     }
-
-//    /**
-//     * 포스트 no로 comment 부르기
-//     */
-//    @GetMapping("/comment/{postNo}/{userNo}")
-//    public Result commentInPost(@PathVariable("postNo") int post_no, @PathVariable("userNo") int user_no){
-//        List<Comment> commentList = commentService.findByPost(post_no);
-//        List<CommentDto> collect = new ArrayList<>();
-//        if(!commentList.isEmpty()){
-//            collect = commentList.stream()
-//                    .map(c -> {
-//                        CommentDto commentDto = new CommentDto(c);
-//            int commentLikeCnt = commentLikeService.findLikeCntByComment(c.getComment_no());
-//                            commentDto.setLike_cnt(commentLikeCnt);
-//            return commentDto;
-//        }).collect(Collectors.toList());
-//        }
-//        return new Result(true, HttpStatus.OK.value(), collect);
-//    }
 
     @Data
     static class CommentDto{
@@ -148,11 +109,11 @@ public class CommentApiController {
         private String user_profile;
 
         public CommentDto(Comment comment) {
-            this.comment_no = comment.getComment_no();
-            this.comment_content = comment.getComment_content();
-            this.comment_report = comment.getComment_report();
+            this.comment_no = comment.getNo();
+            this.comment_content = comment.getContent();
+            this.comment_report = comment.getReport();
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            this.comment_regdate = formatter.format(comment.getComment_regdate());
+            this.comment_regdate = formatter.format(comment.getRegdate());
             this.user_no = comment.getUser().getNo();
             this.user_nickname = comment.getUser().getNickname();
             if(comment.getUser().getMedia() != null){
@@ -169,6 +130,11 @@ public class CommentApiController {
         private String comment_content;
     }
 
+    /**
+     * data안에 isLiked 넣을 수 있을 듯
+     * 프론트와 추가 수정 필요
+     * @param <T>
+     */
     @Data
     @AllArgsConstructor
     static class Result<T>{

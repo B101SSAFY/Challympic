@@ -24,18 +24,18 @@ public class CommentDto {
     private int file_no;
 
     public CommentDto(Comment comment, boolean IsLiked) {
-        this.comment_no = comment.getComment_no();
+        this.comment_no = comment.getNo();
         this.user_no = comment.getUser().getNo();
         this.user_nickname = comment.getUser().getNickname();
         if(comment.getUser().getMedia() != null)
             this.user_profile = comment.getUser().getMedia().getFile_path() +             File.separator
                     + comment.getUser().getMedia().getFile_savedname();
         this.post_no = comment.getPost().getNo();
-        this.comment_content = comment.getComment_content();
-        this.comment_regdate = comment.getComment_regdate();
-        this.comment_update = comment.getComment_update();
+        this.comment_content = comment.getContent();
+        this.comment_regdate = comment.getRegdate();
+        this.comment_update = comment.getUpdate();
         this.like_cnt = comment.getCommentLike().size();
-        this.comment_report = comment.getComment_report();
+        this.comment_report = comment.getReport();
         this.IsLiked = IsLiked;
 
     }

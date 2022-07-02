@@ -16,11 +16,11 @@ public class Subscription {
     private int no;
 
     @ManyToOne
-    @JoinColumn(name = "no")
+    @JoinColumn(name = "challenge_no")
     private Challenge challenge;
 
     @ManyToOne
-    @JoinColumn(name = "no")
+    @JoinColumn(name = "user_no")
     private User user;
 
     @Builder

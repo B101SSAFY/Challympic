@@ -1,19 +1,21 @@
 package com.ssafy.challympic.domain;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
+@Getter
+@NoArgsConstructor
 @Entity
-@Getter @Setter
 public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int comment_no;
+    private int no;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_no")
@@ -24,18 +26,37 @@ public class Comment {
     private Post post;
 
     @Column(nullable = false)
-    private String comment_content;
+    private String content;
 
     @Column(columnDefinition = "TIMESTAMP default CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date comment_regdate;
+    private Date regdate;
 
     @Column(columnDefinition = "TIMESTAMP default CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date comment_update;
+    private Date update;
 
-    private int comment_report;
+    private int report;
 
     @OneToMany(mappedBy = "comment")
     private List<CommentLike> commentLike;
+
+    @Builder
+    public Comment(User user, Post post, String content) {
+        this.user = user;
+        this.post = post;
+        this.content = content;
+        this.report = 0;
+    }
+
+    public Comment update(String content){
+        this.content = content;
+        this.update = new Date();
+        return this;
+    }
+
+    public Comment updateReport(){
+        this.report++;
+        return this;
+    }
 }

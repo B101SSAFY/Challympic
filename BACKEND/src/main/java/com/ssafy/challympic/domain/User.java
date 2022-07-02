@@ -62,11 +62,11 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Subscription> subscription;
 
-    @OneToMany(mappedBy = "follow_following_no")
-    private List<Follow> following;
-
-    @OneToMany(mappedBy = "follow_follower_no")
-    private List<Follow> follower;
+//    @OneToMany(mappedBy = "follow_following_no")
+//    private List<Follow> following;
+//
+//    @OneToMany(mappedBy = "follow_follower_no")
+//    private List<Follow> follower;
 
     @OneToMany(mappedBy = "user")
     private List<QnA> qna;

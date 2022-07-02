@@ -1,29 +1,37 @@
 package com.ssafy.challympic.domain;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@Getter
+@NoArgsConstructor
 @Entity
-@Getter @Setter
 public class Follow {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int follow_no;
+    private int no;
 
     /**
      * 내가 follow한 사람
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "follow_following_no")
-    private User follow_following_no;
+    @JoinColumn(name = "src_no")
+    private User srcUser;
 
     /**
      * 나를 follow한 사람
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "follow_follower_no")
-    private User follow_follower_no;
+    @JoinColumn(name = "dest_no")
+    private User destUser;
+
+    @Builder
+    public Follow(User src_no, User dest_no) {
+        this.srcUser = src_no;
+        this.destUser = dest_no;
+    }
 }

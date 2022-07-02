@@ -15,10 +15,8 @@ import java.util.Optional;
 
 public interface InterestRepository extends JpaRepository<Interest, Integer> {
 
-    @Query("SELECT i FROM Interest i WHERE i.user.no = :userNo")
-    List<Interest> findAllByUser(@Param("userNo") int userNo);
+    List<Interest> findAllByUser_No(int userNo);
 
-    @Query("SELECT i FROM Interest i WHERE i.user.no = :userNo AND i.tag.no = :tagNo")
-    Optional<Interest> findByUserAndTag(@Param("userNo") int userNo, @Param("tagNo") int tagNo);
+    Optional<Interest> findByUser_NoAndTag_No(int userNo, int tagNo);
 
 }

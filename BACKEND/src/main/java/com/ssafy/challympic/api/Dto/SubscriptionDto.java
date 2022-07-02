@@ -12,7 +12,7 @@ public class SubscriptionDto {
     private String challenge_title;
 
     public SubscriptionDto(Subscription subscription) {
-        this.subscription_no = subscription.getSubscription_no();
+        this.subscription_no = subscription.getNo();
         this.challenge_no = subscription.getChallenge().getNo();
         this.challenge_title = subscription.getChallenge().getTitle();
     }

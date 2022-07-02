@@ -1,66 +1,22 @@
 package com.ssafy.challympic.repository;
 
-import com.ssafy.challympic.domain.Challenge;
 import com.ssafy.challympic.domain.Subscription;
-import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import java.util.List;
 
 @Repository
-@RequiredArgsConstructor
-public class SubscriptionRepository {
+public interface SubscriptionRepository extends JpaRepository<Subscription, Integer> {
 
-    private final EntityManager em;
+    @Query("select s from Subscription s where s.challenge.no = :challengeNo")
+    List<Subscription> findByChallengeNo(@Param("challengeNo") int challengeNo);
 
-    public void saveSubscription(Subscription subscription) {
-        em.persist(subscription);
-    }
+    @Query("select s from Subscription s where s.challenge.no = :challengeNo and s.user.no = :userNo")
+    Subscription findByChallengeNoAndUserNo(@Param("challengeNo") int challengeNo, @Param("userNo") int userNo);
 
-    public Subscription findSubscription(Subscription subscription) {
-        try{
-            return (Subscription) em.createQuery("select s from Subscription s where s.challenge = :challenge_no and s.user = :user_no")
-                    .setParameter("challenge_no", subscription.getChallenge())
-                    .setParameter("user_no", subscription.getUser())
-                    .getSingleResult();
-        }catch (NoResultException e) {
-            return null;
-        }
-
-    }
-
-    public void deleteSubscription(Subscription subscription) {
-        em.remove(subscription);
-    }
-
-    public List<Challenge> findChallengeByUserNoFromSubs(int userNo) {
-        return em.createQuery("select s.challenge from Subscription s where s.user.user_no = :user_no", Challenge.class)
-            .setParameter("user_no", userNo)
-            .getResultList();
-    }
-
-    public List<Subscription> findSubscriptionByChallenge(int challenge_no){
-        return em.createQuery("select s from Subscription s where s.challenge.no = :challenge_no", Subscription.class)
-                .setParameter("challenge_no", challenge_no)
-                .getResultList();
-    }
-
-    public Subscription findSubscriptionByChallengeAndUser(int challengeNo, int userNo) {
-        try{
-            return em.createQuery("select s from Subscription s where s.challenge.no = :challengeNo and s.user.user_no = :userNo", Subscription.class)
-                    .setParameter("challengeNo", challengeNo)
-                    .setParameter("userNo", userNo)
-                    .getSingleResult();
-        }catch (NoResultException e){
-            return null;
-        }
-    }
-
-    public List<Subscription> findSubscriptionByUser(int userNo) {
-        return em.createQuery("select s from Subscription s where s.user.user_no = :user_no", Subscription.class)
-                .setParameter("user_no", userNo)
-                .getResultList();
-    }
+    @Query("select s from Subscription s where s.user.no = :userNo")
+     List<Subscription> findByUserNo(int userNo);
 }

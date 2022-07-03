@@ -87,7 +87,8 @@ public class AdminService {
 
     @Transactional
     public void deleteComment(int comment_no){
-        Comment findComment = commentRepository.findOne(comment_no);
+        Comment findComment = commentRepository.findById(comment_no)
+                .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 없습니다."));
         commentRepository.delete(findComment);
     }
 

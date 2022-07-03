@@ -5,15 +5,12 @@ import com.ssafy.challympic.api.Dto.Post.*;
 import com.ssafy.challympic.api.Dto.User.UserShortListResponse;
 import com.ssafy.challympic.domain.*;
 import com.ssafy.challympic.service.*;
-import com.ssafy.challympic.util.S3Uploader;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -55,7 +52,7 @@ public class PostApiController {
             List<Comment> comments = commentService.findByPost(post.getNo());
             List<CommentDto> commentList = comments.stream()
                     .map(c -> {
-                        boolean IsLiked = commentLikeService.findIsLikeByUser(userNo, c.getComment_no());
+                        boolean IsLiked = commentLikeService.findIsLikeByUser(userNo, c.getNo());
                         return new CommentDto(c, IsLiked);
                     })
                     .collect(Collectors.toList());
@@ -103,7 +100,7 @@ public class PostApiController {
                 List<Comment> comments = commentService.findByPost(post.getNo());
                 List<CommentDto> commentList = comments.stream()
                         .map(c -> {
-                boolean IsLiked = commentLikeService.findIsLikeByUser(request.getUser_no(), c.getComment_no());
+                boolean IsLiked = commentLikeService.findIsLikeByUser(request.getUser_no(), c.getNo());
                 return new CommentDto(c, IsLiked);
             })
                         .collect(Collectors.toList());

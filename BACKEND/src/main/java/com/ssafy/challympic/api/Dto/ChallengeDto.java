@@ -6,12 +6,13 @@ import com.ssafy.challympic.domain.defaults.ChallengeType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
+@NoArgsConstructor
 public class ChallengeDto {
     private int challenge_no;
     private int user_no;

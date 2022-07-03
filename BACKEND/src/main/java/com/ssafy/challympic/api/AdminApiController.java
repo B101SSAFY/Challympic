@@ -82,7 +82,7 @@ public class AdminApiController {
         List<CommentDto> collect = commentList.stream()
                 .map(c -> {
                     CommentDto commentDto = new CommentDto(c);
-                    int like_cnt = commentLikeService.findLikeCntByComment(c.getComment_no());
+                    int like_cnt = commentLikeService.findLikeCntByComment(c.getNo());
                     commentDto.setLike_cnt(like_cnt);
                     return commentDto;
                 }).collect(Collectors.toList());
@@ -168,10 +168,10 @@ public class AdminApiController {
         private int comment_report;
 
         public CommentDto(Comment comment) {
-            this.comment_no = comment.getComment_no();
-            this.comment_content = comment.getComment_content();
-            this.comment_regdate = comment.getComment_regdate();
-            this.comment_report = comment.getComment_report();
+            this.comment_no = comment.getNo();
+            this.comment_content = comment.getContent();
+            this.comment_regdate = comment.getRegdate();
+            this.comment_report = comment.getReport();
         }
     }
 

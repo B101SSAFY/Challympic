@@ -1,22 +1,20 @@
 package com.ssafy.challympic.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+@Getter
+@NoArgsConstructor
 @Entity
-@Getter @Setter
-@AllArgsConstructor
 public class Media {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int file_no;
-    
+    private int no;
+
     // 원래 파일명
     private String file_name;
 
@@ -26,11 +24,11 @@ public class Media {
     // 저장된 파일명
     private String file_savedname;
 
-    public Media() {}
-
+    @Builder
     public Media(String file_name, String file_savedname, String file_path){
         this.file_name = file_name;
         this.file_savedname = file_savedname;
         this.file_path = file_path;
     }
 }
+

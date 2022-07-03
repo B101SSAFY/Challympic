@@ -23,7 +23,7 @@ public class UserShortListResponse {
         this.user_nickname = user.getNickname();
         this.user_title = user.getTitle();
         if(media != null){
-            this.file_no = media.getFile_no();
+            this.file_no = media.getNo();
             this.file_path = media.getFile_path();
             this.file_savedname = media.getFile_savedname();
         }

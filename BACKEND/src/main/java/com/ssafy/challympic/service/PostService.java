@@ -192,7 +192,7 @@ public class PostService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 포스트가 존재하지 않습니다."));
 
         s3Uploader.deleteS3(post.getMedia().getFile_path());
-        mediaService.delete(post.getMedia().getFile_no());
+        mediaService.delete(post.getMedia().getNo());
 
         String type = getFileType(request.getFile());
         Media media = s3Uploader.upload(request.getFile(), type.toLowerCase(), "media");
@@ -229,7 +229,7 @@ public class PostService {
 
         s3Uploader.deleteS3(media.getFile_path());
 
-        mediaService.delete(media.getFile_no());
+        mediaService.delete(media.getNo());
 
         List<PostTag> ptl = tagService.findPostTagList(postNo);
 

@@ -34,7 +34,7 @@ public class UserResponse {
         if (user.getMedia() == null) {
             this.file_no = 0;
         } else {
-            this.file_no = user.getMedia().getFile_no();
+            this.file_no = user.getMedia().getNo();
             this.file_path = user.getMedia().getFile_path();
             this.file_savedname = user.getMedia().getFile_savedname();
         }
@@ -57,7 +57,7 @@ public class UserResponse {
         if(user.getMedia() == null){
             this.file_no = 0;
         }else{
-            this.file_no = user.getMedia().getFile_no();
+            this.file_no = user.getMedia().getNo();
             this.file_path = user.getMedia().getFile_path();
             this.file_savedname = user.getMedia().getFile_savedname();
         }

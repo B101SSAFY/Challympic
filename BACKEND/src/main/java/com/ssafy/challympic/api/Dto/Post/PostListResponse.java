@@ -58,7 +58,7 @@ public class PostListResponse {
         this.challenge_type = post.getChallenge().getType().name().toLowerCase();
         this.challenge_name = post.getChallenge().getTitle();
         this.challenge_no = post.getChallenge().getNo();
-        this.file_no = post.getMedia().getFile_no();
+        this.file_no = post.getMedia().getNo();
         this.file_path = post.getMedia().getFile_path();
         this.file_savedname = post.getMedia().getFile_savedname();
         LikeCnt = likeCnt;

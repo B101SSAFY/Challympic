@@ -1,31 +1,31 @@
 package com.ssafy.challympic.domain;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
-@Getter @Setter
+@Getter
+@NoArgsConstructor
 public class Subscription {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "subscription_no")
-    private int subscription_no;
+    @Column(name = "no")
+    private int no;
 
     @ManyToOne
-    @JoinColumn(name = "challenge_no")
+    @JoinColumn(name = "no")
     private Challenge challenge;
 
     @ManyToOne
-    @JoinColumn(name = "user_no")
+    @JoinColumn(name = "no")
     private User user;
 
-    public static Subscription setSubscription(Challenge challenge, User user) {
-        Subscription subscription = new Subscription();
-        subscription.setChallenge(challenge);
-        subscription.setUser(user);
-        return subscription;
+    @Builder
+    public Subscription(Challenge challenge, User user) {
+        this.challenge = challenge;
+        this.user = user;
     }
-
 }

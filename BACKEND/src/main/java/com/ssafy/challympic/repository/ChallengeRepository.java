@@ -23,4 +23,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Integer>{
 
     @Query("select c from Challenge c where c.title = :title")
     List<Challenge> findByTitle(@Param("title")String title);
+
+    @Query("select s.challenge from Subscription s where s.user.no = :userNo")
+    List<Challenge> findByUserNoFromSubscription(@Param("userNo") int userNo);
 }

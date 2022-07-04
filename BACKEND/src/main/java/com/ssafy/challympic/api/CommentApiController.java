@@ -36,7 +36,7 @@ public class CommentApiController {
     public Result update(@RequestBody CommentUpdateRequest request){
         try {
             commentService.update(request);
-            return getResult(request.getPost_no());
+            return getResult(request.getPost_no(), request.getUser_no());
         }catch (Exception e){
             return new Result(false, HttpStatus.BAD_REQUEST.value());
         }
@@ -46,7 +46,7 @@ public class CommentApiController {
     public Result delete(@RequestBody CommentDeleteRequest request){
         try {
             commentService.delete(request.getComment_no());
-            return getResult(request.getPost_no());
+            return getResult(request.getPost_no(), request.getUser_no());
         }catch (Exception e){
             return new Result(false, HttpStatus.BAD_REQUEST.value());
         }
@@ -55,35 +55,20 @@ public class CommentApiController {
     /**
      * 프론트 수정 필요!
      * 업데이트, 삭제시 리스트 전체를 반환할 필요는 없어보임.
+     * 시간 반환 regdate 수정 필요!
      */
-    private Result getResult(int post) {
-        List<Comment> commentList = commentService.findByPost(post);
-        List<CommentDto> comments = new ArrayList<>();
-        if(!commentList.isEmpty()){
-            comments = commentList.stream()
-                    .map(c -> new CommentDto(c))
-                    .collect(Collectors.toList());
-        }
-        return new Result(true, HttpStatus.OK.value(), comments);
+    private Result getResult(int postNo, int userNo) {
+        List<CommentListResponse> commentList = commentService.findByPost(postNo, userNo);
+        return new Result(true, HttpStatus.OK.value(), commentList);
     }
 
     @PostMapping("/comment/like")
-    public Result like(@RequestBody CommentRequest request){
-        CommentLike commentLike = commentLikeService.findOne(request.user_no, request.comment_no);
-        if(commentLike != null){
-            commentLikeService.delete(request.user_no, request.comment_no);
-            return new Result(true, HttpStatus.OK.value(), null, false);
-        }else{
-            User user = userService.findByNo(request.user_no);
-            Comment comment = commentService.findOne(request.comment_no);
-            if(user == null || comment == null){
-                return new Result(true, HttpStatus.OK.value(), "유저나 코멘트가 이상", true);
-            }
-            commentLike = new CommentLike();
-            commentLike.setUser(user);
-            commentLike.setComment(comment);
-            commentLikeService.save(commentLike);
-            return new Result(true, HttpStatus.OK.value(), null, true);
+    public Result like(@RequestBody CommentLikeRequest request){
+        try {
+            boolean commentLike = commentLikeService.findCommentLike(request);
+            return new Result(true, HttpStatus.OK.value(), null, commentLike);
+        }catch (Exception e){
+            return new Result(false, HttpStatus.BAD_REQUEST.value());
         }
     }
 
@@ -95,39 +80,6 @@ public class CommentApiController {
         }catch (Exception e){
             return new Result(false, HttpStatus.BAD_REQUEST.value());
         }
-    }
-
-    @Data
-    static class CommentDto{
-        private int comment_no;
-        private String comment_content;
-        private int like_cnt;
-        private String comment_regdate;
-        private int comment_report;
-        private int user_no;
-        private String user_nickname;
-        private String user_profile;
-
-        public CommentDto(Comment comment) {
-            this.comment_no = comment.getNo();
-            this.comment_content = comment.getContent();
-            this.comment_report = comment.getReport();
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            this.comment_regdate = formatter.format(comment.getRegdate());
-            this.user_no = comment.getUser().getNo();
-            this.user_nickname = comment.getUser().getNickname();
-            if(comment.getUser().getMedia() != null){
-                this.user_profile = comment.getUser().getMedia().getFile_path()+File.separator+comment.getUser().getMedia().getFile_savedname();
-            }
-        }
-    }
-
-    @Data
-    static class CommentRequest{
-        private int comment_no;
-        private int user_no;
-        private int post_no;
-        private String comment_content;
     }
 
     /**

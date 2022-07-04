@@ -1,5 +1,6 @@
 package com.ssafy.challympic.api;
 
+import com.ssafy.challympic.api.Dto.Comment.CommentListResponse;
 import com.ssafy.challympic.api.Dto.CommentDto;
 import com.ssafy.challympic.api.Dto.Post.*;
 import com.ssafy.challympic.api.Dto.User.UserShortListResponse;
@@ -49,14 +50,7 @@ public class PostApiController {
                 isLike = postLikeService.getPostLikeByUserNoPostNo(post.getNo(), userNo);
             }
 
-            List<Comment> comments = commentService.findByPost(post.getNo());
-            List<CommentDto> commentList = comments.stream()
-                    .map(c -> {
-                        boolean IsLiked = commentLikeService.findIsLikeByUser(userNo, c.getNo());
-                        return new CommentDto(c, IsLiked);
-                    })
-                    .collect(Collectors.toList());
-
+            List<CommentListResponse> commentList = commentService.findByPost(post.getNo(), userNo);
             collect.add(PostListResponse.builder()
                     .post(post)
                     .isLike(isLike)
@@ -97,13 +91,7 @@ public class PostApiController {
                     isLike = postLikeService.getPostLikeByUserNoPostNo(post.getNo(), request.getUser_no());
                 }
 
-                List<Comment> comments = commentService.findByPost(post.getNo());
-                List<CommentDto> commentList = comments.stream()
-                        .map(c -> {
-                boolean IsLiked = commentLikeService.findIsLikeByUser(request.getUser_no(), c.getNo());
-                return new CommentDto(c, IsLiked);
-            })
-                        .collect(Collectors.toList());
+                List<CommentListResponse> commentList = commentService.findByPost(post.getNo(), request.getUser_no());
 
                 collect.add(PostListResponse.builder()
                         .post(post)

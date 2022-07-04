@@ -1,6 +1,7 @@
 package com.ssafy.challympic.service;
 
 import com.ssafy.challympic.api.CommentApiController;
+import com.ssafy.challympic.api.Dto.Comment.CommentListResponse;
 import com.ssafy.challympic.api.Dto.Comment.CommentResponse;
 import com.ssafy.challympic.api.Dto.Comment.CommentSaveRequest;
 import com.ssafy.challympic.api.Dto.Comment.CommentUpdateRequest;
@@ -8,15 +9,19 @@ import com.ssafy.challympic.domain.Alert;
 import com.ssafy.challympic.domain.Comment;
 import com.ssafy.challympic.domain.Post;
 import com.ssafy.challympic.domain.User;
+import com.ssafy.challympic.repository.CommentLikeRepository;
 import com.ssafy.challympic.repository.CommentRepository;
 import com.ssafy.challympic.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -30,6 +35,8 @@ public class CommentService {
     private final PostService postService;
 
     private final AlertService alertService;
+
+    private final CommentLikeRepository commentLikeRepository;
 
     @Transactional
     public CommentResponse save(CommentSaveRequest request){
@@ -71,8 +78,15 @@ public class CommentService {
         return new CommentResponse(comment);
     }
 
-    public List<Comment> findByPost(int post_no){
-        return commentRepository.findByPost_No(post_no);
+    public List<CommentListResponse> findByPost(int postNo, int userNo){
+        List<Comment> commentList = commentRepository.findByPost_No(postNo);
+        List<CommentListResponse> response = commentList.stream()
+                .map(c -> {
+                    boolean IsLiked = !commentLikeRepository.findByUser_NoAndComment_No(userNo, c.getNo()).isEmpty();
+                    return new CommentListResponse(c, IsLiked);
+                })
+                .collect(Collectors.toList());
+        return response;
     }
 
 //    public int findCommentLikeCnt(int )

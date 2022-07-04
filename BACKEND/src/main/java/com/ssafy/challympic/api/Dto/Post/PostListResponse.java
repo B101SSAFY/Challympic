@@ -1,5 +1,6 @@
 package com.ssafy.challympic.api.Dto.Post;
 
+import com.ssafy.challympic.api.Dto.Comment.CommentListResponse;
 import com.ssafy.challympic.api.Dto.CommentDto;
 import com.ssafy.challympic.domain.Post;
 import lombok.Builder;
@@ -42,10 +43,10 @@ public class PostListResponse {
     private boolean IsLike = false;
 
     // 댓글 리스트
-    private List<CommentDto> commentList;
+    private List<CommentListResponse> commentList;
 
     @Builder
-    public PostListResponse(Post post, Integer likeCnt, boolean isLike, List<CommentDto> commentList) {
+    public PostListResponse(Post post, Integer likeCnt, boolean isLike, List<CommentListResponse> commentList) {
         this.post_no = post.getNo();
         this.post_content = post.getPost_content();
         this.post_report = post.getPost_report();

@@ -1,9 +1,8 @@
 package com.ssafy.challympic.service;
 
 import com.ssafy.challympic.domain.*;
-import com.ssafy.challympic.repository.ChallengeRepository;
-import com.ssafy.challympic.repository.SearchRepository;
-import com.ssafy.challympic.repository.TagRepository;
+import com.ssafy.challympic.domain.SearchChallenge;
+import com.ssafy.challympic.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,31 +19,34 @@ public class SearchService {
     private final SearchRepository searchRepository;
     private final TagRepository tagRepository;
     private final ChallengeRepository challengeRepository;
+    private final UserRepository userRepository;
+    private final PostRepository postRepository;
+    private final SearchChallengeRepository searchChallengeRepository;
 
     public List<Tag> findTagList() {
-        List<Tag> tagList = searchRepository.findTagList();
+        List<Tag> tagList = tagRepository.findAll();
         tagList.removeIf(t -> t.getIsChallenge() != null);
         return tagList;
     }
 
     public List<User> findUserList(){
-        return searchRepository.findUserList();
+        return userRepository.findAll();
     }
 
     public List<Search> findTagListByUserNo(int userNo) {
-        return searchRepository.findTagListByUserNo(userNo);
+        return searchRepository.findByUserNo(userNo);
     }
 
     public List<Challenge> findChallengeListByTagContent(String tag) {
-        return searchRepository.findChallengeByTagContent(tag);
+        return challengeRepository.findByTagContent(tag);
     }
 
     public List<Post> findPostListByTagContent(String tag) {
-        return searchRepository.findPostByTagContent(tag);
+        return postRepository.findFromPostTagByTagContent(tag);
     }
 
     public List<Challenge> findTrendChallenge() {
-        List<Challenge> searchedChallenges = searchRepository.findChallengeByTrend();
+        List<Challenge> searchedChallenges = challengeRepository.findFromSearchChallenge();
         List<Challenge> allChallenge = challengeRepository.findAll();
         int challengeSize = allChallenge.size();
         List<int[]> challengeCount = new ArrayList<>();
@@ -81,7 +83,7 @@ public class SearchService {
     }
 
     public List<User> findRank() {
-        return searchRepository.findRank();
+        return userRepository.findRank();
     }
 
     @Transactional
@@ -94,11 +96,11 @@ public class SearchService {
             search.setTag_no(tag.getNo());
             search.setTag_content(tag.getContent());
         }
-        searchRepository.saveSearchRecord(search);
+        searchRepository.save(search);
     }
 
     @Transactional
     public void saveSearchChallenge(SearchChallenge searchChallenge){
-        searchRepository.saveSearchChallenge(searchChallenge);
+        searchChallengeRepository.save(searchChallenge);
     }
 }

@@ -18,4 +18,8 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     @Query("SELECT p FROM Post p WHERE p.no = (SELECT pt.post.no FROM PostTag pt WHERE pt.tag.content = :tagContent)")
     List<Post> findByTag(@Param("tagContent") String tagContent);
 
+    @Query("select pt.post from PostTag pt where pt.tag = " +
+            "(select t from Tag t where t.content = :tag)")
+    List<Post> findFromPostTagByTagContent(String tag);
+
 }

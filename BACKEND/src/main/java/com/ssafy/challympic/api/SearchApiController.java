@@ -3,16 +3,17 @@ package com.ssafy.challympic.api;
 import com.ssafy.challympic.api.Dto.ChallengeDto;
 import com.ssafy.challympic.api.Dto.PostDto;
 import com.ssafy.challympic.api.Dto.SearchDto;
+import com.ssafy.challympic.api.Dto.Tag.TagSearchRequest;
+import com.ssafy.challympic.api.Dto.User.UserNicknameResponse;
 import com.ssafy.challympic.domain.*;
 import com.ssafy.challympic.service.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,10 +32,7 @@ public class SearchApiController {
     @GetMapping("/search")
     public Result getSearchList() {
         List<Tag> tagList = searchService.findTagList();
-        List<User> users = searchService.findUserList();
-        List<UserDto> userList = users.stream()
-                .map(u -> new UserDto(u.getNo(), u.getNickname()))
-                .collect(Collectors.toList());
+        List<UserNicknameResponse> userList = searchService.findUserList();
 
         Map<String, List> data = new HashMap<>();
 
@@ -44,42 +42,28 @@ public class SearchApiController {
         return new Result(true, HttpStatus.OK.value(), data);
     }
 
-    @Data
-    @AllArgsConstructor
-    static class UserDto{
-        private int user_no;
-        private String user_nickname;
-    }
+
 
     /**
      * 태그 검색
      */
     @PostMapping("/search/tag")
     public Result searchTagList(@RequestBody TagSearchRequest request) {
-        List<Challenge> challenges = searchService.findChallengeListByTagContent("#" + request.tag_content);
-        List<Post> posts = searchService.findPostListByTagContent("#" + request.tag_content);
-        List<ChallengeDto> challengeList = challenges.stream()
-                .map(c -> {
-                    List<Post> postListByChallengeNo = postService.getPostList(c.getNo());
-                    List<PostDto> postList = postToDto(postListByChallengeNo, request.user_no);
-                    boolean isSubscription = subscriptionService.findSubscriptionByChallengeAndUser(c.getNo(), request.user_no) != null;
-                    return new ChallengeDto(c, postList, isSubscription);
-                })
-                .collect(Collectors.toList());
-        List<PostDto> postList = postToDto(posts, request.getUser_no());
+        List<ChallengeDto> challengeList = searchService.findChallengeListByTagContent(request);
+        List<PostDto> postList = searchService.findPostListByTagContent(request);
 
         Map<String, List> data = new HashMap<>();
         data.put("challengeList", challengeList);
         data.put("postList", postList);
 
-        if(request.user_no > 0){
+        if(request.getUser_no() > 0){
             // 검색 기록 저장
-            User user = userService.findByNo(request.user_no);
+            User user = userService.findByNo(request.getUser_no());
             if(user != null) {
-                searchService.saveSearchRecord("#" + request.tag_content, user);
+                searchService.saveSearchRecord("#" + request.getTag_content(), user);
             }
 
-            List<Challenge> tagContainChallenges = challengeService.findChallengesByTag("#" + request.tag_content);
+            List<Challenge> tagContainChallenges = challengeService.findChallengesByTag("#" + request.getTag_content());
             for(Challenge c : tagContainChallenges) {
                 SearchChallenge sc = new SearchChallenge();
                 sc.setUser(user);
@@ -88,7 +72,7 @@ public class SearchApiController {
             }
         }
 
-        List<Post> tagContainPost = postService.getPostByTag(request.tag_content);
+        List<Post> tagContainPost = postService.getPostByTag(request.getTag_content());
         for(Post p : tagContainPost) {
             Activity activity = new Activity();
             activity.setPost_no(p.getNo());
@@ -99,48 +83,21 @@ public class SearchApiController {
         return new Result(true, HttpStatus.OK.value(), data);
     }
 
-    private List<PostDto> postToDto(List<Post> posts, Integer userNo) {
-        return posts.stream()
-                .map(p -> {
-                    String challengeTitle = challengeService.findChallengeByChallengeNo(p.getChallenge().getNo()).getTitle();
-                    List<PostLike> postLikeList = postLikeService.getPostLikeListByPostNo(p.getNo());
-                    int commentCount = commentService.postCommentCnt(p.getNo());
-                    boolean isLike = postService.getPostLikeByPostNoAndUserNo(p.getNo(), userNo);
-                    return new PostDto(p,challengeTitle, postLikeList.size(), commentCount, isLike);
-                })
-                .collect(Collectors.toList());
-    }
-
-    @Data
-    static class TagSearchRequest {
-        private int user_no;
-        private String tag_content;
-    }
-
     @GetMapping("/search/recent/user/{userNo}")
     public Result searchRecentListByUser(@PathVariable int userNo){
-        List<Search> searchs = searchService.findTagListByUserNo(userNo);
-        List<SearchDto> searchList = searchs.stream()
-                .map(s -> new SearchDto(s.getSearch_no(), s.getUser().getNo(), s.getTag_no(), s.getTag_content(), s.getSearch_content(), s.getSearch_regdate()))
-                .collect(Collectors.toList());
+        List<SearchDto> searchList = searchService.findTagListByUserNo(userNo);
         return new Result(true, HttpStatus.OK.value(), searchList);
     }
 
     @GetMapping("/search/trending")
     public Result searchTrending() {
-        List<Challenge> trendChallenge = searchService.findTrendChallenge();
-        List<ChallengeDto> trendChallengeList = trendChallenge.stream()
-                .map(c -> new ChallengeDto(c))
-                .collect(Collectors.toList());
+        List<ChallengeDto> trendChallengeList = searchService.findTrendChallenge();
         return new Result(true, HttpStatus.OK.value(), trendChallengeList);
     }
 
     @GetMapping("/search/rank")
     public Result getRank() {
-        List<User> users = searchService.findRank();
-        List<UserDto> userList = users.stream()
-                .map(u -> new UserDto(u.getNo(), u.getNickname()))
-                .collect(Collectors.toList());
+        List<UserNicknameResponse> userList = searchService.findRank();
         return new Result(true, HttpStatus.OK.value(), userList);
     }
 

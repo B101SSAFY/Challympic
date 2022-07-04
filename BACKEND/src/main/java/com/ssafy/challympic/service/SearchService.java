@@ -1,7 +1,11 @@
 package com.ssafy.challympic.service;
 
+import com.ssafy.challympic.api.Dto.ChallengeDto;
+import com.ssafy.challympic.api.Dto.PostDto;
+import com.ssafy.challympic.api.Dto.SearchDto;
+import com.ssafy.challympic.api.Dto.Tag.TagSearchRequest;
+import com.ssafy.challympic.api.Dto.User.UserNicknameResponse;
 import com.ssafy.challympic.domain.*;
-import com.ssafy.challympic.domain.SearchChallenge;
 import com.ssafy.challympic.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -22,6 +27,11 @@ public class SearchService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final SearchChallengeRepository searchChallengeRepository;
+    private final PostService postService;
+    private final ChallengeService challengeService;
+    private final SubscriptionService subscriptionService;
+    private final PostLikeService postLikeService;
+    private final CommentService commentService;
 
     public List<Tag> findTagList() {
         List<Tag> tagList = tagRepository.findAll();
@@ -29,23 +39,50 @@ public class SearchService {
         return tagList;
     }
 
-    public List<User> findUserList(){
-        return userRepository.findAll();
+    public List<UserNicknameResponse> findUserList(){
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(u -> new UserNicknameResponse(u.getNo(), u.getNickname()))
+                .collect(Collectors.toList());
     }
 
-    public List<Search> findTagListByUserNo(int userNo) {
-        return searchRepository.findByUserNo(userNo);
+    public List<SearchDto> findTagListByUserNo(int userNo) {
+        List<Search> searches = searchRepository.findByUserNo(userNo);
+        return searches.stream()
+                .map(s -> new SearchDto(s.getSearch_no(), s.getUser().getNo(), s.getTag_no(), s.getTag_content(), s.getSearch_content(), s.getSearch_regdate()))
+                .collect(Collectors.toList());
     }
 
-    public List<Challenge> findChallengeListByTagContent(String tag) {
-        return challengeRepository.findByTagContent(tag);
+    public List<ChallengeDto> findChallengeListByTagContent(TagSearchRequest request) {
+        List<Challenge> challenges = challengeRepository.findByTagContent(request.getTag_content());
+        return challenges.stream()
+                .map(c -> {
+                    List<Post> postListByChallengeNo = postService.getPostList(c.getNo());
+                    List<PostDto> postList = postToDto(postListByChallengeNo, request.getUser_no());
+                    boolean isSubscription = subscriptionService.findSubscriptionByChallengeAndUser(c.getNo(), request.getUser_no()) != null;
+                    return new ChallengeDto(c, postList, isSubscription);
+                })
+                .collect(Collectors.toList());
     }
 
-    public List<Post> findPostListByTagContent(String tag) {
-        return postRepository.findFromPostTagByTagContent(tag);
+    private List<PostDto> postToDto(List<Post> posts, Integer userNo) {
+        return posts.stream()
+                .map(p -> {
+                    String challengeTitle = challengeService.findChallengeByChallengeNo(p.getChallenge().getNo()).getTitle();
+                    List<PostLike> postLikeList = postLikeService.getPostLikeListByPostNo(p.getNo());
+                    int commentCount = commentService.postCommentCnt(p.getNo());
+                    boolean isLike = postService.getPostLikeByPostNoAndUserNo(p.getNo(), userNo);
+                    return new PostDto(p,challengeTitle, postLikeList.size(), commentCount, isLike);
+                })
+                .collect(Collectors.toList());
     }
 
-    public List<Challenge> findTrendChallenge() {
+    public List<PostDto> findPostListByTagContent(TagSearchRequest request) {
+        List<Post> posts = postRepository.findFromPostTagByTagContent(request.getTag_content());
+        return postToDto(posts, request.getUser_no());
+    }
+
+    public List<ChallengeDto> findTrendChallenge() {
         List<Challenge> searchedChallenges = challengeRepository.findFromSearchChallenge();
         List<Challenge> allChallenge = challengeRepository.findAll();
         int challengeSize = allChallenge.size();
@@ -79,11 +116,16 @@ public class SearchService {
                     .findById(challengeNo).get());
         }
 
-        return trendChallenge;
+        return trendChallenge.stream()
+                .map(c -> new ChallengeDto(c))
+                .collect(Collectors.toList());
     }
 
-    public List<User> findRank() {
-        return userRepository.findRank();
+    public List<UserNicknameResponse> findRank() {
+        List<User> users = userRepository.findRank();
+        return users.stream()
+                .map(u -> new UserNicknameResponse(u.getNo(), u.getNickname()))
+                .collect(Collectors.toList());
     }
 
     @Transactional

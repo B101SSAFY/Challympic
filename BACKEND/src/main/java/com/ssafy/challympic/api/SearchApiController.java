@@ -21,13 +21,9 @@ public class SearchApiController {
 
     private final SearchService searchService;
     private final UserService userService;
-    private final TagService tagService;
     private final ChallengeService challengeService;
     private final PostService postService;
-    private final CommentService commentService;
-    private final SubscriptionService subscriptionService;
     private final ActivityService activityService;
-    private final PostLikeService postLikeService;
 
     @GetMapping("/search")
     public Result getSearchList() {
@@ -60,15 +56,12 @@ public class SearchApiController {
             // 검색 기록 저장
             User user = userService.findByNo(request.getUser_no());
             if(user != null) {
-                searchService.saveSearchRecord("#" + request.getTag_content(), user);
+                searchService.saveSearchRecord(request);
             }
 
             List<Challenge> tagContainChallenges = challengeService.findChallengesByTag("#" + request.getTag_content());
             for(Challenge c : tagContainChallenges) {
-                SearchChallenge sc = new SearchChallenge();
-                sc.setUser(user);
-                sc.setChallenge(c);
-                searchService.saveSearchChallenge(sc);
+                searchService.saveSearchChallenge(c, user);
             }
         }
 

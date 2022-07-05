@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -124,25 +125,34 @@ public class SearchService {
     public List<UserNicknameResponse> findRank() {
         List<User> users = userRepository.findRank();
         return users.stream()
-                .map(u -> new UserNicknameResponse(u.getNo(), u.getNickname()))
+                .map(u -> UserNicknameResponse.builder()
+                        .user_no(u.getNo())
+                        .user_nickname(u.getNickname())
+                        .build())
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public void saveSearchRecord(String search_content, User user) {
+    public void saveSearchRecord(TagSearchRequest request) {
+        String search_content = request.getTag_content();
+        User user = userRepository.findById(request.getUser_no()).orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
         Tag tag = tagRepository.findByTagContent(search_content);
-        Search search = new Search();
-        search.setSearch_content(search_content);
-        search.setUser(user);
+        Search search = Search.builder()
+                .search_content(search_content)
+                .user(user)
+                .build();
         if(tag != null) {
-            search.setTag_no(tag.getNo());
-            search.setTag_content(tag.getContent());
+            search = search.update(tag.getNo(), tag.getContent());
         }
         searchRepository.save(search);
     }
 
     @Transactional
-    public void saveSearchChallenge(SearchChallenge searchChallenge){
+    public void saveSearchChallenge(Challenge challenge, User user){
+        SearchChallenge searchChallenge = SearchChallenge.builder()
+                .user(user)
+                .challenge(challenge)
+                .build();
         searchChallengeRepository.save(searchChallenge);
     }
 }

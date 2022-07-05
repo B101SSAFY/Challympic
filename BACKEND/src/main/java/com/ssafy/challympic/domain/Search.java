@@ -1,18 +1,17 @@
 package com.ssafy.challympic.domain;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-
-import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.Date;
 
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
-@Getter @Setter
+@Getter
+@NoArgsConstructor
 public class Search {
 
     @Id
@@ -33,4 +32,21 @@ public class Search {
     @Column(columnDefinition = "TIMESTAMP default CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     private Date search_regdate;
+
+    @Builder
+    public Search(int search_no, User user, int tag_no, String tag_content, String search_content, Date search_regdate) {
+        this.search_no = search_no;
+        this.user = user;
+        this.tag_no = tag_no;
+        this.tag_content = tag_content;
+        this.search_content = search_content;
+        this.search_regdate = search_regdate;
+    }
+
+    public Search update(int tag_no, String tag_content) {
+        this.tag_no = tag_no;
+        this.tag_content = tag_content;
+
+        return this;
+    }
 }

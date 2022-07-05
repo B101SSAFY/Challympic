@@ -1,16 +1,15 @@
 package com.ssafy.challympic.domain;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
-
 import java.util.Date;
 
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
-@Getter @Setter
+@Getter
 public class SearchChallenge {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,4 +27,12 @@ public class SearchChallenge {
     @Column(columnDefinition = "TIMESTAMP default CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     private Date search_regdate;
+
+    @Builder
+    public SearchChallenge(int search_challenge_no, Challenge challenge, User user, Date search_regdate) {
+        this.search_challenge_no = search_challenge_no;
+        this.challenge = challenge;
+        this.user = user;
+        this.search_regdate = search_regdate;
+    }
 }

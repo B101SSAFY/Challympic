@@ -1,6 +1,9 @@
 package com.ssafy.challympic.api;
 
-import com.ssafy.challympic.domain.*;
+import com.ssafy.challympic.api.Dto.SearchDto;
+import com.ssafy.challympic.domain.Activity;
+import com.ssafy.challympic.domain.Result;
+import com.ssafy.challympic.domain.Tag;
 import com.ssafy.challympic.service.ActivityService;
 import com.ssafy.challympic.service.SearchService;
 import com.ssafy.challympic.service.TagService;
@@ -10,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -96,9 +101,9 @@ public class ActivityApiController {
     }
 
     private List<Tag> getTagsVer01(int userNo) {
-        List<Search> searchList = searchService.findTagListByUserNo(userNo);
+        List<SearchDto> searchList = searchService.findTagListByUserNo(userNo);
         List<Tag> tagAll = new ArrayList<>();
-        for(Search search : searchList) {
+        for(SearchDto search : searchList) {
             Tag searchTag = tagService.findTagByTagContent(search.getTag_content());
             if(searchTag.getIsChallenge()  == null) tagAll.add(searchTag);
         }

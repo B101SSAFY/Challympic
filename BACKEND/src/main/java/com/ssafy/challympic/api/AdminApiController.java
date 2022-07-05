@@ -1,6 +1,15 @@
 package com.ssafy.challympic.api;
 
-import com.ssafy.challympic.domain.*;
+import com.ssafy.challympic.api.Dto.Challenge.ChallengeRequest;
+import com.ssafy.challympic.api.Dto.ChallengeDto;
+import com.ssafy.challympic.api.Dto.Comment.CommentDeleteRequest;
+import com.ssafy.challympic.api.Dto.QnA.QnADto;
+import com.ssafy.challympic.api.Dto.QnA.QnARequest;
+import com.ssafy.challympic.api.Dto.User.UserRequest;
+import com.ssafy.challympic.domain.Comment;
+import com.ssafy.challympic.domain.QnA;
+import com.ssafy.challympic.domain.Result;
+import com.ssafy.challympic.domain.User;
 import com.ssafy.challympic.domain.defaults.UserActive;
 import com.ssafy.challympic.service.*;
 import lombok.Data;
@@ -10,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @RestController
@@ -42,37 +52,28 @@ public class AdminApiController {
 
     @PutMapping("/admin/users")
     public Result inactiveUser(@RequestBody UserRequest userRequest){
-        adminService.updateUserActive(userRequest.user_no);
+        adminService.updateUserActive(userRequest.getUser_no());
         return new Result(true, HttpStatus.OK.value());
     }
 
     @DeleteMapping("/admin/users")
     public Result deleteUser(@RequestBody UserRequest userRequest){
-        adminService.deleteUser(userRequest.user_no);
+        adminService.deleteUser(userRequest.getUser_no());
         return new Result(true, HttpStatus.OK.value());
     }
 
     @GetMapping("/admin/challenges")
     public Result challengeList(){
-        List<Challenge> challengeList = adminService.challengeList();
-        List<ChallengeDto> collect = challengeList.stream()
-                .map(c -> {
-                    ChallengeDto challengeDto = new ChallengeDto(c);
-                    int post_cnt = postService.postCntByChallenge(c.getNo());
-                    challengeDto.setPost_cnt(post_cnt);
-                    int subscription_cnt = subscriptionService.findSubscriptionByChallenge(c.getNo());
-                    challengeDto.setSubscription_cnt(subscription_cnt);
-                    return challengeDto;
-                }).collect(Collectors.toList());
-        return new Result(true, HttpStatus.OK.value(), collect);
+        List<ChallengeDto> challengeList = adminService.challengeList();
+        return new Result(true, HttpStatus.OK.value(), challengeList);
     }
 
     @DeleteMapping("/admin/challenges")
     public Result deleteChallenge(@RequestBody ChallengeRequest challengeRequest){
         // 하위 포스트 삭제
-        adminService.deletePostByChallenge(challengeRequest.challenge_no);
+        adminService.deletePostByChallenge(challengeRequest.getChallenge_no());
         // 챌린지 삭제
-        adminService.deleteChallenge(challengeRequest.challenge_no);
+        adminService.deleteChallenge(challengeRequest.getChallenge_no());
         return new Result(true, HttpStatus.OK.value());
     }
 
@@ -90,74 +91,31 @@ public class AdminApiController {
     }
 
     @DeleteMapping("/admin/comments")
-    public Result deleteComment(@RequestBody CommentRequest commentRequest){
-        adminService.deleteComment(commentRequest.comment_no);
+    public Result deleteComment(@RequestBody CommentDeleteRequest commentRequest){
+        adminService.deleteComment(commentRequest.getComment_no());
         return new Result(true, HttpStatus.OK.value());
     }
 
     @GetMapping("/admin/qna")
     public Result qnaList(){
-        List<QnA> qnaList = adminService.qnaList();
-        List<QnADto> collect = qnaList.stream()
-                .map(q -> {
-                    QnADto qnaDto = new QnADto(q);
-                    if(q.getQna_answer() == null) qnaDto.setAnswer(false);
-                    else qnaDto.setAnswer(true);
-                    return qnaDto;
-                }).collect(Collectors.toList());
-        return new Result(true, HttpStatus.OK.value(), collect);
+        List<QnADto> qnaList = adminService.qnaList();
+        return new Result(true, HttpStatus.OK.value(), qnaList);
     }
 
     @PutMapping("/admin/qna")
     public Result answer(@RequestBody QnARequest qnaRequest){
-        adminService.updateQnA(qnaRequest.qna_no, qnaRequest.qna_answer);
-        QnA findOne = qnaService.findOne(qnaRequest.qna_no);
-        if(findOne.getQna_answer() == null) return new Result(false, HttpStatus.BAD_REQUEST.value());
+        QnA findOne;
+        try{
+            adminService.updateQnA(qnaRequest.getQna_no(), qnaRequest.getQna_answer());
+            findOne = qnaService.findOne(qnaRequest.getQna_no());
+        } catch (NoSuchElementException e) {
+            return new Result(false, HttpStatus.BAD_REQUEST.value());
+        }
+
+        if(findOne.getAnswer() == null) return new Result(false, HttpStatus.BAD_REQUEST.value());
         else return new Result(true, HttpStatus.OK.value());
     }
 
-    @Data
-    static class QnARequest{
-        private int qna_no;
-        private String qna_answer;
-    }
-
-    @Data
-    static class CommentRequest{
-        private int comment_no;
-    }
-
-    @Data
-    static class ChallengeRequest{
-        private int challenge_no;
-    }
-
-    @Data
-    static class UserRequest{
-        private int user_no;
-    }
-
-    @Data
-    static class QnADto{
-        private int qna_no;
-        private String user_email;
-        private String qna_title;
-        private String qna_question;
-        private String qna_answer;
-        private Date qna_question_regdate;
-        private Date qna_answer_regdate;
-        private boolean isAnswer;
-
-        public QnADto(QnA qna) {
-            this.qna_no = qna.getQna_no();
-            this.user_email = qna.getUser().getEmail();
-            this.qna_title = qna.getQna_title();
-            this.qna_question = qna.getQna_question();
-            this.qna_answer = qna.getQna_answer();
-            this.qna_question_regdate = qna.getQna_question_regdate();
-            this.qna_answer_regdate = qna.getQna_answer_regdate();
-        }
-    }
 
     @Data
     static class CommentDto{
@@ -172,29 +130,6 @@ public class AdminApiController {
             this.comment_content = comment.getContent();
             this.comment_regdate = comment.getRegdate();
             this.comment_report = comment.getReport();
-        }
-    }
-
-    @Data
-    static class ChallengeDto{
-        private int challenge_no;
-        private String challenge_title;
-        private String user_email;
-        private int post_cnt;
-        private int subscription_cnt;
-        private Date challenge_start;
-        private Date challenge_end;
-        private boolean challenge_official;
-        private int challenge_report;
-
-        public ChallengeDto(Challenge challenge) {
-            this.challenge_no = challenge.getNo();
-            this.challenge_title = challenge.getTitle();
-            this.user_email = challenge.getUser().getEmail();
-            this.challenge_start = challenge.getStart();
-            this.challenge_end = challenge.getEnd();
-            this.challenge_official = challenge.isOfficial();
-            this.challenge_report = challenge.getReport();
         }
     }
 

@@ -1,11 +1,9 @@
 package com.ssafy.challympic.api.Dto.Post;
 
 import com.ssafy.challympic.api.Dto.Comment.CommentListResponse;
-import com.ssafy.challympic.api.Dto.CommentDto;
 import com.ssafy.challympic.domain.Post;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.io.File;
 import java.util.Date;
@@ -50,8 +48,8 @@ public class PostListResponse {
         this.post_no = post.getNo();
         this.post_content = post.getPost_content();
         this.post_report = post.getPost_report();
-        this.post_regdate = post.getPost_regdate();
-        this.post_update = post.getPost_update();
+        this.post_regdate = java.sql.Timestamp.valueOf(post.getCreatedDate());
+        this.post_update = java.sql.Timestamp.valueOf(post.getModifiedDate());
         this.user_no = post.getUser().getNo();
         this.user_nickname = post.getUser().getNickname();
         this.user_title = post.getUser().getTitle();
@@ -65,5 +63,24 @@ public class PostListResponse {
         LikeCnt = likeCnt;
         IsLike = isLike;
         this.commentList = commentList;
+    }
+
+    @Builder
+    public PostListResponse(Post post) {
+        this.post_no = post.getNo();
+        this.post_content = post.getPost_content();
+        this.post_report = post.getPost_report();
+        this.post_regdate = java.sql.Timestamp.valueOf(post.getCreatedDate());
+        this.post_update = java.sql.Timestamp.valueOf(post.getModifiedDate());
+        this.user_no = post.getUser().getNo();
+        this.user_nickname = post.getUser().getNickname();
+        this.user_title = post.getUser().getTitle();
+        this.user_profile = post.getUser().getMedia()==null?null:post.getUser().getMedia().getFile_path()+ File.separator+post.getUser().getMedia().getFile_savedname();
+        this.challenge_type = post.getChallenge().getType().name().toLowerCase();
+        this.challenge_name = post.getChallenge().getTitle();
+        this.challenge_no = post.getChallenge().getNo();
+        this.file_no = post.getMedia().getNo();
+        this.file_path = post.getMedia().getFile_path();
+        this.file_savedname = post.getMedia().getFile_savedname();
     }
 }

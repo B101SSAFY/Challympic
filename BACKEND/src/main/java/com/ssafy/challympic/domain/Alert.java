@@ -1,5 +1,6 @@
 package com.ssafy.challympic.domain;
 
+import com.ssafy.challympic.domain.defaults.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Alert {
+public class Alert extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "alert_no")
@@ -26,10 +27,6 @@ public class Alert {
     private String content;
 
     private boolean confirm;
-
-    @Column(columnDefinition = "TIMESTAMP default CURRENT_TIMESTAMP")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date regDate;
 
     @Builder
     public Alert(User user, String content, boolean confirm) {

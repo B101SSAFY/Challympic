@@ -1,5 +1,6 @@
 package com.ssafy.challympic.domain;
 
+import com.ssafy.challympic.domain.defaults.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,7 @@ import java.util.Date;
 @Entity
 @Getter
 @NoArgsConstructor
-public class QnA {
+public class QnA extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,28 +29,17 @@ public class QnA {
 
     private String answer;
 
-    @Column(columnDefinition = "TIMESTAMP default CURRENT_TIMESTAMP")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date question_regdate;
-
-    @Column(columnDefinition = "TIMESTAMP default CURRENT_TIMESTAMP")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date answer_regdate;
-
     @Builder
-    public QnA(int no, User user, String title, String question, String answer, Date question_regdate, Date answer_regdate) {
+    public QnA(int no, User user, String title, String question, String answer) {
         this.no = no;
         this.user = user;
         this.title = title;
         this.question = question;
         this.answer = answer;
-        this.question_regdate = question_regdate;
-        this.answer_regdate = answer_regdate;
     }
 
-    public QnA update(String answer, Date answer_regdate) {
+    public QnA update(String answer) {
         this.answer = answer;
-        this.answer_regdate = answer_regdate;
         return this;
     }
 }

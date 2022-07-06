@@ -1,5 +1,6 @@
 package com.ssafy.challympic.domain;
 
+import com.ssafy.challympic.domain.defaults.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import java.util.Date;
 @Getter
 @NoArgsConstructor
 @Entity
-public class Post {
+public class Post extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,12 +34,6 @@ public class Post {
 
     private int post_report;
 
-    @Column(columnDefinition = "TIMESTAMP default CURRENT_TIMESTAMP", updatable = false)
-    private Date post_regdate;
-
-    @Column(columnDefinition = "TIMESTAMP default CURRENT_TIMESTAMP")
-    private Date post_update;
-
     @Builder
     public Post(User user, Challenge challenge, Media media, String post_content) {
         this.user = user;
@@ -51,14 +46,11 @@ public class Post {
     public Post update(Media media, String post_content){
         this.media = media;
         this.post_content = post_content;
-        this.post_update = new Date();
-
         return this;
     }
 
     public Post updateReport(){
         this.post_report++;
-
         return this;
     }
 }

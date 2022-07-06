@@ -1,5 +1,6 @@
 package com.ssafy.challympic.domain;
 
+import com.ssafy.challympic.domain.defaults.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Entity
-public class Comment {
+public class Comment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,14 +29,6 @@ public class Comment {
     @Column(nullable = false)
     private String content;
 
-    @Column(columnDefinition = "TIMESTAMP default CURRENT_TIMESTAMP")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date regdate;
-
-    @Column(columnDefinition = "TIMESTAMP default CURRENT_TIMESTAMP")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date update;
-
     private int report;
 
     @OneToMany(mappedBy = "comment")
@@ -51,7 +44,6 @@ public class Comment {
 
     public Comment update(String content){
         this.content = content;
-        this.update = new Date();
         return this;
     }
 

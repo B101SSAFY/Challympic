@@ -1,5 +1,6 @@
 package com.ssafy.challympic.domain;
 
+import com.ssafy.challympic.domain.defaults.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,7 +11,7 @@ import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-public class SearchChallenge {
+public class SearchChallenge extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "search_challenge_no")
@@ -24,15 +25,10 @@ public class SearchChallenge {
     @JoinColumn(name = "user_no")
     private User user;
 
-    @Column(columnDefinition = "TIMESTAMP default CURRENT_TIMESTAMP")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date search_regdate;
-
     @Builder
-    public SearchChallenge(int search_challenge_no, Challenge challenge, User user, Date search_regdate) {
+    public SearchChallenge(int search_challenge_no, Challenge challenge, User user) {
         this.search_challenge_no = search_challenge_no;
         this.challenge = challenge;
         this.user = user;
-        this.search_regdate = search_regdate;
     }
 }

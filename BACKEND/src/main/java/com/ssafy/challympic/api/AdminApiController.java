@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -122,13 +123,13 @@ public class AdminApiController {
         private int comment_no;
         private String comment_content;
         private int like_cnt;
-        private Date comment_regdate;
+        private LocalDateTime comment_regdate;
         private int comment_report;
 
         public CommentDto(Comment comment) {
             this.comment_no = comment.getNo();
             this.comment_content = comment.getContent();
-            this.comment_regdate = comment.getRegdate();
+            this.comment_regdate = comment.getCreatedDate();
             this.comment_report = comment.getReport();
         }
     }

@@ -34,7 +34,7 @@ public class AlertApiController {
     public Result getAlert(@PathVariable int userNo) {
         List<Alert> alerts = alertService.findAlertByUserNo(userNo);
         List<AlertDto> alertList = alerts.stream()
-                .map(a -> new AlertDto(a.getUser().getNo(), a.getContent(), a.isConfirm(), a.getRegDate()))
+                .map(a -> new AlertDto(a.getUser().getNo(), a.getContent(), a.isConfirm(), a.getCreatedDate()))
                 .collect(Collectors.toList());
         return new Result(true, HttpStatus.OK.value(), alertList);
     }

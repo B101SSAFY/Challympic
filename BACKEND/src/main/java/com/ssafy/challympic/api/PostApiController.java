@@ -39,16 +39,8 @@ public class PostApiController {
 
         for(Post post : postList){
             List<PostLike> postLikeList = postLikeService.getPostLikeListByPostNo(post.getNo());
-            int likeCnt = 0;
-            // 좋아요 수
-            if(postLikeList.size() != 0){
-                likeCnt = postLikeList.size();
-            }
-
-            boolean isLike = false;
-            if(userNo != null) {
-                isLike = postLikeService.getPostLikeByUserNoPostNo(post.getNo(), userNo);
-            }
+            int likeCnt = postLikeList.size();
+            boolean isLike = postLikeService.getPostLikeByUserNoPostNo(post.getNo(), userNo);
 
             List<CommentListResponse> commentList = commentService.findByPost(post.getNo(), userNo);
             collect.add(PostListResponse.builder()
@@ -115,20 +107,22 @@ public class PostApiController {
     @GetMapping("/post/{postNo}/like/{userNo}")
     public Result likeList(@PathVariable("postNo") int postNo, @PathVariable("userNo") int userNo){
 
-        // PostLike에서 게시글이 post인 것 추출
+        try{
+            // PostLike에서 게시글이 post인 것 추출
+            // 받는 쪽에서 길이 구해서 좋아요 수 출력
+            List<PostLike> postLikeList = postLikeService.getPostLikeListByPostNo(postNo);
 
-        // 받는 쪽에서 길이 구해서 좋아요 수 출력
-        List<PostLike> postLikeList = postLikeService.getPostLikeListByPostNo(postNo);
-
-        // 좋아요 누른 유저 정보만 가져오기
-        List<UserShortListResponse> userList = new ArrayList<>();
-        for(PostLike postLike : postLikeList){
-            User user = userService.findByNo(postLike.getUser().getNo());
-            boolean follow = followService.isFollow(userNo, user.getNo());
-            userList.add(new UserShortListResponse(user, user.getMedia(), follow));
+            // 좋아요 누른 유저 정보만 가져오기
+            List<UserShortListResponse> userList = new ArrayList<>();
+            for(PostLike postLike : postLikeList){
+                User user = userService.findByNo(postLike.getUser().getNo());
+                boolean follow = followService.isFollow(userNo, user.getNo());
+                userList.add(new UserShortListResponse(user, user.getMedia(), follow));
+            }
+            return new Result(true, HttpStatus.OK.value(), userList);
+        }catch (Exception e){
+            return new Result(false, HttpStatus.BAD_REQUEST.value());
         }
-
-        return new Result(true, HttpStatus.OK.value(), userList);
     }
     
     /** 
@@ -144,22 +138,16 @@ public class PostApiController {
     @PostMapping("/challenge/{challengeNo}/post")
     public Result create(@PathVariable("challengeNo") int challengeNo, PostSaveRequest request) throws IOException {
 
-        int returnNo = postService.save(challengeNo, request);
         try{
-            return new Result(true, HttpStatus.OK.value());
+            int returnNo = postService.save(challengeNo, request);
+            Post post = postService.getPost(returnNo);
+            PostListResponse returnPost = PostListResponse.builder()
+                    .post(post)
+                    .build();
+            return new Result(true, HttpStatus.OK.value(), returnPost);
         }catch (Exception e){
             return new Result(false, HttpStatus.BAD_REQUEST.value());
         }
-
-        /**
-         * 왜 cr을 보내는지 이해하지 못했음 프론트 수정이 필요할 수 있습니다..
-         */
-//        if(returnNo != -1) {
-//            CreateResult cr = new CreateResult();
-//            cr.setPost_no(returnNo);
-//            cr.setMedia(media);
-//            return new Result(true, HttpStatus.OK.value(), cr);
-//        }
 
     }
     
@@ -174,7 +162,18 @@ public class PostApiController {
 
         try{
             int returnNo = postService.update(postNo, request);
-            return new Result(true, HttpStatus.OK.value());
+            Post post = postService.getPost(returnNo);
+            int likeCnt = postLikeService.getPostLikeListByPostNo(postNo).size();
+            boolean isLike = postLikeService.getPostLikeByUserNoPostNo(post.getNo(), post.getUser().getNo());
+
+            List<CommentListResponse> commentList = commentService.findByPost(post.getNo(), post.getUser().getNo());
+            PostListResponse returnPost = PostListResponse.builder()
+                    .post(post)
+                    .isLike(isLike)
+                    .likeCnt(likeCnt)
+                    .commentList(commentList)
+                    .build();
+            return new Result(true, HttpStatus.OK.value(), returnPost);
         }catch (Exception e){
             return new Result(false, HttpStatus.BAD_REQUEST.value());
         }
@@ -202,16 +201,16 @@ public class PostApiController {
     @PostMapping("/post/{postNo}/like/{userNo}")
     public Result like(@PathVariable("postNo") int postNo, @PathVariable("userNo") int userNo){
 
-        if (postLikeService.getPostLikeByUserNoPostNo(postNo, userNo)){
-            postLikeService.delete(postNo, userNo);
-        }else{
-            // insert
-            postLikeService.save(PostLike.builder()
-                    .post(postService.getPost(postNo))
-                    .user(userService.findByNo(userNo))
-                    .build());
-        }
         try{
+            if (postLikeService.getPostLikeByUserNoPostNo(postNo, userNo)){
+                postLikeService.delete(postNo, userNo);
+            }else{
+                // insert
+                postLikeService.save(PostLike.builder()
+                        .post(postService.getPost(postNo))
+                        .user(userService.findByNo(userNo))
+                        .build());
+            }
             return new Result(true, HttpStatus.OK.value());
         }catch (Exception e){
             return new Result(false, HttpStatus.BAD_REQUEST.value());

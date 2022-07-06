@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -63,7 +62,7 @@ public class AdminService {
                             .challenge_no(c.getNo())
                             .challenge_title(c.getTitle())
                             .user_email(c.getUser().getEmail())
-                            .challenge_start(c.getStart())
+                            .challenge_start(c.getCreatedDate())
                             .challenge_end(c.getEnd())
                             .challenge_official(c.isOfficial())
                             .challenge_report(c.getReport())
@@ -138,8 +137,8 @@ public class AdminService {
                             .qna_title(q.getTitle())
                             .qna_question(q.getQuestion())
                             .qna_answer(q.getAnswer())
-                            .qna_answer_regdate(q.getAnswer_regdate())
-                            .qna_question_regdate(q.getQuestion_regdate()).build();
+                            .qna_answer_regdate(q.getModifiedDate())
+                            .qna_question_regdate(q.getCreatedDate()).build();
                     if(q.getAnswer() == null) qnaDto = qnaDto.update(false);
                     else qnaDto = qnaDto.update(false);
                     return qnaDto;
@@ -149,6 +148,6 @@ public class AdminService {
     @Transactional
     public void updateQnA(int qna_no, String qna_answer){
         QnA findQnA = qnaRepository.findById(qna_no).orElseThrow(() -> new NoSuchElementException("존재하지 않는 QnA입니다."));
-        findQnA.update(qna_answer, new Date());
+        findQnA.update(qna_answer);
     }
 }

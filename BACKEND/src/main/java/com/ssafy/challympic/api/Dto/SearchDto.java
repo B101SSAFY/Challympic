@@ -3,6 +3,7 @@ package com.ssafy.challympic.api.Dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -13,5 +14,5 @@ public class SearchDto {
     private int tag_no;
     private String tag_content;
     private String search_content;
-    private Date search_regdate;
+    private LocalDateTime search_regdate;
 }

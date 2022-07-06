@@ -24,7 +24,7 @@ public class CommentResponse {
         this.comment_content = comment.getContent();
         this.comment_report = comment.getReport();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        this.comment_regdate = formatter.format(comment.getRegdate());
+        this.comment_regdate = formatter.format(comment.getCreatedDate());
         this.user_no = comment.getUser().getNo();
         this.user_nickname = comment.getUser().getNickname();
         if(comment.getUser().getMedia() != null){

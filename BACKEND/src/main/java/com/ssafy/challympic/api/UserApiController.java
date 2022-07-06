@@ -53,23 +53,24 @@ public class UserApiController {
 
     @PutMapping("/user/account/{userNo}/pwd")
     public Result updatePwd(@PathVariable("userNo") int no, @RequestBody UserUpdatePwdRequest request){
-        int returnNo = userService.updatePwd(no, request);
-        User byNo = userService.findByNo(returnNo);
-
-        return new Result(true, HttpStatus.OK.value(), new UserResponse(byNo));
+        try{
+            int returnNo = userService.updatePwd(no, request);
+            User byNo = userService.findByNo(returnNo);
+            return new Result(true, HttpStatus.OK.value(), new UserResponse(byNo));
+        }catch (Exception e){
+            return new Result(false, HttpStatus.BAD_REQUEST.value());
+        }
     }
 
     @DeleteMapping("/user/account/{userNo}")
     public Result deleteUser(@PathVariable("userNo") int user_no){
         userService.deleteUser(user_no);
-
         return new Result(true, HttpStatus.OK.value());
     }
 
     @PostMapping("/confirm/email")
     public Result confirmEmail(@RequestBody UserConfirmRequest request){
         boolean result = userService.validateDuplicateEmail(request.getUser_email());
-
         return new Result(true, HttpStatus.OK.value(), result);
     }
 

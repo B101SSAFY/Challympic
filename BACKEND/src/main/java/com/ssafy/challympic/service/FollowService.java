@@ -65,7 +65,14 @@ public class FollowService {
      */
     public List<FollowListResponse> following(int userNo, int loginUser){
         List<Follow> following = followRepository.findBySrcUser_No(userNo);
-        return getFollowListResponses(userNo, loginUser, following);
+        return following.stream()
+                .map(f ->{
+                    User user = userRepository.findById(f.getDestUser().getNo())
+                            .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다. "));
+                    boolean isFollow = followRepository.findBySrcUser_NoAndDestUser_No(loginUser, f.getDestUser().getNo()).isEmpty();
+                    return new FollowListResponse(user, !isFollow);
+                })
+                .collect(Collectors.toList());
     }
 
     /**
@@ -75,23 +82,18 @@ public class FollowService {
      */
     public List<FollowListResponse> follower(int userNo, int loginUser){
         List<Follow> follower = followRepository.findByDestUser_No(userNo);
-        return getFollowListResponses(userNo, loginUser, follower);
-    }
-
-    private List<FollowListResponse> getFollowListResponses(int userNo, int loginUser, List<Follow> follower) {
-        List<FollowListResponse> followerList = follower.stream()
+        return follower.stream()
                 .map(f ->{
-                    User user = userRepository.findById(f.getDestUser().getNo())
+                    User user = userRepository.findById(f.getSrcUser().getNo())
                             .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다. "));
-                    boolean isFollow = followRepository.findBySrcUser_NoAndDestUser_No(loginUser, userNo).isEmpty();
+                    boolean isFollow = followRepository.findBySrcUser_NoAndDestUser_No(loginUser, f.getSrcUser().getNo()).isEmpty();
                     return new FollowListResponse(user, !isFollow);
                 })
                 .collect(Collectors.toList());
-        return followerList;
     }
 
     public boolean isFollow(int srcNo, int destNo) {
-        return followRepository.findBySrcUser_NoAndDestUser_No(srcNo, destNo).isEmpty();
+        return !followRepository.findBySrcUser_NoAndDestUser_No(srcNo, destNo).isEmpty();
     }
 
     public int followingCnt(int userNo) {

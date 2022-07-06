@@ -1,5 +1,6 @@
 package com.ssafy.challympic.domain;
 
+import com.ssafy.challympic.domain.defaults.BaseTimeEntity;
 import com.ssafy.challympic.domain.defaults.UserActive;
 import com.ssafy.challympic.domain.defaults.UserAuthEnum;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import static javax.persistence.FetchType.LAZY;
 @Table(uniqueConstraints = {@UniqueConstraint(name = "email_nickname_unique", columnNames = {"email", "nickname"})})
 @NoArgsConstructor
 @Entity
-public class User {
+public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동 생성 전략. AUTO_INCREMENT0
@@ -31,10 +32,6 @@ public class User {
     @Column(columnDefinition = "varchar(100) default 'USER'")
     @Enumerated(EnumType.STRING)
     private UserAuthEnum auth = UserAuthEnum.USER;
-
-    @Column(columnDefinition = "TIMESTAMP default CURRENT_TIMESTAMP")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date regdate;
 
     @Column(columnDefinition = "varchar(100) default 'ACTIVE'")
     @Enumerated(EnumType.STRING)
@@ -85,7 +82,6 @@ public class User {
         this.nickname = nickname;
         this.media = file;
         this.title = title;
-
         return this;
     }
 

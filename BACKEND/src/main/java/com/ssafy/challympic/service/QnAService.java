@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -29,8 +28,6 @@ public class QnAService {
                 .user(user)
                 .title(request.getQna_title())
                 .question(request.getQna_question())
-                .answer_regdate(new Date())
-                .question_regdate(new Date())
                 .build();
         qnARepository.save(qnA);
     }
@@ -45,8 +42,8 @@ public class QnAService {
                                 .qna_title(q.getTitle())
                                 .qna_question(q.getQuestion())
                                 .qna_answer(q.getAnswer())
-                                .qna_question_regdate(q.getQuestion_regdate())
-                                .qna_answer_regdate(q.getAnswer_regdate())
+                                .qna_question_regdate(q.getCreatedDate())
+                                .qna_answer_regdate(q.getModifiedDate())
                                 .build()
                         )
                 .collect(Collectors.toList());

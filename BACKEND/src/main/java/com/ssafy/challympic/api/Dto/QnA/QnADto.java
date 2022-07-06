@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -15,12 +16,12 @@ public class QnADto {
     private String qna_title;
     private String qna_question;
     private String qna_answer;
-    private Date qna_question_regdate;
-    private Date qna_answer_regdate;
+    private LocalDateTime qna_question_regdate;
+    private LocalDateTime qna_answer_regdate;
     private boolean isAnswer;
 
     @Builder
-    public QnADto(int qna_no, String user_nickname, String user_email, String qna_title, String qna_question, String qna_answer, Date qna_question_regdate, Date qna_answer_regdate, boolean isAnswer) {
+    public QnADto(int qna_no, String user_nickname, String user_email, String qna_title, String qna_question, String qna_answer, LocalDateTime qna_question_regdate, LocalDateTime qna_answer_regdate, boolean isAnswer) {
         this.qna_no = qna_no;
         this.user_nickname = user_nickname;
         this.user_email = user_email;

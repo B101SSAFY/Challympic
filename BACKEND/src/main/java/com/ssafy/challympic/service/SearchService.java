@@ -50,7 +50,7 @@ public class SearchService {
     public List<SearchDto> findTagListByUserNo(int userNo) {
         List<Search> searches = searchRepository.findByUserNo(userNo);
         return searches.stream()
-                .map(s -> new SearchDto(s.getSearch_no(), s.getUser().getNo(), s.getTag_no(), s.getTag_content(), s.getSearch_content(), s.getSearch_regdate()))
+                .map(s -> new SearchDto(s.getSearch_no(), s.getUser().getNo(), s.getTag_no(), s.getTag_content(), s.getSearch_content(), s.getCreatedDate()))
                 .collect(Collectors.toList());
     }
 

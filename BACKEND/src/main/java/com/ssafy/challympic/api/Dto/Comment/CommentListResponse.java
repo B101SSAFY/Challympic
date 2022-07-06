@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Getter
@@ -35,8 +34,8 @@ public class CommentListResponse {
                     + comment.getUser().getMedia().getFile_savedname();
         this.post_no = comment.getPost().getNo();
         this.comment_content = comment.getContent();
-        this.comment_regdate = comment.getRegdate();
-        this.comment_update = comment.getUpdate();
+        this.comment_regdate = java.sql.Timestamp.valueOf(comment.getCreatedDate());
+        this.comment_update = java.sql.Timestamp.valueOf(comment.getModifiedDate());
         this.like_cnt = comment.getCommentLike().size();
         this.comment_report = comment.getReport();
         this.IsLiked = IsLiked;

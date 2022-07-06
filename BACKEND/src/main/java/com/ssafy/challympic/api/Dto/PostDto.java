@@ -4,8 +4,8 @@ import com.ssafy.challympic.domain.Post;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -21,8 +21,8 @@ public class PostDto{
     private String file_savedname;
     private String post_content;
     private int post_report;
-    private Date post_regdate;
-    private Date post_update;
+    private LocalDateTime post_regdate;
+    private LocalDateTime post_update;
     private int post_like_count;
     private int comment_count;
     private boolean IsLike = false;
@@ -39,8 +39,8 @@ public class PostDto{
         this.file_savedname = post.getMedia().getFile_savedname();
         this.post_content = post.getPost_content();
         this.post_report = post.getPost_report();
-        this.post_regdate = post.getPost_regdate();
-        this.post_update = post.getPost_update();
+        this.post_regdate = post.getCreatedDate();
+        this.post_update = post.getModifiedDate();
         this.post_like_count = postLikeCount;
         this.comment_count = postCommentCount;
         this.IsLike = isLike;

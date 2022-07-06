@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -16,8 +17,8 @@ public class CommentDto {
     private String user_profile;
     private int post_no;
     private String comment_content;
-    private Date comment_regdate;
-    private Date comment_update;
+    private LocalDateTime comment_regdate;
+    private LocalDateTime comment_update;
     private int like_cnt;
     private int comment_report;
     private boolean IsLiked;
@@ -32,8 +33,8 @@ public class CommentDto {
                     + comment.getUser().getMedia().getFile_savedname();
         this.post_no = comment.getPost().getNo();
         this.comment_content = comment.getContent();
-        this.comment_regdate = comment.getRegdate();
-        this.comment_update = comment.getUpdate();
+        this.comment_regdate = comment.getCreatedDate();
+        this.comment_update = comment.getModifiedDate();
         this.like_cnt = comment.getCommentLike().size();
         this.comment_report = comment.getReport();
         this.IsLiked = IsLiked;

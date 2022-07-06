@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class ChallengeDto {
     private int challenge_no;
     private int user_no;
     private String user_email;
-    private Date challenge_start;
+    private LocalDateTime challenge_start;
     private Date challenge_end;
     private ChallengeAccess challenge_access;
     private ChallengeType challenge_type;
@@ -33,7 +34,7 @@ public class ChallengeDto {
     public ChallengeDto(Challenge challenge) {
         this.challenge_no = challenge.getNo();
         this.user_no = challenge.getUser().getNo();
-        this.challenge_start = challenge.getStart();
+        this.challenge_start = challenge.getCreatedDate();
         this.challenge_end = challenge.getEnd();
         this.challenge_access = challenge.getAccess();
         this.challenge_type = challenge.getType();
@@ -46,7 +47,7 @@ public class ChallengeDto {
     public ChallengeDto(Challenge challenge, List<UserDto> challengers) {
         this.challenge_no = challenge.getNo();
         this.user_no = challenge.getUser().getNo();
-        this.challenge_start = challenge.getStart();
+        this.challenge_start = challenge.getCreatedDate();
         this.challenge_end = challenge.getEnd();
         this.challenge_access = challenge.getAccess();
         this.challenge_type = challenge.getType();
@@ -60,7 +61,7 @@ public class ChallengeDto {
     public ChallengeDto(Challenge challenge, boolean isSubscription) {
         this.challenge_no = challenge.getNo();
         this.user_no = challenge.getUser().getNo();
-        this.challenge_start = challenge.getStart();
+        this.challenge_start = challenge.getCreatedDate();
         this.challenge_end = challenge.getEnd();
         this.challenge_access = challenge.getAccess();
         this.challenge_type = challenge.getType();
@@ -74,7 +75,7 @@ public class ChallengeDto {
     public ChallengeDto(Challenge challenge, List<PostDto> postList, boolean isSubscription) {
         this.challenge_no = challenge.getNo();
         this.user_no = challenge.getUser().getNo();
-        this.challenge_start = challenge.getStart();
+        this.challenge_start = challenge.getCreatedDate();
         this.challenge_end = challenge.getEnd();
         this.challenge_access = challenge.getAccess();
         this.challenge_type = challenge.getType();
@@ -87,7 +88,7 @@ public class ChallengeDto {
     }
 
     @Builder
-    public ChallengeDto(int challenge_no, int user_no, String user_email, Date challenge_start, Date challenge_end, ChallengeAccess challenge_access, ChallengeType challenge_type, String challenge_title, String challenge_content, List<UserDto> challenge_challengers, boolean challenge_official, int challenge_report, List<PostDto> postList, boolean isSubscription, int post_cnt, int subscription_cnt) {
+    public ChallengeDto(int challenge_no, int user_no, String user_email, LocalDateTime challenge_start, Date challenge_end, ChallengeAccess challenge_access, ChallengeType challenge_type, String challenge_title, String challenge_content, List<UserDto> challenge_challengers, boolean challenge_official, int challenge_report, List<PostDto> postList, boolean isSubscription, int post_cnt, int subscription_cnt) {
         this.challenge_no = challenge_no;
         this.user_no = user_no;
         this.user_email = user_email;

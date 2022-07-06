@@ -1,5 +1,7 @@
 package com.ssafy.challympic.service;
 
+import com.ssafy.challympic.api.Dto.ChallengeDto;
+import com.ssafy.challympic.api.Dto.QnA.QnADto;
 import com.ssafy.challympic.domain.*;
 import com.ssafy.challympic.repository.*;
 import com.ssafy.challympic.util.S3Uploader;
@@ -9,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,6 +29,9 @@ public class AdminService {
     private final QnARepository qnaRepository;
     private final MediaRepository mediaRepository;
     private final ChallengeTagRepository challengeTagRepository;
+    private final PostService postService;
+    private final SubscriptionService subscriptionService;
+
 
     private final S3Uploader s3Uploader;
 
@@ -48,8 +55,24 @@ public class AdminService {
         //userRepository.delete(findUser);
     }
 
-    public List<Challenge> challengeList(){
-        return adminRepository.findAllChallenge();
+    public List<ChallengeDto> challengeList(){
+        List<Challenge> challengeList = adminRepository.findAllChallenge();
+        return challengeList.stream()
+                .map(c -> {
+                    ChallengeDto challengeDto = ChallengeDto.builder()
+                            .challenge_no(c.getNo())
+                            .challenge_title(c.getTitle())
+                            .user_email(c.getUser().getEmail())
+                            .challenge_start(c.getStart())
+                            .challenge_end(c.getEnd())
+                            .challenge_official(c.isOfficial())
+                            .challenge_report(c.getReport())
+                            .build();
+                    int post_cnt = postService.postCntByChallenge(c.getNo());
+                    int subscription_cnt = subscriptionService.findSubscriptionByChallenge(c.getNo());
+                    challengeDto = challengeDto.update(post_cnt, subscription_cnt);
+                    return challengeDto;
+                }).collect(Collectors.toList());
     }
 
     private final TagRepository tagRepository;
@@ -105,14 +128,27 @@ public class AdminService {
         }
     }
 
-    public List<QnA> qnaList() {
-        return adminRepository.findAllQnA();
+    public List<QnADto> qnaList() {
+        List<QnA> qnaList = adminRepository.findAllQnA();
+        return qnaList.stream()
+                .map(q -> {
+                    QnADto qnaDto = QnADto.builder()
+                            .qna_no(q.getNo())
+                            .user_email(q.getUser().getEmail())
+                            .qna_title(q.getTitle())
+                            .qna_question(q.getQuestion())
+                            .qna_answer(q.getAnswer())
+                            .qna_answer_regdate(q.getAnswer_regdate())
+                            .qna_question_regdate(q.getQuestion_regdate()).build();
+                    if(q.getAnswer() == null) qnaDto = qnaDto.update(false);
+                    else qnaDto = qnaDto.update(false);
+                    return qnaDto;
+                }).collect(Collectors.toList());
     }
 
     @Transactional
     public void updateQnA(int qna_no, String qna_answer){
-        QnA findQnA = qnaRepository.findOne(qna_no);
-        findQnA.setQna_answer(qna_answer);
-        findQnA.setQna_answer_regdate(new Date());
+        QnA findQnA = qnaRepository.findById(qna_no).orElseThrow(() -> new NoSuchElementException("존재하지 않는 QnA입니다."));
+        findQnA.update(qna_answer, new Date());
     }
 }

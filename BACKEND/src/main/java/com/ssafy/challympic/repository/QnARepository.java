@@ -1,25 +1,11 @@
 package com.ssafy.challympic.repository;
 
 import com.ssafy.challympic.domain.QnA;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
-@Repository
-@RequiredArgsConstructor
-public class QnARepository {
+public interface QnARepository extends JpaRepository<QnA, Integer> {
 
-    private final EntityManager em;
-
-    public void save(QnA qna){ em.persist(qna); }
-
-    public List<QnA> findByUser(int user_no){
-        return em.createQuery("select q from QnA q where q.user.user_no = :user_no", QnA.class)
-                .setParameter("user_no", user_no)
-                .getResultList();
-    }
-
-    public QnA findOne(int qna_no){ return em.find(QnA.class, qna_no); }
+    List<QnA> findByUser_No(int user_no);
 }

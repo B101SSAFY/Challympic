@@ -1,28 +1,14 @@
 package com.ssafy.challympic.repository;
 
 import com.ssafy.challympic.domain.Activity;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
-@Repository
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
-public class ActivityRepository {
+public interface ActivityRepository extends JpaRepository<Activity, Integer> {
 
-    private final EntityManager em;
+    List<Activity> findAllByUser_no(int userNo);
 
-    @Transactional
-    public void saveActivity(Activity activity) {
-        em.persist(activity);
-    }
-
-    public List<Activity> findActivityListByUserNo(int userNo) {
-        return em.createQuery("select a from Activity a where a.user_no = :userNo", Activity.class)
-                .setParameter("userNo", userNo)
-                .getResultList();
-    }
 }

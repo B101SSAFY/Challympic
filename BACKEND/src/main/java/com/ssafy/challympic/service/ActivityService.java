@@ -14,10 +14,10 @@ public class ActivityService {
     private final ActivityRepository activityRepository;
 
     public void saveActivity(Activity activity) {
-        activityRepository.saveActivity(activity);
+        activityRepository.save(activity);
     }
 
     public List<Activity> findActivityListByUserNo(int userNo) {
-        return activityRepository.findActivityListByUserNo(userNo);
+        return activityRepository.findAllByUser_no(userNo);
     }
 }

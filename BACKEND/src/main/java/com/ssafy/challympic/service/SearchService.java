@@ -138,7 +138,7 @@ public class SearchService {
         User user = userRepository.findById(request.getUser_no()).orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
         Tag tag = tagRepository.findByTagContent(search_content);
         Search search = Search.builder()
-                .search_content(search_content)
+                .content(search_content)
                 .user(user)
                 .build();
         if(tag != null) {

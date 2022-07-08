@@ -3,7 +3,6 @@ package com.ssafy.challympic.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -15,7 +14,6 @@ import static javax.persistence.FetchType.LAZY;
 public class ChallengeTag {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "challenge_tag_no")
     private int challenge_tag_no;
 
     @ManyToOne(fetch = LAZY)
@@ -27,8 +25,7 @@ public class ChallengeTag {
     private Tag tag;
 
     @Builder
-    public ChallengeTag(int challenge_tag_no, Challenge challenge, Tag tag) {
-        this.challenge_tag_no = challenge_tag_no;
+    public ChallengeTag(Challenge challenge, Tag tag) {
         this.challenge = challenge;
         this.tag = tag;
     }

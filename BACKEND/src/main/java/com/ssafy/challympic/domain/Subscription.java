@@ -12,7 +12,6 @@ import javax.persistence.*;
 public class Subscription {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "no")
     private int no;
 
     @ManyToOne

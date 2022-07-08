@@ -1,15 +1,14 @@
 package com.ssafy.challympic.domain;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
-
-import static javax.persistence.FetchType.LAZY;
 
 @Entity
-@Getter @Setter
+@Getter
+@NoArgsConstructor
 public class Activity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,4 +18,10 @@ public class Activity {
     private int user_no;
 
     private int post_no;
+
+    @Builder
+    public Activity(int user_no, int post_no) {
+        this.user_no = user_no;
+        this.post_no = post_no;
+    }
 }

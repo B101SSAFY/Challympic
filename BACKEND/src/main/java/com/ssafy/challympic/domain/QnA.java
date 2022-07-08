@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
 @Getter
@@ -30,8 +29,7 @@ public class QnA extends BaseTimeEntity {
     private String answer;
 
     @Builder
-    public QnA(int no, User user, String title, String question, String answer) {
-        this.no = no;
+    public QnA(User user, String title, String question, String answer) {
         this.user = user;
         this.title = title;
         this.question = question;

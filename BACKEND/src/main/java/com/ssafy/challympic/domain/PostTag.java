@@ -1,17 +1,18 @@
 package com.ssafy.challympic.domain;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
-@Getter @Setter
+@Getter
+@NoArgsConstructor
 public class PostTag {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_tag_no")
-    private int post_tag_no;
+    private int no;
 
     @ManyToOne
     @JoinColumn(name = "post_no")
@@ -20,4 +21,10 @@ public class PostTag {
     @ManyToOne
     @JoinColumn(name = "tag_no")
     private Tag tag;
+
+    @Builder
+    public PostTag(Post post, Tag tag) {
+        this.post = post;
+        this.tag = tag;
+    }
 }

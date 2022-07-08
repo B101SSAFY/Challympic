@@ -181,7 +181,7 @@ public class ChallengeService {
         User user = userRepository.findById(userNo)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
 
-        Subscription subscription = subscriptionRepository.findByChallengeNoAndUserNo(challenge.getNo(), user.getNo());
+        Subscription subscription = subscriptionRepository.findByChallengeNoAndUser_No(challenge.getNo(), user.getNo()).get();
         if(subscription == null) {
             subscriptionRepository.save(Subscription.builder()
                     .challenge(challenge)
@@ -194,7 +194,7 @@ public class ChallengeService {
     }
 
     private List<SubscriptionDto> getSubscriptionDtoList(int userNo) {
-        List<Subscription> subscriptionList = subscriptionRepository.findByUserNo(userNo);
+        List<Subscription> subscriptionList = subscriptionRepository.findAllByUserNo(userNo);
         List<SubscriptionDto> subscriptionDtoList = new ArrayList<>();
         if(!subscriptionList.isEmpty()) {
             subscriptionDtoList = subscriptionList.stream()
@@ -223,7 +223,7 @@ public class ChallengeService {
     }
 
     public int findSubscriptionCnt(int challenge_no) {
-        return subscriptionRepository.findByChallengeNo(challenge_no).size();
+        return subscriptionRepository.findAllByChallengeNo(challenge_no).size();
     }
 
     public int findPostCnt(int challenge_no) {

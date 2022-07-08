@@ -78,7 +78,7 @@ public class AdminService {
 
     @Transactional
     public void deleteChallenge(int challenge_no){
-        Title findTitle = titleRepository.findByChallenge(challenge_no);
+        Title findTitle = titleRepository.findByChallengeNo(challenge_no);
         titleRepository.delete(findTitle);
 
         List<ChallengeTag> challengeTags = challengeTagRepository.findByChallengeNo(challenge_no);

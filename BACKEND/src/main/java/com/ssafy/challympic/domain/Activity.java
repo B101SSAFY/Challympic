@@ -12,8 +12,7 @@ import javax.persistence.*;
 public class Activity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "activity_no")
-    private int activity_no;
+    private int no;
 
     private int user_no;
 

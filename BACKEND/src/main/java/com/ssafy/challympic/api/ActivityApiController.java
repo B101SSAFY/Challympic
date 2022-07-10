@@ -1,5 +1,8 @@
 package com.ssafy.challympic.api;
 
+import com.ssafy.challympic.api.Dto.Activity.ActivityRequest;
+import com.ssafy.challympic.api.Dto.Activity.ActivityResponse;
+import com.ssafy.challympic.api.Dto.Activity.TagDto;
 import com.ssafy.challympic.api.Dto.SearchDto;
 import com.ssafy.challympic.domain.Activity;
 import com.ssafy.challympic.domain.Result;
@@ -7,8 +10,6 @@ import com.ssafy.challympic.domain.Tag;
 import com.ssafy.challympic.service.ActivityService;
 import com.ssafy.challympic.service.SearchService;
 import com.ssafy.challympic.service.TagService;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -29,23 +30,11 @@ public class ActivityApiController {
     @PostMapping("/activity")
     public Result setActivity(@RequestBody ActivityRequest request) {
         Activity activity = Activity.builder()
-                .post_no(request.getPostNo())
                 .user_no(request.getUserNo())
+                .post_no(request.getPostNo())
                 .build();
-
         activityService.saveActivity(activity);
         return new Result(true, HttpStatus.OK.value());
-    }
-
-    @Data
-    static class TagDto{
-        private int tag_no;
-        private String tag_content;
-
-        public TagDto(Tag tag) {
-            this.tag_no = tag.getNo();
-            this.tag_content = tag.getContent();
-        }
     }
 
     @GetMapping("/activity/{userNo}")
@@ -76,13 +65,13 @@ public class ActivityApiController {
             }
 
             for (Tag tag : allTagList) {
-                tagDtos.add(new TagDto(tag));
+                tagDtos.add(TagDto.builder().tag_no(tag.getNo()).tag_content(tag.getContent()).build());
             }
 
             if(tagDtos.size() < 5){
-                return new Result(true, HttpStatus.OK.value(), new ActivityResponse(tagDtos));
+                return new Result(true, HttpStatus.OK.value(), ActivityResponse.builder().tagList(tagDtos).build());
             }else{
-                return new Result(true, HttpStatus.OK.value(), new ActivityResponse(tagDtos.subList(0,5)));
+                return new Result(true, HttpStatus.OK.value(), ActivityResponse.builder().tagList(tagDtos.subList(0,5)).build());
             }
         }else {
             List<Tag> tagResponse = getTagsVer01(userNo);
@@ -91,7 +80,10 @@ public class ActivityApiController {
 
             if (!tagResponse.isEmpty()) {
                 tagDtoResponse = tagResponse.stream()
-                        .map(t -> new TagDto(t))
+                        .map(t -> TagDto.builder()
+                                .tag_no(t.getNo())
+                                .tag_content(t.getContent())
+                                .build())
                         .collect(Collectors.toList());
                 return new Result(true, HttpStatus.OK.value(), new ActivityResponse(tagDtoResponse));
             } else {
@@ -129,16 +121,4 @@ public class ActivityApiController {
         return tagResponse;
     }
 
-    @Data
-    @AllArgsConstructor
-    static class ActivityResponse {
-        List<TagDto> tagList;
-    }
-
-    // TODO : Activity Repo부터 전부 수정해야함.
-    @Data
-    static class ActivityRequest {
-        private int postNo;
-        private int userNo;
-    }
 }

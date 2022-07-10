@@ -48,7 +48,7 @@ public class SearchService {
     }
 
     public List<SearchDto> findTagListByUserNo(int userNo) {
-        List<Search> searches = searchRepository.findByUserNo(userNo);
+        List<Search> searches = searchRepository.findAllByUserNo(userNo);
         return searches.stream()
                 .map(s -> new SearchDto(s.getSearch_no(), s.getUser().getNo(), s.getTag_no(), s.getTag_content(), s.getSearch_content(), s.getCreatedDate()))
                 .collect(Collectors.toList());
@@ -136,7 +136,7 @@ public class SearchService {
     public void saveSearchRecord(TagSearchRequest request) {
         String search_content = request.getTag_content();
         User user = userRepository.findById(request.getUser_no()).orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
-        Tag tag = tagRepository.findByTagContent(search_content);
+        Tag tag = tagRepository.findByContent(search_content);
         Search search = Search.builder()
                 .search_content(search_content)
                 .user(user)

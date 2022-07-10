@@ -24,7 +24,7 @@ public class TagService {
      */
     @Transactional
     public void saveTag(String tag_content){
-        Tag isTag = tagRepository.findByTagContent(tag_content);
+        Tag isTag = tagRepository.findByContent(tag_content);
         if(isTag != null) return;
         Tag tag = new Tag();
         tag.setContent(tag_content);
@@ -36,7 +36,7 @@ public class TagService {
      */
     @Transactional
     public void saveTag(String challenge_title, boolean isTitle){
-        Tag isTag = tagRepository.findByTagContent(challenge_title);
+        Tag isTag = tagRepository.findByContent(challenge_title);
         if(isTag != null) return;
         Tag tag = new Tag();
         tag.setContent(challenge_title);
@@ -52,7 +52,7 @@ public class TagService {
     }
 
     public Tag findTagByTagContent(String tagContent) {
-        Tag tag = tagRepository.findByTagContent(tagContent);
+        Tag tag = tagRepository.findByContent(tagContent);
         return tag;
     }
 
@@ -71,7 +71,7 @@ public class TagService {
     }
 
     public List<Tag> findRecentAllTagList() {
-        return tagRepository.findAllByIdDesc();
+        return tagRepository.findAllOrderByNoDesc();
     }
 
 }

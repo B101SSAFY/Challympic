@@ -11,13 +11,12 @@ import java.util.List;
 @Repository
 public interface TagRepository extends JpaRepository<Tag, Integer> {
 
-    @Query("select t from Tag t where t.content = :tagContent")
-    Tag findByTagContent(@Param("tagContent") String tagContent);
+    Tag findByContent(String content);
 
     @Query("select t from Tag t where t.no = " +
             "(select pt.tag.no from PostTag pt where pt.post.no = :postNo)")
     List<Tag> findAllByPostNo(@Param("postNo") int postNo);
 
     @Query("select t from Tag t order by t.no DESC")
-    List<Tag> findAllByIdDesc();
+    List<Tag> findAllOrderByNoDesc();
 }

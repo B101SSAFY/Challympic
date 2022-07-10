@@ -1,10 +1,14 @@
 package com.ssafy.challympic.api;
 
+import com.ssafy.challympic.api.Dto.Challenge.ChallengeAdminListResponse;
 import com.ssafy.challympic.api.Dto.Challenge.ChallengeRequest;
 import com.ssafy.challympic.api.Dto.ChallengeDto;
+import com.ssafy.challympic.api.Dto.Comment.CommentAdminListResponse;
 import com.ssafy.challympic.api.Dto.Comment.CommentDeleteRequest;
+import com.ssafy.challympic.api.Dto.QnA.QnAAdminListResponse;
 import com.ssafy.challympic.api.Dto.QnA.QnADto;
 import com.ssafy.challympic.api.Dto.QnA.QnARequest;
+import com.ssafy.challympic.api.Dto.User.UserListResponse;
 import com.ssafy.challympic.api.Dto.User.UserRequest;
 import com.ssafy.challympic.domain.Comment;
 import com.ssafy.challympic.domain.QnA;
@@ -37,35 +41,33 @@ public class AdminApiController {
 
     @GetMapping("/admin/users")
     public Result userList(){
-        List<User> userList = adminService.userList();
-        List<UserDto> collect = userList.stream()
-                .map(u -> {
-                    UserDto userDto = new UserDto(u);
-                    int post_report = postService.postReportCntByUser(u.getNo());
-                    int challenge_report = challengeService.challengeReportCntByUser(u.getNo());
-                    int comment_report = commentService.commentReportCntByUser(u.getNo());
-                    userDto.setReport(post_report+challenge_report+comment_report);
-                    return userDto;
-                })
-                .collect(Collectors.toList());
-        return new Result(true, HttpStatus.OK.value(), collect);
+        List<UserListResponse> userList = adminService.userList();
+        return new Result(true, HttpStatus.OK.value(), userList);
     }
 
     @PutMapping("/admin/users")
     public Result inactiveUser(@RequestBody UserRequest userRequest){
-        adminService.updateUserActive(userRequest.getUser_no());
-        return new Result(true, HttpStatus.OK.value());
+        try {
+            adminService.updateUserActive(userRequest.getUser_no());
+            return new Result(true, HttpStatus.OK.value());
+        }catch (Exception e) {
+            return new Result(false, HttpStatus.BAD_REQUEST.value());
+        }
     }
 
     @DeleteMapping("/admin/users")
     public Result deleteUser(@RequestBody UserRequest userRequest){
-        adminService.deleteUser(userRequest.getUser_no());
-        return new Result(true, HttpStatus.OK.value());
+        try {
+            adminService.deleteUser(userRequest.getUser_no());
+            return new Result(true, HttpStatus.OK.value());
+        }catch (Exception e) {
+            return new Result(false, HttpStatus.BAD_REQUEST.value());
+        }
     }
 
     @GetMapping("/admin/challenges")
     public Result challengeList(){
-        List<ChallengeDto> challengeList = adminService.challengeList();
+        List<ChallengeAdminListResponse> challengeList = adminService.challengeList();
         return new Result(true, HttpStatus.OK.value(), challengeList);
     }
 
@@ -80,26 +82,23 @@ public class AdminApiController {
 
     @GetMapping("/admin/comments")
     public Result commentList(){
-        List<Comment> commentList = adminService.commentList();
-        List<CommentDto> collect = commentList.stream()
-                .map(c -> {
-                    CommentDto commentDto = new CommentDto(c);
-                    int like_cnt = commentLikeService.findLikeCntByComment(c.getNo());
-                    commentDto.setLike_cnt(like_cnt);
-                    return commentDto;
-                }).collect(Collectors.toList());
-        return new Result(true, HttpStatus.OK.value(), collect);
+        List<CommentAdminListResponse> commentList = adminService.commentList();
+        return new Result(true, HttpStatus.OK.value(), commentList);
     }
 
     @DeleteMapping("/admin/comments")
     public Result deleteComment(@RequestBody CommentDeleteRequest commentRequest){
-        adminService.deleteComment(commentRequest.getComment_no());
-        return new Result(true, HttpStatus.OK.value());
+        try {
+            adminService.deleteComment(commentRequest.getComment_no());
+            return new Result(true, HttpStatus.OK.value());
+        }catch (Exception e){
+            return new Result(false, HttpStatus.BAD_REQUEST.value());
+        }
     }
 
     @GetMapping("/admin/qna")
     public Result qnaList(){
-        List<QnADto> qnaList = adminService.qnaList();
+        List<QnAAdminListResponse> qnaList = adminService.qnaList();
         return new Result(true, HttpStatus.OK.value(), qnaList);
     }
 
@@ -117,36 +116,4 @@ public class AdminApiController {
         else return new Result(true, HttpStatus.OK.value());
     }
 
-
-    @Data
-    static class CommentDto{
-        private int comment_no;
-        private String comment_content;
-        private int like_cnt;
-        private LocalDateTime comment_regdate;
-        private int comment_report;
-
-        public CommentDto(Comment comment) {
-            this.comment_no = comment.getNo();
-            this.comment_content = comment.getContent();
-            this.comment_regdate = comment.getCreatedDate();
-            this.comment_report = comment.getReport();
-        }
-    }
-
-    @Data
-    static class UserDto{
-        private int user_no;
-        private String user_email;
-        private String user_nickname;
-        private UserActive user_active;
-        private int report;
-
-        public UserDto(User user) {
-            this.user_no = user.getNo();
-            this.user_email = user.getEmail();
-            this.user_nickname = user.getNickname();
-            this.user_active = user.getActive();
-        }
-    }
 }

@@ -35,7 +35,7 @@ public class ChallengeService {
     private final TitleRepository titleRepository;
 
     public List<Challenge> getChallengeByUserNo(int userNo) {
-        return challengeRepository.findByUserNo(userNo);
+        return challengeRepository.findByUser_No(userNo);
     }
 
     public List<Challenger> getChallengerByChallengeNo(int challengeNo){
@@ -214,7 +214,7 @@ public class ChallengeService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 챌린지가 없습니다."));
     }
     public int challengeReportCntByUser(int user_no){
-        List<Challenge> findChallengeList = challengeRepository.findByUserNo(user_no);
+        List<Challenge> findChallengeList = challengeRepository.findByUser_No(user_no);
         int reportCnt = 0;
         for (Challenge challenge : findChallengeList) {
             reportCnt += challenge.getReport();

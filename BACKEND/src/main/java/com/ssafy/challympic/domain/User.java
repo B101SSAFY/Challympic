@@ -90,5 +90,12 @@ public class User extends BaseTimeEntity {
         return this;
     }
 
+    public User updateActive(){
+        if (this.active == UserActive.ACTIVE)
+            this.active = UserActive.INACTIVE;
+        else this.active = UserActive.ACTIVE;
+        return this;
+    }
+
 }
 

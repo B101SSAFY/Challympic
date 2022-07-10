@@ -67,9 +67,10 @@ public class SearchApiController {
 
         List<Post> tagContainPost = postService.getPostByTag(request.getTag_content());
         for(Post p : tagContainPost) {
-            Activity activity = new Activity();
-            activity.setPost_no(p.getNo());
-            activity.setUser_no(request.getUser_no());
+            Activity activity = Activity.builder()
+                    .post_no(p.getNo())
+                    .user_no(request.getUser_no())
+                    .build();
             activityService.saveActivity(activity);
         }
 

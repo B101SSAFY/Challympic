@@ -19,7 +19,6 @@ import static javax.persistence.FetchType.LAZY;
 public class Challenge extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "challenge_no")
     private int no;
 
     @ManyToOne(fetch = LAZY)
@@ -49,8 +48,7 @@ public class Challenge extends BaseTimeEntity {
     private int report;
 
     @Builder
-    public Challenge(int no, User user, Date end, ChallengeAccess access, ChallengeType type, String title, String content, boolean official, int report) {
-        this.no = no;
+    public Challenge(User user, Date end, ChallengeAccess access, ChallengeType type, String title, String content, boolean official, int report) {
         this.user = user;
         this.end = end;
         this.access = access;

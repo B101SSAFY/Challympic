@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,7 +21,7 @@ public class SubscriptionService {
 
     @Transactional
     public void deleteSubscription(int challengeNo, int userNo) {
-        Subscription subscription = subscriptionRepository.findByChallengeNoAndUser_No(challengeNo, userNo).get();
+        Subscription subscription = subscriptionRepository.findByChallengeNoAndUser_No(challengeNo, userNo).orElseThrow(() -> new NoSuchElementException("존재하지 않는 구독정보입니다."));
         subscriptionRepository.delete(subscription);
     }
 
@@ -29,7 +30,7 @@ public class SubscriptionService {
     }
 
     public Subscription findSubscriptionByChallengeAndUser(int challengeNo, int userNo) {
-        return subscriptionRepository.findByChallengeNoAndUser_No(challengeNo, userNo).get();
+        return subscriptionRepository.findByChallengeNoAndUser_No(challengeNo, userNo).orElseThrow(() -> new NoSuchElementException("존재하지 않는 구독 정보입니다."));
     }
 
     public List<SubscriptionDto> findSubscriptionByUser(int userNo) {
@@ -42,6 +43,6 @@ public class SubscriptionService {
     }
 
     public boolean validSubscription(int challengeNo, int userNo){
-        return (subscriptionRepository.findByChallengeNoAndUser_No(challengeNo, userNo) != null);
+        return (subscriptionRepository.findByChallengeNoAndUser_No(challengeNo, userNo).isPresent());
     }
 }

@@ -63,7 +63,7 @@ public class TagService {
     public void deletePostTag(PostTag postTag){ postTagRepository.delete(postTag);}
 
     public List<PostTag> findPostTagList(int post_no) {
-        return postTagRepository.findAllByPost_tag_no(post_no);
+        return postTagRepository.findAllByPostNo(post_no);
     }
 
     public List<Tag> findAllTagList() {

@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface PostTagRepository extends JpaRepository<PostTag, Integer> {
 
-    List<PostTag> findAllByPost_tag_no(@Param("postNo") int postNo);
+    List<PostTag> findAllByPostNo(int postNo);
 
 }

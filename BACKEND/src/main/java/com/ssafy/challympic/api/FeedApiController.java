@@ -1,5 +1,6 @@
 package com.ssafy.challympic.api;
 
+import com.ssafy.challympic.api.Dto.Feed.FeedChallengeListResponse;
 import com.ssafy.challympic.domain.Challenge;
 import com.ssafy.challympic.domain.Post;
 import com.ssafy.challympic.domain.Result;
@@ -37,13 +38,14 @@ public class FeedApiController {
         try{
 
             List<Challenge> challenges = challengeService.getChallengeByUserNo(userNo);
-            List<ChallengeResponse> collect = challenges.stream()
+            System.out.println("여기: "+challenges.size());
+            List<FeedChallengeListResponse> collect = challenges.stream()
                     .map(c -> {
                         List<Post> postList = postService.getPostList(c.getNo());
                         Post firstPost = postList.get(0);
                         int post_cnt = challengeService.findPostCnt(c.getNo());
                         int subscription_cnt = challengeService.findSubscriptionCnt(c.getNo());
-                        return new ChallengeResponse(firstPost, c, post_cnt, subscription_cnt);
+                        return new FeedChallengeListResponse(firstPost, c, post_cnt, subscription_cnt);
                     })
                     .collect(Collectors.toList());
             return new Result(true, HttpStatus.OK.value(), collect);

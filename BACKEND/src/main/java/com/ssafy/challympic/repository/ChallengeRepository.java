@@ -13,7 +13,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Integer>{
 
     List<Challenge> findByTitleOrderByEndDesc(@Param("title")String title);
 
-    List<Challenge> findByUserNo(int userNo);
+    List<Challenge> findByUser_No(int userNo);
 
     @Query("select ct.challenge from ChallengeTag ct where ct.tag.content = :content")
     List<Challenge> findByTagContent(@Param("content") String content);

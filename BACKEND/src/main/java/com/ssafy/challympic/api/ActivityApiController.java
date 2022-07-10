@@ -28,9 +28,10 @@ public class ActivityApiController {
 
     @PostMapping("/activity")
     public Result setActivity(@RequestBody ActivityRequest request) {
-        Activity activity = new Activity();
-        activity.setPost_no(request.getPostNo());
-        activity.setUser_no(request.getUserNo());
+        Activity activity = Activity.builder()
+                .post_no(request.getPostNo())
+                .user_no(request.getUserNo())
+                .build();
 
         activityService.saveActivity(activity);
         return new Result(true, HttpStatus.OK.value());
@@ -134,6 +135,7 @@ public class ActivityApiController {
         List<TagDto> tagList;
     }
 
+    // TODO : Activity Repo부터 전부 수정해야함.
     @Data
     static class ActivityRequest {
         private int postNo;

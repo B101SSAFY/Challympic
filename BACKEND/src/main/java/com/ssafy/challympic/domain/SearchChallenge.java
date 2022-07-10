@@ -3,19 +3,19 @@ package com.ssafy.challympic.domain;
 import com.ssafy.challympic.domain.defaults.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Date;
 
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class SearchChallenge extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "search_challenge_no")
-    private int search_challenge_no;
+    private int no;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "challenge_no")
@@ -26,8 +26,7 @@ public class SearchChallenge extends BaseTimeEntity {
     private User user;
 
     @Builder
-    public SearchChallenge(int search_challenge_no, Challenge challenge, User user) {
-        this.search_challenge_no = search_challenge_no;
+    public SearchChallenge(Challenge challenge, User user) {
         this.challenge = challenge;
         this.user = user;
     }

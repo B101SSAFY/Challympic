@@ -128,10 +128,11 @@ public class PostService {
 
             for(String str : splitSharp) {
                 if(str.startsWith("#")) {
-                    PostTag postTag = new PostTag();
-                    postTag.setPost(post);
                     Tag tag = tagService.findTagByTagContent(str);
-                    postTag.setTag(tag);
+                    PostTag postTag = PostTag.builder()
+                            .post(post)
+                            .tag(tag)
+                            .build();
                     tagService.savePostTag(postTag);
                 }
             }

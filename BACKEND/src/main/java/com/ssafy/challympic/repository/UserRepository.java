@@ -20,4 +20,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query("select t.user from Title t where t.user.no = (select count(t) from Title t group by t.user.no)")
     List<User> findRank();
+
 }

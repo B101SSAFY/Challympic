@@ -148,7 +148,8 @@ public class UserService {
     }
 
     public User findByNickname(String user_nickname){
-        return userRepository.findByNickname(user_nickname).get();
+        return userRepository.findByNickname(user_nickname).
+                orElseThrow(() -> new IllegalArgumentException("해당 닉네임의 유저가 없습니다."));
     }
 
     public List<User> findAllUser() {
@@ -156,6 +157,7 @@ public class UserService {
     }
 
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email).get();
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 유저가 없습니다."));
     }
 }

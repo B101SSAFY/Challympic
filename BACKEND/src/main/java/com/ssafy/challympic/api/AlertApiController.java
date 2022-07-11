@@ -22,6 +22,7 @@ public class AlertApiController {
 
     @PostMapping("/alert")
     public Result saveAlert(@RequestBody AlertRequest request){
+        // TODO: dto service 레벨로 내려야함.
         Alert alert = Alert.builder()
                         .user(userService.findByNo(request.getUser_no()))
                         .content(request.alert_content)
@@ -32,6 +33,7 @@ public class AlertApiController {
 
     @GetMapping("/alert/{userNo}")
     public Result getAlert(@PathVariable int userNo) {
+        // TODO: dto service 레벨로 내려야함.
         List<Alert> alerts = alertService.findAlertByUserNo(userNo);
         List<AlertDto> alertList = alerts.stream()
                 .map(a -> new AlertDto(a.getUser().getNo(), a.getContent(), a.isConfirm(), a.getCreatedDate()))
@@ -39,7 +41,7 @@ public class AlertApiController {
         return new Result(true, HttpStatus.OK.value(), alertList);
     }
 
-    @Data
+    @Data // TODO: Dto로 이동
     static class AlertRequest {
         private int user_no;
         private String alert_content;

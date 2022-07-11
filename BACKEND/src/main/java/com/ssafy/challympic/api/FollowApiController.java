@@ -3,19 +3,14 @@ package com.ssafy.challympic.api;
 import com.ssafy.challympic.api.Dto.User.FollowCnt;
 import com.ssafy.challympic.api.Dto.User.FollowListResponse;
 import com.ssafy.challympic.api.Dto.User.FollowRequest;
-import com.ssafy.challympic.domain.User;
-import com.ssafy.challympic.service.AlertService;
 import com.ssafy.challympic.service.FollowService;
-import com.ssafy.challympic.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -66,7 +61,7 @@ public class FollowApiController {
      * 프론트와 상의 후 변경해야 함
      * @param <T>
      */
-    @Data
+    @Data // TODO : dto로 이동할 수 없을까요...?
     @AllArgsConstructor
     static class Result<T>{
         private boolean isSuccess;

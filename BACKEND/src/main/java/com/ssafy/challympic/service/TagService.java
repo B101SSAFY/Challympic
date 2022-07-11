@@ -54,14 +54,16 @@ public class TagService {
     }
 
     public Tag findTagByTagContent(String tagContent) {
-        Tag tag = tagRepository.findByContent(tagContent);
+        Tag tag = tagRepository.findByContent(tagContent); // TODO : 선언 없이 바로 return하도록 수정
         return tag;
     }
 
+    // TODO: Transaction 추가
     public void savePostTag(PostTag postTag) {
         postTagRepository.save(postTag);
     }
 
+    // TODO: Transaction 추가
     public void deletePostTag(PostTag postTag){ postTagRepository.delete(postTag);}
 
     public List<PostTag> findPostTagList(int post_no) {

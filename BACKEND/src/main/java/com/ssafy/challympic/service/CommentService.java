@@ -1,6 +1,5 @@
 package com.ssafy.challympic.service;
 
-import com.ssafy.challympic.api.CommentApiController;
 import com.ssafy.challympic.api.Dto.Comment.CommentListResponse;
 import com.ssafy.challympic.api.Dto.Comment.CommentResponse;
 import com.ssafy.challympic.api.Dto.Comment.CommentSaveRequest;
@@ -11,16 +10,11 @@ import com.ssafy.challympic.domain.Post;
 import com.ssafy.challympic.domain.User;
 import com.ssafy.challympic.repository.CommentLikeRepository;
 import com.ssafy.challympic.repository.CommentRepository;
-import com.ssafy.challympic.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -80,17 +74,18 @@ public class CommentService {
 
     public List<CommentListResponse> findByPost(int postNo, int userNo){
         List<Comment> commentList = commentRepository.findByPost_No(postNo);
-        List<CommentListResponse> response = commentList.stream()
+        List<CommentListResponse> response = commentList.stream() // TODO : 인라인으로 수정 가능
                 .map(c -> {
                     boolean IsLiked = !commentLikeRepository.findByUser_NoAndComment_No(userNo, c.getNo()).isEmpty();
                     return new CommentListResponse(c, IsLiked);
                 })
-                .collect(Collectors.toList());
+               .collect(Collectors.toList());
         return response;
     }
 
 //    public int findCommentLikeCnt(int )
 
+    // TODO : 안쓰는 메서드
     public Comment findOne(int comment_no){
         return commentRepository.findById(comment_no)
                 .orElseThrow(()-> new IllegalArgumentException("해당 댓글이 존재하지 않습니다."));
@@ -102,6 +97,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(request.getComment_no())
                 .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다."));
 
+        // TODO : instance 필요한가?
         Comment updateComment = comment.update(request.getComment_content());
     }
 
@@ -112,6 +108,7 @@ public class CommentService {
         commentRepository.delete(comment);
     }
 
+    // TODO : transactional 필요한가요?
     @Transactional
     public void report(int comment_no) {
         Comment comment = commentRepository.findById(comment_no)

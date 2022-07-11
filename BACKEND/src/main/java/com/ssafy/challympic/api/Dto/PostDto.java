@@ -5,9 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
-@Data
+@Data // TODO : 어노테이션 수정
 @AllArgsConstructor
 public class PostDto{
     private int post_no;
@@ -27,6 +26,7 @@ public class PostDto{
     private int comment_count;
     private boolean IsLike = false;
 
+    // TODO: builder 추가
     public PostDto(Post post, String challengeTitle, int postLikeCount, int postCommentCount, boolean isLike) {
         this.post_no = post.getNo();
         this.user_no = post.getUser().getNo();

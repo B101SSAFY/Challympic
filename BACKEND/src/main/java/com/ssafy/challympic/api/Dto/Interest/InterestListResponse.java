@@ -4,7 +4,7 @@ import com.ssafy.challympic.domain.Interest;
 import lombok.Builder;
 import lombok.Getter;
 
-@Getter
+@Getter // TODO: 여기 NoArgConst 필요없나요?
 public class InterestListResponse {
     private int interest_no;
     private int tag_no;

@@ -46,6 +46,7 @@ public class PostService {
         return postRepository.findByChallengeNo(challengeNo);
     }
 
+    // TODO : 변수 필요 없음
     public List<Post> getRecentPostList(int limit){
         return postRepository.findTop50ByOrderByNoDesc();
     }
@@ -240,7 +241,7 @@ public class PostService {
 
         List<PostLike> byPost_no = postLikeRepository.findByPost_No(postNo);
         for (PostLike postLike : byPost_no) {
-            postLikeRepository.delete(postLike);
+            postLikeRepository.delete(postLike); // TODO: 243 ~ 245 postLikeRepository.deleteAll(byPost_no);로 수정 가능
         }
 
         postRepository.delete(post);
@@ -269,7 +270,7 @@ public class PostService {
         if(!userPostLike.isEmpty()){
             posts = userPostLike.stream()
                     .map(pl -> {
-                        Post post = postRepository.findById(pl.getPost().getNo())
+                        Post post = postRepository.findById(pl.getPost().getNo()) // TODO: 선언 없이 바로 return할 수 있도록 수정
                                 .orElseThrow(() -> new IllegalArgumentException("해당 포스트가 없습니다."));
                         return post;
                     }).collect(Collectors.toList());
@@ -278,10 +279,12 @@ public class PostService {
     }
 
     public boolean getPostLikeByPostNoAndUserNo(int post_no, int user_no) {
+        // TODO : isPresent()로 바로 return
         if (postLikeRepository.findByPost_NoAndUser_No(post_no, user_no).isEmpty()) return false;
         return true;
     }
 
+    // TODO: 주석부분 확인 후 삭제
 //    public int getPostLikeCountByPostNo(int post_no) {
 //        List<CommentLike> commentLikeList = postRepository.findPostLikeByPostNo(post_no);
 //        return commentLikeList.size();

@@ -219,7 +219,7 @@ public class PostApiController {
 
     @GetMapping("/post/{userNo}")
     public Result postByUser(@PathVariable("userNo") int user_no){
-        List<Post> postListByUserNo = postService.getPostListByUserNo(user_no);
+        List<Post> postListByUserNo = postService.getPostListByUserNo(user_no); // TODO : dto service로
         List<PostListShortResponse> collect = new ArrayList<>();
         if(!postListByUserNo.isEmpty()){
             collect = postListByUserNo.stream()
@@ -255,12 +255,12 @@ public class PostApiController {
      *      - 유효하면 true
      *      - 잘못된 타입이면 false
      * */
-    private boolean fileTypeValidate(int challengeNo, String fileType){
+    private boolean fileTypeValidate(int challengeNo, String fileType){ // TODO : 사용안함
         // 챌린지 번호로 챌린지 정보 가져오기
         Challenge challenge = challengeService.findAllChallenge().get(challengeNo);
 
         //입력받은 파일의 타입과 챌린지 타입 비교
-        if(fileType.equals(challenge.getType())){
+        if(fileType.equals(challenge.getType())){ // TODO: always false?
             return true;
         }
         return false;

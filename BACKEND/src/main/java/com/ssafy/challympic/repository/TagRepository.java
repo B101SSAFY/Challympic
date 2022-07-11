@@ -11,6 +11,7 @@ import java.util.List;
 @Repository
 public interface TagRepository extends JpaRepository<Tag, Integer> {
 
+    // TODO: optional로 수정
     Tag findByContent(String content);
 
     @Query("select t from Tag t where t.no = " +

@@ -1,25 +1,20 @@
 package com.ssafy.challympic.api;
 
+import com.ssafy.challympic.api.Dto.Challenge.ChallengeResponseDto;
 import com.ssafy.challympic.api.Dto.Challenge.ChallengeTitleCheckRequsetDto;
 import com.ssafy.challympic.api.Dto.Challenge.CreateChallengeRequset;
 import com.ssafy.challympic.api.Dto.Challenge.CreateChallengeResponseDto;
 import com.ssafy.challympic.api.Dto.ChallengeDto;
-import com.ssafy.challympic.api.Dto.Challenge.ChallengeResponseDto;
 import com.ssafy.challympic.api.Dto.SubscriptionDto;
-import com.ssafy.challympic.api.Dto.UserDto;
-import com.ssafy.challympic.domain.*;
-import com.ssafy.challympic.domain.defaults.ChallengeAccess;
-import com.ssafy.challympic.service.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.ssafy.challympic.domain.Challenge;
+import com.ssafy.challympic.domain.Result;
+import com.ssafy.challympic.service.ChallengeService;
+import com.ssafy.challympic.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -49,7 +44,7 @@ public class ChallengeApiController {
     @PostMapping("/challenge/confirm")
     public Result ChallengeTitleCheck(@RequestBody ChallengeTitleCheckRequsetDto request) {
         try{
-            challengeService.validateDuplicateTitle(request);
+            challengeService.validateDuplicateTitle(request); // TODO : boolean으로 수정
         }catch (Exception e) {
             return new Result(false, HttpStatus.BAD_REQUEST.value());
         }

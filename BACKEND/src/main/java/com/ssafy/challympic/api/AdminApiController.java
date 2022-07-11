@@ -2,36 +2,28 @@ package com.ssafy.challympic.api;
 
 import com.ssafy.challympic.api.Dto.Challenge.ChallengeAdminListResponse;
 import com.ssafy.challympic.api.Dto.Challenge.ChallengeRequest;
-import com.ssafy.challympic.api.Dto.ChallengeDto;
 import com.ssafy.challympic.api.Dto.Comment.CommentAdminListResponse;
 import com.ssafy.challympic.api.Dto.Comment.CommentDeleteRequest;
 import com.ssafy.challympic.api.Dto.QnA.QnAAdminListResponse;
-import com.ssafy.challympic.api.Dto.QnA.QnADto;
 import com.ssafy.challympic.api.Dto.QnA.QnARequest;
 import com.ssafy.challympic.api.Dto.User.UserListResponse;
 import com.ssafy.challympic.api.Dto.User.UserRequest;
-import com.ssafy.challympic.domain.Comment;
 import com.ssafy.challympic.domain.QnA;
 import com.ssafy.challympic.domain.Result;
-import com.ssafy.challympic.domain.User;
-import com.ssafy.challympic.domain.defaults.UserActive;
 import com.ssafy.challympic.service.*;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 public class AdminApiController {
 
     private final AdminService adminService;
+    // TODO : 안쓰는 선언 삭제
     private final CommentLikeService commentLikeService;
     private final CommentService commentService;
     private final PostService postService;

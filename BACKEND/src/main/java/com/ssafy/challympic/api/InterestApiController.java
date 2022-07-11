@@ -3,19 +3,15 @@ package com.ssafy.challympic.api;
 import com.ssafy.challympic.api.Dto.Interest.InterestListResponse;
 import com.ssafy.challympic.api.Dto.Interest.InterestListSaveRequest;
 import com.ssafy.challympic.api.Dto.Interest.InterestSaveRequest;
-import com.ssafy.challympic.domain.Interest;
 import com.ssafy.challympic.domain.Result;
 import com.ssafy.challympic.domain.User;
 import com.ssafy.challympic.service.InterestService;
 import com.ssafy.challympic.service.UserService;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,7 +24,7 @@ public class InterestApiController {
     public Result save(@PathVariable("userNo") int userNo, @RequestBody InterestSaveRequest request){
 
         try{
-            int interestNo = interestService.save(userNo, request.getTag_no());
+            int interestNo = interestService.save(userNo, request.getTag_no()); // TODO: 선언 필요할까요?
             List<InterestListResponse> interestList = interestService.findByUser(userNo);
             return new Result(true, HttpStatus.OK.value(), interestList);
         }catch (Exception e){

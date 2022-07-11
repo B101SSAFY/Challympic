@@ -30,7 +30,7 @@ public class SearchApiController {
         List<Tag> tagList = searchService.findTagList();
         List<UserNicknameResponse> userList = searchService.findUserList();
 
-        Map<String, List> data = new HashMap<>();
+        Map<String, List> data = new HashMap<>(); // TODO: 제네릭
 
         data.put("tagList", tagList);
         data.put("userList", userList);
@@ -48,7 +48,7 @@ public class SearchApiController {
         List<ChallengeDto> challengeList = searchService.findChallengeListByTagContent(request);
         List<PostDto> postList = searchService.findPostListByTagContent(request);
 
-        Map<String, List> data = new HashMap<>();
+        Map<String, List> data = new HashMap<>(); // TODO : 제네릭
         data.put("challengeList", challengeList);
         data.put("postList", postList);
 

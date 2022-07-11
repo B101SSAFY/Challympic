@@ -22,7 +22,7 @@ public class UserApiController {
 
     @GetMapping("/user/account/{userNo}")
     public Result findUser(@PathVariable("userNo") int no){
-        User byNo = userService.findByNo(no);
+        User byNo = userService.findByNo(no); // TODO: duplicate
         List<Title> titles = titleService.findTitlesByUserNo(no);
         List<Interest> interests = byNo.getInterest();
         List<Subscription> subscriptions = byNo.getSubscription();
@@ -43,7 +43,7 @@ public class UserApiController {
     @PutMapping("/user/account/{userNo}")
     public Result updateUser(@PathVariable("userNo") int no, UserUpdateRequest request){
         int returnNo = userService.updateUser(no, request);
-        User byNo = userService.findByNo(returnNo);
+        User byNo = userService.findByNo(returnNo); // TODO: duplicate
         List<Title> titles = titleService.findTitlesByUserNo(no);
         List<Interest> interests = byNo.getInterest();
         List<Subscription> subscriptions = byNo.getSubscription();
@@ -81,6 +81,7 @@ public class UserApiController {
         return new Result(true, HttpStatus.OK.value(), result);
     }
 
+    // TODO : 왜 Kings인가요?
     static class Kings implements Comparable<Kings> {
         private int user_no;
         private int post_cnt;

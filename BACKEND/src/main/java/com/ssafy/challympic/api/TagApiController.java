@@ -29,7 +29,7 @@ public class TagApiController {
 //        });
 //    }
 
-    @Data
+    @Data // TODO: DTO로 빼기
     @AllArgsConstructor
     static class Result<T>{
         private boolean isSuccess;
@@ -42,11 +42,11 @@ public class TagApiController {
         }
     }
 
-    static class tagRequest {
+    static class tagRequest { // TODO: dto로
         private List<Integer> tag_noList;
     }
 
-    @Data
+    @Data // TODO: dto로
     static class TagDto{
         private int tag_no;
         private String tag_content;
@@ -66,7 +66,7 @@ public class TagApiController {
                 allTags.add(tag);
             }
         }
-        List<TagDto> TagResponse = allTags.stream()
+        List<TagDto> TagResponse = allTags.stream() // TODO: service로
                 .map(t -> new TagDto(t))
                 .collect(Collectors.toList());
 

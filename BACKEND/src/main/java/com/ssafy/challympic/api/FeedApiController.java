@@ -2,6 +2,7 @@ package com.ssafy.challympic.api;
 
 import com.ssafy.challympic.api.Dto.Feed.FeedChallengeListResponse;
 import com.ssafy.challympic.api.Dto.Feed.FeedPostListResponse;
+import com.ssafy.challympic.api.Dto.User.UserResponse;
 import com.ssafy.challympic.domain.Challenge;
 import com.ssafy.challympic.domain.Post;
 import com.ssafy.challympic.domain.Result;
@@ -82,38 +83,14 @@ public class FeedApiController {
         }
     }
 
-    // TODO: 추후 추가 수정
     @GetMapping("/feed/{userNo}")
     public Result getFeedUserInfo(@PathVariable("userNo") int user_no){
-        if(user_no == 0){
-            return new Result(false, HttpStatus.NO_CONTENT.value());
-        }
-        User findUser = userService.findByNo(user_no);
-        if(findUser == null){
+        try {
+            User findUser = userService.findByNo(user_no);
+            return new Result(true, HttpStatus.OK.value(), new UserResponse(findUser));
+        }catch (Exception e){
             return new Result(false, HttpStatus.BAD_REQUEST.value());
-        }else{
-            return new Result(true, HttpStatus.OK.value(), new UserDto(findUser));
         }
     }
 
-    @Data // TODO : dto로
-    static class UserDto{
-        private int user_no;
-        private String user_nickname;
-        private String user_title;
-        private int file_no;
-        private String file_path;
-        private String file_savedname;
-
-        public UserDto(User user) {
-            this.user_no = user.getNo();
-            this.user_nickname = user.getNickname();
-            this.user_title = user.getTitle();
-            if(user.getMedia() !=  null){
-                this.file_no = user.getMedia().getNo();
-                this.file_path = user.getMedia().getFile_path();
-                this.file_savedname = user.getMedia().getFile_savedname();
-            }
-        }
-    }
 }

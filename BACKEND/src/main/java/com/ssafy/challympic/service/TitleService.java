@@ -18,7 +18,7 @@ public class TitleService {
     @Transactional
     public void saveTitles(Title title) {
         titleRepository.save(title);
-    }
+    } // TODO: 사용하지 않음. title 어떻게 사용하고 있는지 확인 필요
 
     public List<Title> findTitlesByUserNo(int user_no) {return titleRepository.findByUser_No(user_no);}
 

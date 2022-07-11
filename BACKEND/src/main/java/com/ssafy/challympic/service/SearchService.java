@@ -43,14 +43,14 @@ public class SearchService {
     public List<UserNicknameResponse> findUserList(){
         List<User> users = userRepository.findAll();
         return users.stream()
-                .map(u -> new UserNicknameResponse(u.getNo(), u.getNickname()))
+                .map(u -> new UserNicknameResponse(u.getNo(), u.getNickname())) // TODO : 생성자 builder로 수정
                 .collect(Collectors.toList());
     }
 
     public List<SearchDto> findTagListByUserNo(int userNo) {
         List<Search> searches = searchRepository.findAllByUserNo(userNo);
         return searches.stream()
-                .map(s -> new SearchDto(s.getNo(), s.getUser().getNo(), s.getTag_no(), s.getTag_content(), s.getContent(), s.getCreatedDate()))
+                .map(s -> new SearchDto(s.getNo(), s.getUser().getNo(), s.getTag_no(), s.getTag_content(), s.getContent(), s.getCreatedDate())) // TODO: 생성자 builder로 수정
                 .collect(Collectors.toList());
     }
 
@@ -61,7 +61,7 @@ public class SearchService {
                     List<Post> postListByChallengeNo = postService.getPostList(c.getNo());
                     List<PostDto> postList = postToDto(postListByChallengeNo, request.getUser_no());
                     boolean isSubscription = subscriptionService.findSubscriptionByChallengeAndUser(c.getNo(), request.getUser_no()) != null;
-                    return new ChallengeDto(c, postList, isSubscription);
+                    return new ChallengeDto(c, postList, isSubscription); // TODO : 생성자 builder로 수정
                 })
                 .collect(Collectors.toList());
     }
@@ -73,7 +73,7 @@ public class SearchService {
                     List<PostLike> postLikeList = postLikeService.getPostLikeListByPostNo(p.getNo());
                     int commentCount = commentService.postCommentCnt(p.getNo());
                     boolean isLike = postService.getPostLikeByPostNoAndUserNo(p.getNo(), userNo);
-                    return new PostDto(p,challengeTitle, postLikeList.size(), commentCount, isLike);
+                    return new PostDto(p,challengeTitle, postLikeList.size(), commentCount, isLike); // TODO : 생성자 builder로 수정
                 })
                 .collect(Collectors.toList());
     }

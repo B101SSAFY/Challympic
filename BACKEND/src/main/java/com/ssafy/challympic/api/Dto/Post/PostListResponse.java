@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 @Getter
+// TODO : NoArgsConst 필요없나요? + res에서는 NoArgs 필요없는건가요?
 public class PostListResponse {
     // 포스트 정보
     private int post_no;

@@ -6,9 +6,8 @@ import lombok.Data;
 
 import java.io.File;
 import java.time.LocalDateTime;
-import java.util.Date;
 
-@Data
+@Data // TODO : 어노테이션 수정
 @AllArgsConstructor
 public class CommentDto {
     private int comment_no;
@@ -24,6 +23,7 @@ public class CommentDto {
     private boolean IsLiked;
     private int file_no;
 
+    // builder 추가
     public CommentDto(Comment comment, boolean IsLiked) {
         this.comment_no = comment.getNo();
         this.user_no = comment.getUser().getNo();

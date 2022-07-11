@@ -4,6 +4,7 @@ import com.ssafy.challympic.domain.Challenge;
 import com.ssafy.challympic.domain.Post;
 import lombok.Builder;
 
+// TODO : Getter도 필요없나요.....?
 public class PostListShortResponse {
     private int challenge_no;
     private int post_no;

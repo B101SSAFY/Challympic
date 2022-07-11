@@ -1,25 +1,23 @@
 package com.ssafy.challympic.api;
 
 import com.ssafy.challympic.api.Dto.Comment.*;
-import com.ssafy.challympic.domain.*;
-import com.ssafy.challympic.service.*;
-import lombok.*;
+import com.ssafy.challympic.service.CommentLikeService;
+import com.ssafy.challympic.service.CommentService;
+import com.ssafy.challympic.service.UserService;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 public class CommentApiController {
 
     private final CommentService commentService;
-    private final UserService userService;
+    private final UserService userService; // TODO: 안쓰는 선언 제거
     private final CommentLikeService commentLikeService;
 
     @PostMapping("/comment")
@@ -89,7 +87,7 @@ public class CommentApiController {
      */
     @Data
     @AllArgsConstructor
-    static class Result<T>{
+    static class Result<T>{ // TODO: Dto로 이동?
         private boolean isSuccess;
         private int code;
         private T data;

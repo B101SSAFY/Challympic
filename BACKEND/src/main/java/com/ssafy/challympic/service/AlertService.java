@@ -15,6 +15,7 @@ public class AlertService {
 
     private final AlertRepository alertRepository;
 
+    // TODO : Transactional 추가 필요
     public void saveAlert(Alert alert) {
         alertRepository.save(alert);
     }

@@ -2,10 +2,9 @@ package com.ssafy.challympic.api.Dto.Post;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
-@Getter
+@Getter // TODO: request는 NoArgs 필요하지 않나요...?
 public class PostSaveRequest {
 
     private Integer user_no;

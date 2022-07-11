@@ -38,8 +38,8 @@ public class FeedApiController {
         try{
 
             List<Challenge> challenges = challengeService.getChallengeByUserNo(userNo);
-            System.out.println("여기: "+challenges.size());
-            List<FeedChallengeListResponse> collect = challenges.stream()
+            System.out.println("여기: "+challenges.size()); // TODO : 출력문 제거
+            List<FeedChallengeListResponse> collect = challenges.stream() // TODO : dto service 레벨로
                     .map(c -> {
                         List<Post> postList = postService.getPostList(c.getNo());
                         Post firstPost = postList.get(0);
@@ -54,7 +54,7 @@ public class FeedApiController {
         }
     }
 
-    @Data
+    @Data // TODO : dto로 이동
     static class ChallengeResponse{
         private int challenge_no;
         private boolean isVideo;
@@ -79,7 +79,7 @@ public class FeedApiController {
         }
     }
 
-    @Data
+    @Data // TODO : dto로 이동
     static class PostResponse{
         private int challenge_no;
         private boolean isVideo;
@@ -113,7 +113,7 @@ public class FeedApiController {
     public Result getSubscriptionChallengeList(@PathVariable int userNo) {
         List<Challenge> challenges = challengeService.findChallengeBySubscription(userNo);
         if(challenges == null) return new Result(false, HttpStatus.NOT_FOUND.value());
-        List<ChallengeResponse> collect = challenges.stream()
+        List<ChallengeResponse> collect = challenges.stream() // TODO : dto service 레벨로
                 .map(c -> {
                     List<Post> postList = postService.getPostList(c.getNo());
                     Post firstPost = postList.get(0);
@@ -130,7 +130,7 @@ public class FeedApiController {
      */
     @GetMapping("/feed/{userNo}/like")
     public Result getLikePostList(@PathVariable int userNo) {
-        List<Post> posts = postService.getLikePostListByUserNo(userNo);
+        List<Post> posts = postService.getLikePostListByUserNo(userNo); // TODO : dto service 레벨로
         List<PostResponse> collect = new ArrayList<>();
         if(!posts.isEmpty()){
             collect = posts.stream()
@@ -150,7 +150,7 @@ public class FeedApiController {
      */
     @GetMapping("/feed/{userNo}/post")
     public Result postByUser(@PathVariable("userNo") int user_no){
-        List<Post> postListByUserNo = postService.getPostListByUserNo(user_no);
+        List<Post> postListByUserNo = postService.getPostListByUserNo(user_no); // TODO : dto service 레벨로
         List<PostResponse> collect = new ArrayList<>();
         if(!postListByUserNo.isEmpty()){
             collect = postListByUserNo.stream()
@@ -178,7 +178,7 @@ public class FeedApiController {
         }
     }
 
-    @Data
+    @Data // TODO : dto로
     static class UserDto{
         private int user_no;
         private String user_nickname;

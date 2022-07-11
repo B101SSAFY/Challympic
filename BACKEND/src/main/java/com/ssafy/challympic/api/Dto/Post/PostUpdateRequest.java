@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
-@Getter
+@Getter // TODO : NoArgsConst
 public class PostUpdateRequest {
     private Integer user_no;
     private String post_content;

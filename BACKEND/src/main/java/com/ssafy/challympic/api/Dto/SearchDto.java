@@ -4,9 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
-@Data
+@Data // TODO : 어노테이션 수정
 @AllArgsConstructor
 public class SearchDto {
     private int search_no;
@@ -15,4 +14,6 @@ public class SearchDto {
     private String tag_content;
     private String search_content;
     private LocalDateTime search_regdate;
+    
+    // TODO : builder 추가
 }

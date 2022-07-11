@@ -54,6 +54,7 @@ public class ChallengeService {
         if(request.getChallengers().size() == 0) access = ChallengeAccess.PUBLIC;
         else {
             access = ChallengeAccess.PRIVATE;
+            // TODO : str 대신 user_nickname으로 받고 바로 사용하도록 수정 가능
             for(String str : request.getChallengers().subList(1, request.getChallengers().size())) {
                 String user_nickname = str;
                 User challenger = userRepository.findByNickname(user_nickname).orElseThrow(() ->
@@ -81,6 +82,7 @@ public class ChallengeService {
                 .build();
 
         // 중복 확인
+        // TODO : validation 확인 안되어있음.
         validateDuplicateChallenge(challenge);
         // 챌린지 저장
         challengeRepository.save(challenge);
@@ -153,6 +155,7 @@ public class ChallengeService {
         return challenge;
     }
 
+    // TODO: void -> boolean, Error Throw보단 boolean으로 return할 수 있도록
     private void validateDuplicateChallenge(Challenge challenge) {
         List<Challenge> findChallenges = challengeRepository.findByTitleOrderByEndDesc(challenge.getTitle());
         for(Challenge c : findChallenges) {
@@ -162,8 +165,9 @@ public class ChallengeService {
         }
     }
 
+    // TODO : void -> boolean, Error Throw보단 boolean으로 return할 수 있도록
     public void validateDuplicateTitle(ChallengeTitleCheckRequsetDto request) {
-        List<Challenge> challenges = challengeRepository.findByTitle(request.getChallenge_title());
+        List<Challenge> challenges = challengeRepository.findByTitle(request.getChallenge_title()); // TODO : 확인필요 - challenges == null로 나옴.
 
         if(challenges.size() != 0){
             throw new NoSuchElementException("챌린지가 없습니다.");
@@ -181,7 +185,7 @@ public class ChallengeService {
         User user = userRepository.findById(userNo)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
 
-        Subscription subscription = subscriptionRepository.findByChallengeNoAndUser_No(challenge.getNo(), user.getNo()).get();
+        Subscription subscription = subscriptionRepository.findByChallengeNoAndUser_No(challenge.getNo(), user.getNo()).get(); // TODO : orElseThrow로 변경
         if(subscription == null) {
             subscriptionRepository.save(Subscription.builder()
                     .challenge(challenge)
@@ -198,7 +202,7 @@ public class ChallengeService {
         List<SubscriptionDto> subscriptionDtoList = new ArrayList<>();
         if(!subscriptionList.isEmpty()) {
             subscriptionDtoList = subscriptionList.stream()
-                    .map(s -> new SubscriptionDto(s))
+                    .map(s -> new SubscriptionDto(s)) // TODO : 생성자 builder로 수정
                     .collect(Collectors.toList());
         }
         return subscriptionDtoList;
@@ -236,7 +240,7 @@ public class ChallengeService {
 
     public List<ChallengeResponseDto> getChallenges() {
         return challengeRepository.findAll().stream()
-                .map(c -> new ChallengeResponseDto(c))
+                .map(c -> new ChallengeResponseDto(c)) // TODO : 생성자 builder로 수정
                 .collect(Collectors.toList());
     }
 

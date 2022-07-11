@@ -2,10 +2,10 @@ package com.ssafy.challympic.api.Dto.User;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
+// TODO: NoArgsConst?
 public class UserUpdateRequest {
 
     private String user_nickname;

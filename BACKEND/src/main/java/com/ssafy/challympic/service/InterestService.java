@@ -31,7 +31,7 @@ public class InterestService {
     public int save(int userNo, int tagNo){
 
         User user = userRepository.findById(userNo)
-                .orElseThrow(() -> new NoSuchElementException());
+                .orElseThrow(() -> new NoSuchElementException()); // TODO: 오류 내용 추가
         Tag tag = tagRepository.findById(tagNo)
                 .orElseThrow(() -> new NoSuchElementException());
 
@@ -46,7 +46,7 @@ public class InterestService {
     public List<InterestListResponse> findByUser(int userNo){
 
         List<Interest> allByUser_no = interestRepository.findAllByUser_No(userNo);
-        List<InterestListResponse> interests = allByUser_no.stream()
+        List<InterestListResponse> interests = allByUser_no.stream() // TODO : 선언 없이 바로 return
                 .map(i -> new InterestListResponse(i))
                 .collect(Collectors.toList());
 
@@ -56,7 +56,7 @@ public class InterestService {
     @Transactional
     public void delete(int userNo, int tagNo){
         Interest interest = interestRepository.findByUser_NoAndTag_No(userNo, tagNo)
-                        .orElseThrow(() -> new NoSuchElementException());
+                        .orElseThrow(() -> new NoSuchElementException()); // TODO: 오류 내용 추가
         interestRepository.delete(interest);
     }
 }

@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -32,7 +30,7 @@ public class CommentLikeService {
     public boolean findCommentLike(CommentLikeRequest request){
         try{
             CommentLike commentLike = commentLikeRepository.findByUser_NoAndComment_No(request.getUser_no(), request.getComment_no()).get();
-            commentLikeRepository.delete(commentLike);
+            commentLikeRepository.delete(commentLike); // TODO: delete 들어가서 Transactional 추가해야 할 듯. 아래 save도 추가됨.
             return false;
         }catch (Exception e){
             User user = userRepository.findById(request.getUser_no())

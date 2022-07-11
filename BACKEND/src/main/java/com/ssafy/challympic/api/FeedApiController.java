@@ -23,12 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FeedApiController {
 
-    private final PostService postService;
-    private final ChallengeService challengeService;
-    private final PostLikeService postLikeService;
-    private final CommentService commentService;
     private final UserService userService;
-
     private final FeedService feedService;
 
     /**
@@ -87,6 +82,7 @@ public class FeedApiController {
         }
     }
 
+    // TODO: 추후 추가 수정
     @GetMapping("/feed/{userNo}")
     public Result getFeedUserInfo(@PathVariable("userNo") int user_no){
         if(user_no == 0){

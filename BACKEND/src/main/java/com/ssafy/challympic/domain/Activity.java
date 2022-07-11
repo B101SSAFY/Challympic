@@ -14,13 +14,17 @@ public class Activity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int no;
 
-    private int user_no;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_no")
+    private User user;
 
-    private int post_no;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_no")
+    private Post post;
 
     @Builder
-    public Activity(int user_no, int post_no) {
-        this.user_no = user_no;
-        this.post_no = post_no;
+    public Activity(User user, Post post) {
+        this.user = user;
+        this.post = post;
     }
 }

@@ -24,7 +24,7 @@ public class InterestApiController {
     public Result save(@PathVariable("userNo") int userNo, @RequestBody InterestSaveRequest request){
 
         try{
-            int interestNo = interestService.save(userNo, request.getTag_no()); // TODO: 선언 필요할까요?
+            interestService.save(userNo, request.getTag_no());
             List<InterestListResponse> interestList = interestService.findByUser(userNo);
             return new Result(true, HttpStatus.OK.value(), interestList);
         }catch (Exception e){

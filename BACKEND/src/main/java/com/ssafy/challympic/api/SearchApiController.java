@@ -1,5 +1,6 @@
 package com.ssafy.challympic.api;
 
+import com.ssafy.challympic.api.Dto.Activity.ActivityRequest;
 import com.ssafy.challympic.api.Dto.ChallengeDto;
 import com.ssafy.challympic.api.Dto.PostDto;
 import com.ssafy.challympic.api.Dto.SearchDto;
@@ -67,11 +68,7 @@ public class SearchApiController {
 
         List<Post> tagContainPost = postService.getPostByTag(request.getTag_content());
         for(Post p : tagContainPost) {
-            Activity activity = Activity.builder()
-                    .post_no(p.getNo())
-                    .user_no(request.getUser_no())
-                    .build();
-            activityService.saveActivity(activity);
+            activityService.saveActivity(new ActivityRequest(request.getUser_no(), p.getNo()));
         }
 
         return new Result(true, HttpStatus.OK.value(), data);

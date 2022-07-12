@@ -185,14 +185,14 @@ public class ChallengeService {
         User user = userRepository.findById(userNo)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
 
-        Subscription subscription = subscriptionRepository.findByChallengeNoAndUser_No(challenge.getNo(), user.getNo()).get(); // TODO : orElseThrow로 변경
-        if(subscription == null) {
+        try {
+            Subscription subscription = subscriptionRepository.findByChallengeNoAndUser_No(challenge.getNo(), user.getNo()).get(); // TODO : orElseThrow로 변경
+            subscriptionRepository.delete(subscription);
+        }catch (NoSuchElementException e) {
             subscriptionRepository.save(Subscription.builder()
                     .challenge(challenge)
                     .user(user)
                     .build());
-        } else {
-            subscriptionRepository.delete(subscription);
         }
         return getSubscriptionDtoList(userNo);
     }
@@ -209,7 +209,7 @@ public class ChallengeService {
     }
 
 
-    public List<Challenge> findChallengeBySubscription(int userNo) {
+    public List<Challenge> getChallengeBySubscription(int userNo) {
         return challengeRepository.findByUserNoFromSubscription(userNo);
     }
 

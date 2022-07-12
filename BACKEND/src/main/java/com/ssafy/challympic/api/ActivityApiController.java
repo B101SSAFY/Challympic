@@ -29,11 +29,7 @@ public class ActivityApiController {
 
     @PostMapping("/activity")
     public Result setActivity(@RequestBody ActivityRequest request) { // TODO : Raw Type 모두 수정할 수도 있음. (http://happinessoncode.com/2018/02/08/java-generic-raw-type/)
-        Activity activity = Activity.builder()
-                .user_no(request.getUserNo())
-                .post_no(request.getPostNo())
-                .build();
-        activityService.saveActivity(activity);
+        activityService.saveActivity(request);
         return new Result(true, HttpStatus.OK.value());
     }
 

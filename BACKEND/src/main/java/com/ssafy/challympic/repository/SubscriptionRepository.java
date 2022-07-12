@@ -1,5 +1,6 @@
 package com.ssafy.challympic.repository;
 
+import com.ssafy.challympic.domain.Challenge;
 import com.ssafy.challympic.domain.Subscription;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,6 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Inte
 
     Optional<Subscription> findByChallengeNoAndUser_No(int challengeNo, int user_no);
 
-     List<Subscription> findAllByUserNo(int userNo);
+    List<Subscription> findAllByUserNo(int userNo);
 
 }

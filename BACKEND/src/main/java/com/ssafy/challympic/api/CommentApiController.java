@@ -17,7 +17,6 @@ import java.util.List;
 public class CommentApiController {
 
     private final CommentService commentService;
-    private final UserService userService; // TODO: 안쓰는 선언 제거
     private final CommentLikeService commentLikeService;
 
     @PostMapping("/comment")

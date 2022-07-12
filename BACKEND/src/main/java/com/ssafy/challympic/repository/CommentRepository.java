@@ -15,4 +15,6 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
     List<Comment> findByUser_No(int userNo);
 
+    int countByPost_No(int postNo);
+
 }

@@ -54,11 +54,11 @@ public class ChallengeApiController {
     /**
      * 구독추가
      */
-    @PostMapping("/challenge/{challengeNo}/subscribe/{no}")
-    public Result addSubscription(@PathVariable int challengeNo, @PathVariable int no) {
+    @PostMapping("/challenge/{challengeNo}/subscribe/{userNo}")
+    public Result addSubscription(@PathVariable int challengeNo, @PathVariable int userNo) {
         List<SubscriptionDto> subscriptionDtoList;
         try{
-            subscriptionDtoList = challengeService.addSubscription(challengeNo, no);
+            subscriptionDtoList = challengeService.addSubscription(challengeNo, userNo);
         }catch (Exception e){
             return new Result(false, HttpStatus.BAD_REQUEST.value());
         }

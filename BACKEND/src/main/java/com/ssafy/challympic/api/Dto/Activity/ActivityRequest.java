@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ActivityRequest {
-    private int postNo;
-    private int userNo;
+    private int post_no;
+    private int user_no;
 
     @Builder
-    public ActivityRequest(int postNo, int userNo) {
-        this.postNo = postNo;
-        this.userNo = userNo;
+    public ActivityRequest(int post_no, int user_no) {
+        this.post_no = post_no;
+        this.user_no = user_no;
     }
 }

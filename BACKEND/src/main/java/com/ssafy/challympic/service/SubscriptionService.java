@@ -1,6 +1,6 @@
 package com.ssafy.challympic.service;
 
-import com.ssafy.challympic.api.Dto.SubscriptionDto;
+import com.ssafy.challympic.api.Dto.Subscription.ListSubscriptionResponse;
 import com.ssafy.challympic.domain.Subscription;
 import com.ssafy.challympic.repository.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,11 +33,11 @@ public class SubscriptionService {
         return subscriptionRepository.findByChallengeNoAndUser_No(challengeNo, userNo).orElseThrow(() -> new NoSuchElementException("존재하지 않는 구독 정보입니다."));
     }
 
-    public List<SubscriptionDto> findSubscriptionByUser(int userNo) {
+    public List<ListSubscriptionResponse> findSubscriptionByUser(int userNo) {
         List<Subscription> subscriptionList = subscriptionRepository.findAllByUserNo(userNo);
-        List<SubscriptionDto> subscriptionDtoList = new ArrayList<>();
+        List<ListSubscriptionResponse> subscriptionDtoList = new ArrayList<>();
         subscriptionDtoList = subscriptionList.stream()
-                .map(s -> new SubscriptionDto(s))
+                .map(ListSubscriptionResponse::new)
                 .collect(Collectors.toList());
         return subscriptionDtoList;
     }

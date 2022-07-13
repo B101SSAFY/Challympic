@@ -1,7 +1,5 @@
 package com.ssafy.challympic.api.Dto.Challenge;
 
-import com.ssafy.challympic.api.Dto.PostDto;
-import com.ssafy.challympic.api.Dto.UserDto;
 import com.ssafy.challympic.domain.Challenge;
 import com.ssafy.challympic.domain.defaults.ChallengeAccess;
 import com.ssafy.challympic.domain.defaults.ChallengeType;
@@ -11,11 +9,10 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class ChallengeResponseDto {
+public class ChallengeResponse {
     private int challenge_no;
     private int user_no;
     private LocalDateTime challenge_start;
@@ -24,14 +21,11 @@ public class ChallengeResponseDto {
     private ChallengeType challenge_type;
     private String challenge_title;
     private String challenge_content;
-    private List<UserDto> challenge_challengers;
     private boolean challenge_official;
     private int challenge_report;
-    private List<PostDto> postList;
-    private boolean isSubscription;
 
     @Builder
-    public ChallengeResponseDto(Challenge challenge) {
+    public ChallengeResponse(Challenge challenge) {
         this.challenge_no = challenge.getNo();
         this.user_no = challenge.getUser().getNo();
         this.challenge_start = challenge.getCreatedDate();
@@ -44,9 +38,4 @@ public class ChallengeResponseDto {
         this.challenge_report = challenge.getReport();
     }
 
-    public ChallengeResponseDto update(List<UserDto> challengers, List<PostDto> postList){
-        this.challenge_challengers = challengers;
-        this.postList = postList;
-        return this;
-    }
 }

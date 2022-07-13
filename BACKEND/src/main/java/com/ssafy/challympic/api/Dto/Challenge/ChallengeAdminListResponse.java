@@ -1,11 +1,6 @@
 package com.ssafy.challympic.api.Dto.Challenge;
 
-import com.ssafy.challympic.api.Dto.PostDto;
-import com.ssafy.challympic.api.Dto.UserDto;
 import com.ssafy.challympic.domain.Challenge;
-import com.ssafy.challympic.domain.User;
-import com.ssafy.challympic.domain.defaults.ChallengeAccess;
-import com.ssafy.challympic.domain.defaults.ChallengeType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

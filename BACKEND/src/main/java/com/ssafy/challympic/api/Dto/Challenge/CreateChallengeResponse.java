@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data // TODO: 어노테이션 변경
 @AllArgsConstructor
-public class CreateChallengeResponseDto {
+public class CreateChallengeResponse {
     private int challenge_no;
     
     // TODO: builder 추가

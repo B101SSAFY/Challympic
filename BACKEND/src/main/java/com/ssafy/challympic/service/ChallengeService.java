@@ -1,11 +1,11 @@
 package com.ssafy.challympic.service;
 
-import com.ssafy.challympic.api.Dto.Challenge.ChallengeResponseDto;
-import com.ssafy.challympic.api.Dto.Challenge.ChallengeTitleCheckRequsetDto;
-import com.ssafy.challympic.api.Dto.Challenge.CreateChallengeRequset;
-import com.ssafy.challympic.api.Dto.ChallengeDto;
-import com.ssafy.challympic.api.Dto.SubscriptionDto;
-import com.ssafy.challympic.api.Dto.UserDto;
+import com.ssafy.challympic.api.Dto.Challenge.ChallengeInfoResponse;
+import com.ssafy.challympic.api.Dto.Challenge.ChallengeResponse;
+import com.ssafy.challympic.api.Dto.Challenge.ChallengeTitleCheckRequest;
+import com.ssafy.challympic.api.Dto.Challenge.CreateChallengeRequest;
+import com.ssafy.challympic.api.Dto.Subscription.AddSubscriptionResponse;
+import com.ssafy.challympic.api.Dto.User.ChallengerDto;
 import com.ssafy.challympic.domain.*;
 import com.ssafy.challympic.domain.defaults.ChallengeAccess;
 import com.ssafy.challympic.repository.*;
@@ -28,15 +28,10 @@ public class ChallengeService {
     private final ChallengerRepository challengerRepository;
     private final ChallengeTagRepository challengeTagRepository;
     private final SubscriptionRepository subscriptionRepository;
-    private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final AlertRepository alertRepository;
     private final TagService tagService;
     private final TitleRepository titleRepository;
-
-    public List<Challenge> getChallengeByUserNo(int userNo) {
-        return challengeRepository.findByUser_No(userNo);
-    }
 
     public List<Challenger> getChallengerByChallengeNo(int challengeNo){
         return challengerRepository.findByChallengeNo(challengeNo);
@@ -47,7 +42,7 @@ public class ChallengeService {
     }
 
     @Transactional
-    public Challenge saveChallenge(CreateChallengeRequset request) {
+    public Challenge saveChallenge(CreateChallengeRequest request) {
         // 권한 설정
         ChallengeAccess access;
         List<Integer> challengers = new ArrayList<>();
@@ -166,7 +161,7 @@ public class ChallengeService {
     }
 
     // TODO : void -> boolean, Error Throw보단 boolean으로 return할 수 있도록
-    public void validateDuplicateTitle(ChallengeTitleCheckRequsetDto request) {
+    public void validateDuplicateTitle(ChallengeTitleCheckRequest request) {
         List<Challenge> challenges = challengeRepository.findByTitle(request.getChallenge_title()); // TODO : 확인필요 - challenges == null로 나옴.
 
         if(challenges.size() != 0){
@@ -179,7 +174,7 @@ public class ChallengeService {
     }
 
     @Transactional
-    public List<SubscriptionDto> addSubscription(int challengeNo, int userNo) {
+    public List<AddSubscriptionResponse> addSubscription(int challengeNo, int userNo) {
         Challenge challenge = challengeRepository.findById(challengeNo)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 챌린지입니다."));
         User user = userRepository.findById(userNo)
@@ -197,20 +192,15 @@ public class ChallengeService {
         return getSubscriptionDtoList(userNo);
     }
 
-    private List<SubscriptionDto> getSubscriptionDtoList(int userNo) {
+    private List<AddSubscriptionResponse> getSubscriptionDtoList(int userNo) {
         List<Subscription> subscriptionList = subscriptionRepository.findAllByUserNo(userNo);
-        List<SubscriptionDto> subscriptionDtoList = new ArrayList<>();
+        List<AddSubscriptionResponse> subscriptionDtoList = new ArrayList<>();
         if(!subscriptionList.isEmpty()) {
             subscriptionDtoList = subscriptionList.stream()
-                    .map(s -> new SubscriptionDto(s)) // TODO : 생성자 builder로 수정
+                    .map(AddSubscriptionResponse::new)
                     .collect(Collectors.toList());
         }
         return subscriptionDtoList;
-    }
-
-
-    public List<Challenge> getChallengeBySubscription(int userNo) {
-        return challengeRepository.findByUserNoFromSubscription(userNo);
     }
 
     public Challenge findChallengeByChallengeNo(int challengeNo) {
@@ -226,38 +216,28 @@ public class ChallengeService {
         return reportCnt;
     }
 
-    public int findSubscriptionCnt(int challenge_no) {
-        return subscriptionRepository.findAllByChallengeNo(challenge_no).size();
-    }
-
-    public int findPostCnt(int challenge_no) {
-        return postRepository.findByChallengeNo(challenge_no).size();
-    }
-
     public List<Challenge> findChallengesByTag(String tag_content) {
         return challengeRepository.findByTagContent(tag_content);
     }
 
-    public List<ChallengeResponseDto> getChallenges() {
+    public List<ChallengeResponse> getChallenges() {
         return challengeRepository.findAll().stream()
-                .map(c -> new ChallengeResponseDto(c)) // TODO : 생성자 builder로 수정
+                .map(ChallengeResponse::new)
                 .collect(Collectors.toList());
     }
 
-    public ChallengeDto getChallengeInfo(int challengeNo) {
+    public ChallengeInfoResponse getChallengeInfo(int challengeNo) {
         Challenge challenge = challengeRepository.findById(challengeNo)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 챌린지입니다."));
         List<Challenger> challengerList = challengerRepository.findByChallengeNo(challengeNo);
-        List<UserDto> challengers = new ArrayList<>();
+        List<ChallengerDto> challengers = new ArrayList<>();
         challengers = challengerList.stream()
                 .map(cs -> {
                     User user = userRepository.findById(cs.getUser().getNo())
                             .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
-                    return new UserDto(user);
+                    return new ChallengerDto(user);
                 })
                 .collect(Collectors.toList());
-        return new ChallengeDto(challenge, challengers);
+        return new ChallengeInfoResponse(challenge, challengers);
     }
-
-
 }

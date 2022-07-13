@@ -1,13 +1,17 @@
 package com.ssafy.challympic.service;
 
 import com.ssafy.challympic.domain.PostTag;
+import com.ssafy.challympic.domain.Search;
 import com.ssafy.challympic.domain.Tag;
 import com.ssafy.challympic.repository.PostTagRepository;
+import com.ssafy.challympic.repository.SearchRepository;
 import com.ssafy.challympic.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -18,6 +22,7 @@ public class TagService {
 
     private final TagRepository tagRepository;
     private final PostTagRepository postTagRepository;
+    private final SearchRepository searchRepository;
 
     /**
      * 태그 저장
@@ -46,16 +51,8 @@ public class TagService {
         tagRepository.save(tag);
     }
 
-    /**
-     * 태그 선택
-     */
-    public Tag findOne(int tag_no){
-        return tagRepository.findById(tag_no).orElseThrow(() -> new NoSuchElementException("존재하지 않는 태그입니다."));
-    }
-
     public Tag findTagByTagContent(String tagContent) {
-        Tag tag = tagRepository.findByContent(tagContent); // TODO : 선언 없이 바로 return하도록 수정
-        return tag;
+        return tagRepository.findByContent(tagContent);
     }
 
     // TODO: Transaction 추가
@@ -70,12 +67,33 @@ public class TagService {
         return postTagRepository.findAllByPostNo(post_no);
     }
 
-    public List<Tag> findAllTagList() {
-        return tagRepository.findAll();
-    }
-
     public List<Tag> findRecentAllTagList() {
         return tagRepository.findAllOrderByNoDesc();
     }
 
+    public List<Tag> getTagsVer01(int userNo) {
+        List<Search> searchList = searchRepository.findAllByUserNo(userNo);
+        List<Tag> tagAll = new ArrayList<>();
+        for(Search search : searchList) {
+            Tag searchTag = tagRepository.findByContent(search.getTag_content());
+            if(searchTag.getIsChallenge()  == null) tagAll.add(searchTag);
+        }
+
+        List<Tag> tempTagList = tagRepository.findAll();
+        int maxTag = tempTagList.size();
+        int[][] tagCount = new int[maxTag][2];
+
+        for(int i = 0; i < maxTag; i++) tagCount[i][0] = i + 1;
+        for(Tag tag : tagAll) {
+            tagCount[tag.getNo() - 1][1]++;
+        }
+
+        Arrays.sort(tagCount, (int[] o1, int[] o2) -> o2[1] - o1[1]);
+
+        List<Tag> tagResponse = new ArrayList<>();
+        for(int i = 0; i < Math.min(maxTag, 5); i++) {
+            tagResponse.add(tagRepository.findById(tagCount[i][0]).orElseThrow(() -> new NoSuchElementException("존재하지 않는 태그입니다.")));
+        }
+        return tagResponse;
+    }
 }

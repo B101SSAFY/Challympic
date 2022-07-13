@@ -1,9 +1,10 @@
 package com.ssafy.challympic.api;
 
 import com.ssafy.challympic.api.Dto.Activity.ActivityRequest;
-import com.ssafy.challympic.api.Dto.ChallengeDto;
-import com.ssafy.challympic.api.Dto.PostDto;
-import com.ssafy.challympic.api.Dto.SearchDto;
+import com.ssafy.challympic.api.Dto.Challenge.SearchTagChallengeResponse;
+import com.ssafy.challympic.api.Dto.Challenge.SearchTrendResponse;
+import com.ssafy.challympic.api.Dto.Post.SearchTagPostResponse;
+import com.ssafy.challympic.api.Dto.Search.SearchRecentResponse;
 import com.ssafy.challympic.api.Dto.Tag.TagSearchRequest;
 import com.ssafy.challympic.api.Dto.User.UserNicknameResponse;
 import com.ssafy.challympic.domain.*;
@@ -46,8 +47,8 @@ public class SearchApiController {
      */
     @PostMapping("/search/tag")
     public Result searchTagList(@RequestBody TagSearchRequest request) {
-        List<ChallengeDto> challengeList = searchService.findChallengeListByTagContent(request);
-        List<PostDto> postList = searchService.findPostListByTagContent(request);
+        List<SearchTagChallengeResponse> challengeList = searchService.findChallengeListByTagContent(request);
+        List<SearchTagPostResponse> postList = searchService.findPostListByTagContent(request);
 
         Map<String, List> data = new HashMap<>(); // TODO : 제네릭
         data.put("challengeList", challengeList);
@@ -76,13 +77,13 @@ public class SearchApiController {
 
     @GetMapping("/search/recent/user/{userNo}")
     public Result searchRecentListByUser(@PathVariable int userNo){
-        List<SearchDto> searchList = searchService.findTagListByUserNo(userNo);
+        List<SearchRecentResponse> searchList = searchService.findTagListByUserNo(userNo);
         return new Result(true, HttpStatus.OK.value(), searchList);
     }
 
     @GetMapping("/search/trending")
     public Result searchTrending() {
-        List<ChallengeDto> trendChallengeList = searchService.findTrendChallenge();
+        List<SearchTrendResponse> trendChallengeList = searchService.findTrendChallenge();
         return new Result(true, HttpStatus.OK.value(), trendChallengeList);
     }
 

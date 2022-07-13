@@ -3,8 +3,6 @@ package com.ssafy.challympic.api;
 import com.ssafy.challympic.api.Dto.Activity.ActivityRequest;
 import com.ssafy.challympic.api.Dto.Activity.ActivityResponse;
 import com.ssafy.challympic.api.Dto.Activity.TagDto;
-import com.ssafy.challympic.api.Dto.SearchDto;
-import com.ssafy.challympic.domain.Activity;
 import com.ssafy.challympic.domain.Result;
 import com.ssafy.challympic.domain.Tag;
 import com.ssafy.challympic.service.ActivityService;
@@ -15,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,7 +68,7 @@ public class ActivityApiController {
                 return new Result(true, HttpStatus.OK.value(), ActivityResponse.builder().tagList(tagDtos.subList(0,5)).build());
             }
         }else {
-            List<Tag> tagResponse = getTagsVer01(userNo);
+            List<Tag> tagResponse = tagService.getTagsVer01(userNo);
             tagResponse.removeIf(t -> t.getIsChallenge() != null);
             List<TagDto> tagDtoResponse = new ArrayList<>();
 
@@ -89,33 +86,4 @@ public class ActivityApiController {
         }
 
     }
-
-    private List<Tag> getTagsVer01(int userNo) {
-        List<SearchDto> searchList = searchService.findTagListByUserNo(userNo);
-        List<Tag> tagAll = new ArrayList<>();
-        for(SearchDto search : searchList) {
-            Tag searchTag = tagService.findTagByTagContent(search.getTag_content());
-            if(searchTag.getIsChallenge()  == null) tagAll.add(searchTag);
-        }
-
-        List<Tag> tempTagList = tagService.findAllTagList();
-        int maxTag = tempTagList.size();
-        int[][] tagCount = new int[maxTag][2];
-
-        for(int i = 0; i < maxTag; i++) tagCount[i][0] = i + 1;
-        for(Tag tag : tagAll) {
-            tagCount[tag.getNo() - 1][1]++;
-        }
-
-        Arrays.sort(tagCount, (int[] o1, int[] o2) -> {
-            return o2[1] - o1[1];
-        });
-
-        List<Tag> tagResponse = new ArrayList<>();
-        for(int i = 0; i < Math.min(maxTag, 5); i++) {
-            tagResponse.add(tagService.findOne(tagCount[i][0]));
-        }
-        return tagResponse;
-    }
-
 }

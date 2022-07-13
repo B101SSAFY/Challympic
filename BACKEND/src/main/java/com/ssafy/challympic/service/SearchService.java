@@ -1,8 +1,9 @@
 package com.ssafy.challympic.service;
 
-import com.ssafy.challympic.api.Dto.ChallengeDto;
-import com.ssafy.challympic.api.Dto.PostDto;
-import com.ssafy.challympic.api.Dto.SearchDto;
+import com.ssafy.challympic.api.Dto.Challenge.SearchTagChallengeResponse;
+import com.ssafy.challympic.api.Dto.Challenge.SearchTrendResponse;
+import com.ssafy.challympic.api.Dto.Post.SearchTagPostResponse;
+import com.ssafy.challympic.api.Dto.Search.SearchRecentResponse;
 import com.ssafy.challympic.api.Dto.Tag.TagSearchRequest;
 import com.ssafy.challympic.api.Dto.User.UserNicknameResponse;
 import com.ssafy.challympic.domain.*;
@@ -47,43 +48,43 @@ public class SearchService {
                 .collect(Collectors.toList());
     }
 
-    public List<SearchDto> findTagListByUserNo(int userNo) {
+    public List<SearchRecentResponse> findTagListByUserNo(int userNo) {
         List<Search> searches = searchRepository.findAllByUserNo(userNo);
         return searches.stream()
-                .map(s -> new SearchDto(s.getNo(), s.getUser().getNo(), s.getTag_no(), s.getTag_content(), s.getContent(), s.getCreatedDate())) // TODO: 생성자 builder로 수정
+                .map(s -> new SearchRecentResponse(s.getNo(), s.getUser().getNo(), s.getTag_no(), s.getTag_content(), s.getContent(), s.getCreatedDate())) // TODO: 생성자 builder로 수정
                 .collect(Collectors.toList());
     }
 
-    public List<ChallengeDto> findChallengeListByTagContent(TagSearchRequest request) {
+    public List<SearchTagChallengeResponse> findChallengeListByTagContent(TagSearchRequest request) {
         List<Challenge> challenges = challengeRepository.findByTagContent(request.getTag_content());
         return challenges.stream()
                 .map(c -> {
                     List<Post> postListByChallengeNo = postService.getPostList(c.getNo());
-                    List<PostDto> postList = postToDto(postListByChallengeNo, request.getUser_no());
+                    List<SearchTagPostResponse> postList = postToDto(postListByChallengeNo, request.getUser_no());
                     boolean isSubscription = subscriptionService.findSubscriptionByChallengeAndUser(c.getNo(), request.getUser_no()) != null;
-                    return new ChallengeDto(c, postList, isSubscription); // TODO : 생성자 builder로 수정
+                    return new SearchTagChallengeResponse(c, postList, isSubscription);
                 })
                 .collect(Collectors.toList());
     }
 
-    private List<PostDto> postToDto(List<Post> posts, Integer userNo) {
+    private List<SearchTagPostResponse> postToDto(List<Post> posts, Integer userNo) {
         return posts.stream()
                 .map(p -> {
                     String challengeTitle = challengeService.findChallengeByChallengeNo(p.getChallenge().getNo()).getTitle();
                     List<PostLike> postLikeList = postLikeService.getPostLikeListByPostNo(p.getNo());
                     int commentCount = commentService.postCommentCnt(p.getNo());
                     boolean isLike = postService.getPostLikeByPostNoAndUserNo(p.getNo(), userNo);
-                    return new PostDto(p,challengeTitle, postLikeList.size(), commentCount, isLike); // TODO : 생성자 builder로 수정
+                    return new SearchTagPostResponse(p,challengeTitle, postLikeList.size(), commentCount, isLike);
                 })
                 .collect(Collectors.toList());
     }
 
-    public List<PostDto> findPostListByTagContent(TagSearchRequest request) {
+    public List<SearchTagPostResponse> findPostListByTagContent(TagSearchRequest request) {
         List<Post> posts = postRepository.findFromPostTagByTagContent(request.getTag_content());
         return postToDto(posts, request.getUser_no());
     }
 
-    public List<ChallengeDto> findTrendChallenge() {
+    public List<SearchTrendResponse> findTrendChallenge() {
         List<Challenge> searchedChallenges = challengeRepository.findFromSearchChallenge();
         List<Challenge> allChallenge = challengeRepository.findAll();
         int challengeSize = allChallenge.size();
@@ -118,7 +119,7 @@ public class SearchService {
         }
 
         return trendChallenge.stream()
-                .map(c -> new ChallengeDto(c))
+                .map(c -> new SearchTrendResponse(c))
                 .collect(Collectors.toList());
     }
 

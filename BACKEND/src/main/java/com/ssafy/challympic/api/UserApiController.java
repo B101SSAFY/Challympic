@@ -49,7 +49,7 @@ public class UserApiController {
         }
     }
 
-    private Result getResult(@PathVariable("userNo") int no, int returnNo) {
+    private Result getResult(int no, int returnNo) {
         User user = userService.findByNo(returnNo);
         List<Title> titles = titleService.findTitlesByUserNo(no);
         List<Interest> interests = user.getInterest();

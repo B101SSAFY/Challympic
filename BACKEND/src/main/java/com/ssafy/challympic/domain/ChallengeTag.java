@@ -14,7 +14,7 @@ import static javax.persistence.FetchType.LAZY;
 public class ChallengeTag {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int no; // TODO : 이것도... 안바꿨군요...
+    private int no;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "challenge_no")

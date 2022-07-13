@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ChallengeTagRepository extends JpaRepository<ChallengeTag, Integer> {
 
-    List<ChallengeTag> findByChallenge_No(@Param("challengeNo")int challengeNo);
+    List<ChallengeTag> findByChallenge_No(int challengeNo);
 
     List<ChallengeTag> findByTag_Content(String Content);
 }

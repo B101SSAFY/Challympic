@@ -1,6 +1,6 @@
 package com.ssafy.challympic.api;
 
-import com.ssafy.challympic.api.Dto.User.FollowCnt;
+import com.ssafy.challympic.api.Dto.User.FollowCntResponse;
 import com.ssafy.challympic.api.Dto.User.FollowListResponse;
 import com.ssafy.challympic.api.Dto.User.FollowRequest;
 import com.ssafy.challympic.service.FollowService;
@@ -41,7 +41,7 @@ public class FollowApiController {
     public Result followCnt(@PathVariable("userNo") int user_no){
         int followerCnt = followService.followingCnt(user_no); // 피드 주인을 팔로우한
         int followingCnt = followService.followerCnt(user_no); // 피드 주인이 팔로우한
-        return new Result(true, HttpStatus.OK.value(), new FollowCnt(followerCnt, followingCnt));
+        return new Result(true, HttpStatus.OK.value(), new FollowCntResponse(followerCnt, followingCnt));
     }
 
     @GetMapping("/{userNo}/follower/{loginUser}")

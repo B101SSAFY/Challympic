@@ -4,6 +4,7 @@ import com.ssafy.challympic.api.Dto.User.FollowListResponse;
 import com.ssafy.challympic.domain.Alert;
 import com.ssafy.challympic.domain.Follow;
 import com.ssafy.challympic.domain.User;
+import com.ssafy.challympic.repository.AlertRepository;
 import com.ssafy.challympic.repository.FollowRepository;
 import com.ssafy.challympic.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +21,8 @@ import java.util.stream.Collectors;
 public class FollowService {
 
     private final FollowRepository followRepository;
-
     private final UserRepository userRepository;
-
-    private final UserService userService;
-
-    private final AlertService alertService;
+    private final AlertRepository alertRepository;
 
     @Transactional
     public boolean follow(int srcNo, int destNo){
@@ -46,13 +43,15 @@ public class FollowService {
             followRepository.save(newFollow);
 
             // 팔로우했을때 알림
-            User writer = userService.findByNo(destNo);
-            User follower = userService.findByNo(srcNo);
+            User writer = userRepository.findById(destNo)
+                    .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
+            User follower = userRepository.findById(srcNo)
+                    .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
             Alert alert = Alert.builder()
                     .user(writer)
                     .content(follower.getNickname() + "님이 팔로우합니다.")
                     .build();
-            alertService.saveAlert(alert);
+            alertRepository.save(alert);
 
             return true;
         }
@@ -93,15 +92,16 @@ public class FollowService {
     }
 
     public boolean isFollow(int srcNo, int destNo) {
-        return !followRepository.findBySrcUser_NoAndDestUser_No(srcNo, destNo).isEmpty(); // TODO: !isEmpty()에서 isPresent()로 수정
+        return followRepository.findBySrcUser_NoAndDestUser_No(srcNo, destNo).isPresent();
     }
 
     public int followingCnt(int userNo) {
-        return followRepository.findBySrcUser_No(userNo).size();
+        return followRepository.countBySrcUser_No(userNo);
     }
 
-    public int followerCnt(int user_no) {
-        return followRepository.findByDestUser_No(user_no).size();
+    public int followerCnt(int userNo) {
+        return followRepository.countByDestUser_No(userNo);
     }
+
 }
 

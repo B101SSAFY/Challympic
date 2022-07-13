@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ChallengeTagRepository extends JpaRepository<ChallengeTag, Integer> {
-    @Query("select ct from ChallengeTag ct where ct.challenge.no = :challengeNo")
-    List<ChallengeTag> findByChallengeNo(@Param("challengeNo")int challengeNo);
+
+    List<ChallengeTag> findByChallenge_No(@Param("challengeNo")int challengeNo);
+
+    List<ChallengeTag> findByTag_Content(String Content);
 }

@@ -26,9 +26,8 @@ public class FollowService {
 
     @Transactional
     public boolean follow(int srcNo, int destNo){
-        try{ // TODO : 로직 다시 한 번 확인해야함.
-            // get은 null일 경우 NoSuchElementException 반환
-            Follow follow = followRepository.findBySrcUser_NoAndDestUser_No(srcNo, destNo).get(); // TODO : get 말고 orElseThrow로 수정
+        try{
+            Follow follow = followRepository.findBySrcUser_NoAndDestUser_No(srcNo, destNo).get();
             followRepository.delete(follow);
             return false;
         }catch (NoSuchElementException e){

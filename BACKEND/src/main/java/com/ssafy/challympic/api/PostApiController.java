@@ -34,7 +34,7 @@ public class PostApiController {
     @GetMapping("/main/recent/post")
     public Result getRecentPosts(@RequestParam(required = false) Integer userNo){
         // 최대 50개 가져오기
-        List<Post> postList = postService.getRecentPostList(50);
+        List<Post> postList = postService.getRecentPostList();
         List<PostListResponse> collect = new ArrayList<>();
 
         for(Post post : postList){
@@ -219,19 +219,8 @@ public class PostApiController {
 
     @GetMapping("/post/{userNo}")
     public Result postByUser(@PathVariable("userNo") int user_no){
-        List<Post> postListByUserNo = postService.getPostListByUserNo(user_no); // TODO : dto service로
-        List<PostListShortResponse> collect = new ArrayList<>();
-        if(!postListByUserNo.isEmpty()){
-            collect = postListByUserNo.stream()
-                    .map(p -> {
-                        int challenge_no = p.getChallenge().getNo();
-                        Challenge challenge = challengeService.findChallengeByChallengeNo(challenge_no);
-                        int like_cnt = postLikeService.postLikeCnt(p.getNo());
-                        int comment_cnt = commentService.postCommentCnt(p.getNo());
-                        return new PostListShortResponse(p, challenge, like_cnt, comment_cnt);
-                    }).collect(Collectors.toList());
-        }
-        return new Result(true, HttpStatus.OK.value(), collect);
+        List<PostListShortResponse> responses = postService.getPostListByUserNo(user_no);
+        return new Result(true, HttpStatus.OK.value(), responses);
     }
 
     /**
@@ -247,23 +236,6 @@ public class PostApiController {
         }catch (Exception e){
             return new Result(false, HttpStatus.BAD_REQUEST.value());
         }
-    }
-
-
-    /** 
-     *  챌린지 번호로 챌린지 정보를 가져와 파일 타입이 유효한 타입인지 확인
-     *      - 유효하면 true
-     *      - 잘못된 타입이면 false
-     * */
-    private boolean fileTypeValidate(int challengeNo, String fileType){ // TODO : 사용안함
-        // 챌린지 번호로 챌린지 정보 가져오기
-        Challenge challenge = challengeService.findAllChallenge().get(challengeNo);
-
-        //입력받은 파일의 타입과 챌린지 타입 비교
-        if(fileType.equals(challenge.getType())){ // TODO: always false?
-            return true;
-        }
-        return false;
     }
 
 }

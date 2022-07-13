@@ -235,7 +235,10 @@ public class ChallengeService {
     }
 
     public List<Challenge> findChallengesByTag(String tag_content) {
-        return challengeRepository.findByTagContent(tag_content);
+        List<ChallengeTag> challengeTags = challengeTagRepository.findByTag_Content(tag_content);
+        return challengeTags.stream()
+                .map( ct -> ct.getChallenge())
+                .collect(Collectors.toList());
     }
 
     public List<ChallengeResponseDto> getChallenges() {

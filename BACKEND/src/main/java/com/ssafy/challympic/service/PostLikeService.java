@@ -6,12 +6,13 @@ import com.ssafy.challympic.domain.User;
 import com.ssafy.challympic.repository.PostLikeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service
 @RequiredArgsConstructor
-// TODO : Transactional(readOnly = true) 추가 필요
+@Transactional(readOnly = true)
+@Service
 public class PostLikeService {
 
     private final PostLikeRepository postLikeRepository;
@@ -26,13 +27,11 @@ public class PostLikeService {
         return postLikeRepository.findByPost_No(postNo);
     }
 
-    // TODO : return ~~~~.isPresent()로 수정 가능
     public boolean getPostLikeByUserNoPostNo(Integer postNo, Integer userNo){
-        if(postLikeRepository.findByPost_NoAndUser_No(postNo, userNo).isEmpty()) return false;
-        return true;
+        return postLikeRepository.findByPost_NoAndUser_No(postNo, userNo).isPresent();
     }
 
-    // TODO: Transactional 추가
+    @Transactional
     public void delete(Integer postNo, Integer userNo){
         PostLike postLike = postLikeRepository.findByPost_NoAndUser_No(postNo, userNo)
                 .orElseThrow(() -> new IllegalArgumentException("해당 포스트를 유저가 좋아요 누르지 않았습니다."));
@@ -40,7 +39,7 @@ public class PostLikeService {
         postLikeRepository.delete(postLike);
     }
 
-    // TODO: Transactional 추가
+    @Transactional
     public void save(PostLike postLike){
         postLikeRepository.save(postLike);
 
@@ -54,7 +53,4 @@ public class PostLikeService {
 
     }
 
-    public int postLikeCnt(int post_no) {
-        return postLikeRepository.countByPost_No(post_no);
-    }
 }

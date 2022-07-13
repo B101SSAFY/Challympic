@@ -14,7 +14,7 @@ import java.util.List;
 import static javax.persistence.FetchType.LAZY;
 
 @Getter
-@Table(uniqueConstraints = {@UniqueConstraint(name = "email_nickname_unique", columnNames = {"email", "nickname"})}) // TODO : 저 이부분 알려주실 수 있을까요...?
+@Table(uniqueConstraints = {@UniqueConstraint(name = "email_nickname_unique", columnNames = {"email", "nickname"})})
 @NoArgsConstructor
 @Entity
 public class User extends BaseTimeEntity {
@@ -58,13 +58,6 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "user")
     private List<Subscription> subscription;
-
-    // TODO : 여기도 주석 지울까요...?
-//    @OneToMany(mappedBy = "follow_following_no")
-//    private List<Follow> following;
-//
-//    @OneToMany(mappedBy = "follow_follower_no")
-//    private List<Follow> follower;
 
     @OneToMany(mappedBy = "user")
     private List<QnA> qna;

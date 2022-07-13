@@ -82,11 +82,11 @@ public class AdminService {
 
     @Transactional
     public void deleteChallenge(int challengeNo){
-        // TODO : orElseThrow로 NPE 확인 필요
-        Title findTitle = titleRepository.findByChallengeNo(challengeNo);
+        Title findTitle = titleRepository.findByChallengeNo(challengeNo)
+                .orElseThrow(() -> new IllegalArgumentException("해당 타이틀이 없습니다."));
         titleRepository.delete(findTitle);
 
-        List<ChallengeTag> challengeTags = challengeTagRepository.findByChallengeNo(challengeNo);
+        List<ChallengeTag> challengeTags = challengeTagRepository.findByChallenge_No(challengeNo);
         if(!challengeTags.isEmpty()){
             challengeTagRepository.deleteAll(challengeTags);
         }
@@ -100,20 +100,8 @@ public class AdminService {
         challengeRepository.delete(findChallenge);
     }
 
-    // TODO : 사용하지 않는 메서드인데 삭제해도 될까요?
-    public List<Post> postList(){
-        return postRepository.findAll();
-    }
-
-    // TODO : 사용하지 않는 메서드인데 삭제해도 될까요?
-    @Transactional
-    public void deletePost(Post post){
-        postRepository.delete(post);
-    }
-
     public List<CommentAdminListResponse> commentList(){
         return commentRepository.findAll()
-                // TODO : 생성자 builder로 바꿔야 할 것 같습니다.
                 .stream().map(c -> new CommentAdminListResponse(c, commentLikeService.findLikeCntByComment(c.getNo())))
                 .collect(Collectors.toList());
     }
@@ -141,7 +129,6 @@ public class AdminService {
     public List<QnAAdminListResponse> qnaList() {
         List<QnA> qnaList = qnaRepository.findAll();
         return qnaList.stream()
-                // TODO : 생성자 builder로 수정
                 .map(q -> new QnAAdminListResponse(q))
                 .collect(Collectors.toList());
     }

@@ -25,6 +25,9 @@ public class SearchService {
     private final SearchRepository searchRepository;
     private final TagRepository tagRepository;
     private final ChallengeRepository challengeRepository;
+
+    private final ChallengeTagRepository challengeTagRepository;
+
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final SearchChallengeRepository searchChallengeRepository;
@@ -55,13 +58,13 @@ public class SearchService {
     }
 
     public List<ChallengeDto> findChallengeListByTagContent(TagSearchRequest request) {
-        List<Challenge> challenges = challengeRepository.findByTagContent(request.getTag_content());
-        return challenges.stream()
-                .map(c -> {
-                    List<Post> postListByChallengeNo = postService.getPostList(c.getNo());
+        List<ChallengeTag> challengeTags = challengeTagRepository.findByTag_Content(request.getTag_content());
+        return challengeTags.stream()
+                .map(ct -> {
+                    List<Post> postListByChallengeNo = postService.getPostList(ct.getChallenge().getNo());
                     List<PostDto> postList = postToDto(postListByChallengeNo, request.getUser_no());
-                    boolean isSubscription = subscriptionService.findSubscriptionByChallengeAndUser(c.getNo(), request.getUser_no()) != null;
-                    return new ChallengeDto(c, postList, isSubscription); // TODO : 생성자 builder로 수정
+                    boolean isSubscription = subscriptionService.findSubscriptionByChallengeAndUser(ct.getChallenge().getNo(), request.getUser_no()) != null;
+                    return new ChallengeDto(ct.getChallenge(), postList, isSubscription); // TODO : 생성자 builder로 수정
                 })
                 .collect(Collectors.toList());
     }

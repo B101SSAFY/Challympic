@@ -21,13 +21,12 @@ public class UserApiController {
     private final PostService postService;
 
     @GetMapping("/user/account/{userNo}")
-    public Result findUser(@PathVariable("userNo") int no){
-        User byNo = userService.findByNo(no); // TODO: duplicate
-        List<Title> titles = titleService.findTitlesByUserNo(no);
-        List<Interest> interests = byNo.getInterest();
-        List<Subscription> subscriptions = byNo.getSubscription();
-
-        return new Result(true, HttpStatus.OK.value(), new UserResponse(byNo, titles, interests, subscriptions));
+    public Result findUser(@PathVariable("userNo") int userNo){
+        try {
+            return getResult(userNo, userNo);
+        }catch (Exception e){
+            return new Result(false, HttpStatus.BAD_REQUEST.value());
+        }
     }
 
     @PostMapping("/join")
@@ -42,13 +41,20 @@ public class UserApiController {
      */
     @PutMapping("/user/account/{userNo}")
     public Result updateUser(@PathVariable("userNo") int no, UserUpdateRequest request){
-        int returnNo = userService.updateUser(no, request);
-        User byNo = userService.findByNo(returnNo); // TODO: duplicate
-        List<Title> titles = titleService.findTitlesByUserNo(no);
-        List<Interest> interests = byNo.getInterest();
-        List<Subscription> subscriptions = byNo.getSubscription();
+        try{
+            int returnNo = userService.updateUser(no, request);
+            return getResult(no, returnNo);
+        }catch (Exception e){
+            return new Result(false, HttpStatus.BAD_REQUEST.value());
+        }
+    }
 
-        return new Result(true, HttpStatus.OK.value(), new UserResponse(byNo, titles, interests, subscriptions));
+    private Result getResult(int no, int returnNo) {
+        User user = userService.findByNo(returnNo);
+        List<Title> titles = titleService.findTitlesByUserNo(no);
+        List<Interest> interests = user.getInterest();
+        List<Subscription> subscriptions = user.getSubscription();
+        return new Result(true, HttpStatus.OK.value(), new UserResponse(user, titles, interests, subscriptions));
     }
 
     @PutMapping("/user/account/{userNo}/pwd")

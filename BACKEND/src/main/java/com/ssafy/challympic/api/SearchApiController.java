@@ -47,32 +47,37 @@ public class SearchApiController {
      */
     @PostMapping("/search/tag")
     public Result searchTagList(@RequestBody TagSearchRequest request) {
-        List<SearchTagChallengeResponse> challengeList = searchService.findChallengeListByTagContent(request);
-        List<SearchTagPostResponse> postList = searchService.findPostListByTagContent(request);
+        try{
 
-        Map<String, List> data = new HashMap<>(); // TODO : 제네릭
-        data.put("challengeList", challengeList);
-        data.put("postList", postList);
+            List<SearchTagChallengeResponse> challengeList = searchService.findChallengeListByTagContent(request);
+            List<SearchTagPostResponse> postList = searchService.findPostListByTagContent(request);
 
-        if(request.getUser_no() > 0){
-            // 검색 기록 저장
-            User user = userService.findByNo(request.getUser_no());
-            if(user != null) {
-                searchService.saveSearchRecord(request);
+            Map<String, List> data = new HashMap<>(); // TODO : 제네릭
+            data.put("challengeList", challengeList);
+            data.put("postList", postList);
+
+            if(request.getUser_no() > 0){
+                // 검색 기록 저장
+                User user = userService.findByNo(request.getUser_no());
+                if(user != null) {
+                    searchService.saveSearchRecord(request);
+                }
+
+                List<Challenge> tagContainChallenges = challengeService.findChallengesByTag("#" + request.getTag_content());
+                for(Challenge c : tagContainChallenges) {
+                    searchService.saveSearchChallenge(c, user);
+                }
             }
 
-            List<Challenge> tagContainChallenges = challengeService.findChallengesByTag("#" + request.getTag_content());
-            for(Challenge c : tagContainChallenges) {
-                searchService.saveSearchChallenge(c, user);
+            List<Post> tagContainPost = postService.getPostByTag(request.getTag_content());
+            for(Post p : tagContainPost) {
+                activityService.saveActivity(new ActivityRequest(request.getUser_no(), p.getNo()));
             }
-        }
 
-        List<Post> tagContainPost = postService.getPostByTag(request.getTag_content());
-        for(Post p : tagContainPost) {
-            activityService.saveActivity(new ActivityRequest(request.getUser_no(), p.getNo()));
+            return new Result(true, HttpStatus.OK.value(), data);
+        }catch (Exception e){
+            return new Result(false, HttpStatus.BAD_REQUEST.value());
         }
-
-        return new Result(true, HttpStatus.OK.value(), data);
     }
 
     @GetMapping("/search/recent/user/{userNo}")

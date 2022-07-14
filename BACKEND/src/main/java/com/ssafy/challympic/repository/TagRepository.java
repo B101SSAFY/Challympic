@@ -7,12 +7,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TagRepository extends JpaRepository<Tag, Integer> {
 
-    // TODO: optional로 수정
-    Tag findByContent(String content);
+    Optional<Tag> findByContent(String content);
 
     @Query("select t from Tag t where t.no = " +
             "(select pt.tag.no from PostTag pt where pt.post.no = :postNo)")

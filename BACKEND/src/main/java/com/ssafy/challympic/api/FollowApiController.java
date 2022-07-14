@@ -57,11 +57,7 @@ public class FollowApiController {
     }
 
 
-    /**
-     * 프론트와 상의 후 변경해야 함
-     * @param <T>
-     */
-    @Data // TODO : dto로 이동할 수 없을까요...?
+    @Data // TODO : isFollowing과 cnt data 안에 넣을 수 있는지 프론트와 상의
     @AllArgsConstructor
     static class Result<T>{
         private boolean isSuccess;

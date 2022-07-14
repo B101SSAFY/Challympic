@@ -243,9 +243,7 @@ public class PostService {
         }
 
         List<PostLike> byPost_no = postLikeRepository.findByPost_No(postNo);
-        for (PostLike postLike : byPost_no) {
-            postLikeRepository.delete(postLike); // TODO: 243 ~ 245 postLikeRepository.deleteAll(byPost_no);로 수정 가능
-        }
+        postLikeRepository.deleteAll(byPost_no);
 
         postRepository.delete(post);
     }
@@ -265,41 +263,18 @@ public class PostService {
 
     public List<PostListShortResponse> getPostListByUserNo(int userNo) {
         List<Post> posts = postRepository.findByUserNo(userNo);
-        List<PostListShortResponse> collect = posts.stream()
+        return posts.stream()
                 .map(p -> {
                     Challenge challenge = challengeService.findChallengeByChallengeNo(p.getChallenge().getNo());
                     int like_cnt = postLikeRepository.countByPost_No(p.getNo());
                     int comment_cnt = commentRepository.countByPost_No(p.getNo());
                     return new PostListShortResponse(p, challenge, like_cnt, comment_cnt);
                 }).collect(Collectors.toList());
-        return collect;
-    }
-
-    public List<Post> getLikePostListByUserNo(int userNo) {
-        List<PostLike> userPostLike = postLikeRepository.findByUser_No(userNo);
-        List<Post> posts = new ArrayList<>();
-        if(!userPostLike.isEmpty()){
-            posts = userPostLike.stream()
-                    .map(pl -> {
-                        Post post = postRepository.findById(pl.getPost().getNo()) // TODO: 선언 없이 바로 return할 수 있도록 수정
-                                .orElseThrow(() -> new IllegalArgumentException("해당 포스트가 없습니다."));
-                        return post;
-                    }).collect(Collectors.toList());
-        }
-        return posts;
     }
 
     public boolean getPostLikeByPostNoAndUserNo(int post_no, int user_no) {
-        // TODO : isPresent()로 바로 return
-        if (postLikeRepository.findByPost_NoAndUser_No(post_no, user_no).isEmpty()) return false;
-        return true;
+        return postLikeRepository.findByPost_NoAndUser_No(post_no, user_no).isPresent();
     }
-
-    // TODO: 주석부분 확인 후 삭제
-//    public int getPostLikeCountByPostNo(int post_no) {
-//        List<CommentLike> commentLikeList = postRepository.findPostLikeByPostNo(post_no);
-//        return commentLikeList.size();
-//    }
 
     public List<Post> getPostByTag(String tag_content) {
         return postRepository.findByTag(tag_content);

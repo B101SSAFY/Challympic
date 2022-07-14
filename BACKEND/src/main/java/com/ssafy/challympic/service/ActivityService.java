@@ -17,7 +17,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
-// TODO : Transactional(readOnly = true) 추가해야함.
 public class ActivityService {
 
     private final ActivityRepository activityRepository;
@@ -26,7 +25,6 @@ public class ActivityService {
 
     private final UserRepository userRepository;
 
-    // TODO: save가 있는데 왜 Transactional 안붙임
     @Transactional
     public void saveActivity(ActivityRequest request) {
         Post post = postRepository.findById(request.getPost_no())
@@ -40,9 +38,5 @@ public class ActivityService {
         activityRepository.save(activity);
     }
 
-    // TODO : 사용 안하는 메서드같은데
-    public List<Activity> findActivityListByUserNo(int userNo) {
-        return activityRepository.findAllByUser_no(userNo);
-    }
 }
 

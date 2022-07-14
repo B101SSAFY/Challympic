@@ -49,10 +49,8 @@ public class ChallengeService {
         if(request.getChallengers().size() == 0) access = ChallengeAccess.PUBLIC;
         else {
             access = ChallengeAccess.PRIVATE;
-            // TODO : str 대신 user_nickname으로 받고 바로 사용하도록 수정 가능
             for(String str : request.getChallengers().subList(1, request.getChallengers().size())) {
-                String user_nickname = str;
-                User challenger = userRepository.findByNickname(user_nickname).orElseThrow(() ->
+                User challenger = userRepository.findByNickname(str).orElseThrow(() ->
                     new NoSuchElementException("존재하지 않는 사용자입니다.")
                 );
                 challengers.add(challenger.getNo());
@@ -106,7 +104,7 @@ public class ChallengeService {
 
         // 챌린지 제목 태그로 저장
         tagContentList.add(request.getChallenge_title());
-        String tagTitle = "#" + request.getChallenge_title();
+        String tagTitle = request.getChallenge_title();
         tagService.saveTag(tagTitle, true);
 
         // 챌린지 내용 태그 파싱 후 저장
@@ -180,14 +178,15 @@ public class ChallengeService {
         User user = userRepository.findById(userNo)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
 
-        try {
-            Subscription subscription = subscriptionRepository.findByChallengeNoAndUser_No(challenge.getNo(), user.getNo()).get(); // TODO : orElseThrow로 변경
-            subscriptionRepository.delete(subscription);
-        }catch (NoSuchElementException e) {
+        Subscription subscription = subscriptionRepository.findByChallengeNoAndUser_No(challenge.getNo(), user.getNo())
+                .orElse(null);
+        if (subscription == null) {
             subscriptionRepository.save(Subscription.builder()
                     .challenge(challenge)
                     .user(user)
                     .build());
+        } else {
+            subscriptionRepository.delete(subscription);
         }
         return getSubscriptionDtoList(userNo);
     }
@@ -219,7 +218,7 @@ public class ChallengeService {
     public List<Challenge> findChallengesByTag(String tag_content) {
         List<ChallengeTag> challengeTags = challengeTagRepository.findByTag_Content(tag_content);
         return challengeTags.stream()
-                .map( ct -> ct.getChallenge())
+                .map(ChallengeTag::getChallenge)
                 .collect(Collectors.toList());
     }
 

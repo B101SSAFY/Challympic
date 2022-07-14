@@ -47,14 +47,14 @@ public class SearchService {
     public List<UserNicknameResponse> findUserList(){
         List<User> users = userRepository.findAll();
         return users.stream()
-                .map(u -> new UserNicknameResponse(u.getNo(), u.getNickname())) // TODO : 생성자 builder로 수정
+                .map(u -> new UserNicknameResponse(u.getNo(), u.getNickname()))
                 .collect(Collectors.toList());
     }
 
     public List<SearchRecentResponse> findTagListByUserNo(int userNo) {
         List<Search> searches = searchRepository.findAllByUserNo(userNo);
         return searches.stream()
-                .map(s -> new SearchRecentResponse(s.getNo(), s.getUser().getNo(), s.getTag_no(), s.getTag_content(), s.getContent(), s.getCreatedDate())) // TODO: 생성자 builder로 수정
+                .map(s -> new SearchRecentResponse(s))
                 .collect(Collectors.toList());
     }
 
@@ -122,7 +122,7 @@ public class SearchService {
         }
 
         return trendChallenge.stream()
-                .map(c -> new SearchTrendResponse(c))
+                .map(SearchTrendResponse::new)
                 .collect(Collectors.toList());
     }
 
@@ -140,7 +140,8 @@ public class SearchService {
     public void saveSearchRecord(TagSearchRequest request) {
         String search_content = request.getTag_content();
         User user = userRepository.findById(request.getUser_no()).orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
-        Tag tag = tagRepository.findByContent(search_content);
+        Tag tag = tagRepository.findByContent(search_content)
+                .orElseThrow(() -> new IllegalArgumentException("해당 태그가 없습니다."));
         Search search = Search.builder()
                 .content(search_content)
                 .user(user)

@@ -87,7 +87,6 @@ public class UserApiController {
         return new Result(true, HttpStatus.OK.value(), result);
     }
 
-    // TODO : 왜 Kings인가요?
     static class Kings implements Comparable<Kings> {
         private int user_no;
         private int post_cnt;

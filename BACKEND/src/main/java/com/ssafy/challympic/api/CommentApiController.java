@@ -18,11 +18,10 @@ public class CommentApiController {
     private final CommentService commentService;
     private final CommentLikeService commentLikeService;
 
-    // TODO : 이슈있음(저장안됨)
     @PostMapping("/comment")
     public Result save(@RequestBody CommentSaveRequest request){
+        CommentResponse comment = commentService.save(request);
         try{
-            CommentResponse comment = commentService.save(request);
             return new Result(true, HttpStatus.OK.value(), comment);
         }catch (Exception e){
             return new Result(false, HttpStatus.BAD_REQUEST.value());
@@ -79,17 +78,13 @@ public class CommentApiController {
         }
     }
 
-    /**
-     * data안에 isLiked 넣을 수 있을 듯
-     * 프론트와 추가 수정 필요
-     * @param <T>
-     */
     @Data
     @AllArgsConstructor
-    static class Result<T>{ // TODO: Dto로 이동?
+    static class Result<T>{ // TODO: isLiked data 안에 넣을 수 있는지 프론트와 상의
         private boolean isSuccess;
         private int code;
         private T data;
+
         private boolean isLiked;
 
         public Result(boolean isSuccess, int code) {

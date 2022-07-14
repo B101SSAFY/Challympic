@@ -29,7 +29,7 @@ public class TagService {
      */
     @Transactional
     public void saveTag(String tag_content){
-        Tag isTag = tagRepository.findByContent(tag_content);
+        Tag isTag = tagRepository.findByContent(tag_content).orElse(null);
         if(isTag != null) return;
         Tag tag = Tag.builder()
                 .content(tag_content)
@@ -42,7 +42,7 @@ public class TagService {
      */
     @Transactional
     public void saveTag(String challenge_title, boolean isTitle){
-        Tag isTag = tagRepository.findByContent(challenge_title);
+        Tag isTag = tagRepository.findByContent(challenge_title).orElse(null);
         if(isTag != null) return;
         Tag tag = Tag.builder()
                 .content(challenge_title)
@@ -52,10 +52,11 @@ public class TagService {
     }
 
     public Tag findTagByTagContent(String tagContent) {
-        return tagRepository.findByContent(tagContent);
+        return tagRepository.findByContent(tagContent)
+                .orElseThrow(() -> new IllegalArgumentException("해당 태그가 없습니다."));
     }
 
-    // TODO: Transaction 추가
+    @Transactional
     public void savePostTag(PostTag postTag) {
         postTagRepository.save(postTag);
     }
@@ -75,7 +76,7 @@ public class TagService {
         List<Search> searchList = searchRepository.findAllByUserNo(userNo);
         List<Tag> tagAll = new ArrayList<>();
         for(Search search : searchList) {
-            Tag searchTag = tagRepository.findByContent(search.getTag_content());
+            Tag searchTag = tagRepository.findByContent(search.getTag_content()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 태그입니다."));
             if(searchTag.getIsChallenge()  == null) tagAll.add(searchTag);
         }
 

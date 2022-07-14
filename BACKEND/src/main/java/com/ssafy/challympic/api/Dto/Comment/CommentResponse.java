@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 
 @Getter
 @NoArgsConstructor
@@ -23,8 +26,9 @@ public class CommentResponse {
         this.comment_no = comment.getNo();
         this.comment_content = comment.getContent();
         this.comment_report = comment.getReport();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        this.comment_regdate = formatter.format(comment.getCreatedDate());
+//        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+//        this.comment_regdate = formatter.format(comment.getCreatedDate());
+        this.comment_regdate = comment.getCreatedDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL));
         this.user_no = comment.getUser().getNo();
         this.user_nickname = comment.getUser().getNickname();
         if(comment.getUser().getMedia() != null){

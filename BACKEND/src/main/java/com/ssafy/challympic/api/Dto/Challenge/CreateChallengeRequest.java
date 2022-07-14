@@ -8,7 +8,7 @@ import java.util.List;
 
 
 @Data // 어노테이션 변경
-public class CreateChallengeRequset { // TODO: 클래스 이름 변경
+public class CreateChallengeRequest { // TODO: 클래스 이름 변경
     private int user_no;
     private List<String> challengers;
     private Date challenge_end;

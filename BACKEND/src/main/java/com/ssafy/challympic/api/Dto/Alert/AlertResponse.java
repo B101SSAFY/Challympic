@@ -1,17 +1,17 @@
-package com.ssafy.challympic.api.Dto;
+package com.ssafy.challympic.api.Dto.Alert;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Data // TODO : 어노테이션 2개 수정
+@Getter
+@NoArgsConstructor
 @AllArgsConstructor
-public class AlertDto {
+public class AlertResponse {
     private int user_no;
     private String alert_content;
     private boolean alert_confirm;
     private LocalDateTime alert_regDate;
-    
-    // TODO : builder 추가
 }

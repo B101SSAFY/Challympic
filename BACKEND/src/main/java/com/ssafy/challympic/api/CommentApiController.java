@@ -3,7 +3,6 @@ package com.ssafy.challympic.api;
 import com.ssafy.challympic.api.Dto.Comment.*;
 import com.ssafy.challympic.service.CommentLikeService;
 import com.ssafy.challympic.service.CommentService;
-import com.ssafy.challympic.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +18,7 @@ public class CommentApiController {
     private final CommentService commentService;
     private final CommentLikeService commentLikeService;
 
+    // TODO : 이슈있음(저장안됨)
     @PostMapping("/comment")
     public Result save(@RequestBody CommentSaveRequest request){
         try{

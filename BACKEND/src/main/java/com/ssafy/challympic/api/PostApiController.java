@@ -1,7 +1,6 @@
 package com.ssafy.challympic.api;
 
 import com.ssafy.challympic.api.Dto.Comment.CommentListResponse;
-import com.ssafy.challympic.api.Dto.CommentDto;
 import com.ssafy.challympic.api.Dto.Post.*;
 import com.ssafy.challympic.api.Dto.User.UserShortListResponse;
 import com.ssafy.challympic.domain.*;

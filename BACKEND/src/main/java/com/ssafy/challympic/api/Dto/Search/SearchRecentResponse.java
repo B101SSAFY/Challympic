@@ -1,19 +1,19 @@
-package com.ssafy.challympic.api.Dto;
+package com.ssafy.challympic.api.Dto.Search;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Data // TODO : 어노테이션 수정
+@Getter
+@NoArgsConstructor
 @AllArgsConstructor
-public class SearchDto {
+public class SearchRecentResponse {
     private int search_no;
     private int user_no;
     private int tag_no;
     private String tag_content;
     private String search_content;
     private LocalDateTime search_regdate;
-    
-    // TODO : builder 추가
 }

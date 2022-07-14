@@ -1,14 +1,15 @@
-package com.ssafy.challympic.api.Dto;
+package com.ssafy.challympic.api.Dto.Post;
 
 import com.ssafy.challympic.domain.Post;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Data // TODO : 어노테이션 수정
-@AllArgsConstructor
-public class PostDto{
+@Getter
+@NoArgsConstructor
+public class SearchTagPostResponse {
+
     private int post_no;
     private int user_no;
     private String user_nickname;
@@ -26,8 +27,7 @@ public class PostDto{
     private int comment_count;
     private boolean IsLike = false;
 
-    // TODO: builder 추가
-    public PostDto(Post post, String challengeTitle, int postLikeCount, int postCommentCount, boolean isLike) {
+    public SearchTagPostResponse(Post post, String challengeTitle, int postLikeCount, int postCommentCount, boolean isLike) {
         this.post_no = post.getNo();
         this.user_no = post.getUser().getNo();
         this.user_nickname = post.getUser().getNickname();

@@ -1,11 +1,8 @@
 package com.ssafy.challympic.api;
 
-import com.ssafy.challympic.api.Dto.Challenge.ChallengeResponseDto;
-import com.ssafy.challympic.api.Dto.Challenge.ChallengeTitleCheckRequsetDto;
-import com.ssafy.challympic.api.Dto.Challenge.CreateChallengeRequset;
-import com.ssafy.challympic.api.Dto.Challenge.CreateChallengeResponseDto;
-import com.ssafy.challympic.api.Dto.ChallengeDto;
-import com.ssafy.challympic.api.Dto.SubscriptionDto;
+import com.ssafy.challympic.api.Dto.Challenge.*;
+import com.ssafy.challympic.api.Dto.Subscription.AddSubscriptionResponse;
+import com.ssafy.challympic.api.Dto.Subscription.ListSubscriptionResponse;
 import com.ssafy.challympic.domain.Challenge;
 import com.ssafy.challympic.domain.Result;
 import com.ssafy.challympic.service.ChallengeService;
@@ -28,7 +25,7 @@ public class ChallengeApiController {
      */
     @GetMapping("/challenge")
     public Result challenges() {
-        List<ChallengeResponseDto> challengeList = challengeService.getChallenges();
+        List<ChallengeResponse> challengeList = challengeService.getChallenges();
         return new Result(true, HttpStatus.OK.value(), challengeList);
     }
 
@@ -36,13 +33,13 @@ public class ChallengeApiController {
      * 챌린지 등록
      */
     @PostMapping("/challenge")
-    public Result createChallenge(@RequestBody CreateChallengeRequset request) {
+    public Result createChallenge(@RequestBody CreateChallengeRequest request) {
         Challenge challenge = challengeService.saveChallenge(request);
-        return new Result(true, HttpStatus.OK.value(), new CreateChallengeResponseDto(challenge.getNo()));
+        return new Result(true, HttpStatus.OK.value(), new CreateChallengeResponse(challenge.getNo()));
     }
 
     @PostMapping("/challenge/confirm")
-    public Result ChallengeTitleCheck(@RequestBody ChallengeTitleCheckRequsetDto request) {
+    public Result ChallengeTitleCheck(@RequestBody ChallengeTitleCheckRequest request) {
         try{
             challengeService.validateDuplicateTitle(request); // TODO : boolean으로 수정
         }catch (Exception e) {
@@ -56,7 +53,7 @@ public class ChallengeApiController {
      */
     @PostMapping("/challenge/{challengeNo}/subscribe/{userNo}")
     public Result addSubscription(@PathVariable int challengeNo, @PathVariable int userNo) {
-        List<SubscriptionDto> subscriptionDtoList;
+        List<AddSubscriptionResponse> subscriptionDtoList;
         try{
             subscriptionDtoList = challengeService.addSubscription(challengeNo, userNo);
         }catch (Exception e){
@@ -70,7 +67,7 @@ public class ChallengeApiController {
      */
     @GetMapping("/challenge/{challengeNo}")
     public Result getChallengeInfoByChallengeNo(@PathVariable int challengeNo) {
-        ChallengeDto challengeResponse;
+        ChallengeInfoResponse challengeResponse;
         try{
             challengeResponse = challengeService.getChallengeInfo(challengeNo);
         }catch (Exception e) {
@@ -109,7 +106,7 @@ public class ChallengeApiController {
      */
     @GetMapping("/subscribe/{userNo}")
     public Result getSubscription(@PathVariable int userNo) {
-        List<SubscriptionDto> subscriptions;
+        List<ListSubscriptionResponse> subscriptions;
         try{
             subscriptions = subscriptionService.findSubscriptionByUser(userNo);
         }catch (Exception e) {

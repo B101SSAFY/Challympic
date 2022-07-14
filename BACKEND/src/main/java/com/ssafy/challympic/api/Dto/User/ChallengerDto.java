@@ -1,21 +1,18 @@
-package com.ssafy.challympic.api.Dto;
+package com.ssafy.challympic.api.Dto.User;
 
 import com.ssafy.challympic.domain.User;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data // TODO : 어노테이션 수정
-@AllArgsConstructor
+@Getter
 @NoArgsConstructor
-public class UserDto {
+public class ChallengerDto {
 
     private int user_no;
     private String user_email;
     private String user_nickname;
 
-    // TODO : builder 추가
-    public UserDto(User user) {
+    public ChallengerDto(User user) {
         this.user_no = user.getNo();
         this.user_email = user.getEmail();
         this.user_nickname = user.getNickname();

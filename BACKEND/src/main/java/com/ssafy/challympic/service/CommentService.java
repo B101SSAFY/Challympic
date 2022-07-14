@@ -8,6 +8,7 @@ import com.ssafy.challympic.domain.Alert;
 import com.ssafy.challympic.domain.Comment;
 import com.ssafy.challympic.domain.Post;
 import com.ssafy.challympic.domain.User;
+import com.ssafy.challympic.repository.AlertRepository;
 import com.ssafy.challympic.repository.CommentLikeRepository;
 import com.ssafy.challympic.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class CommentService {
 
     private final PostService postService;
 
-    private final AlertService alertService;
+    private final AlertRepository alertRepository;
 
     private final CommentLikeRepository commentLikeRepository;
 
@@ -52,7 +53,7 @@ public class CommentService {
                 .user(writer)
                 .content(findUser.getNickname() + "님이 댓글을 작성했습니다.")
                 .build();
-        alertService.saveAlert(commentAlert);
+        alertRepository.save(commentAlert);
 
         Alert tagAlert = null;
         String content = request.getComment_content();
@@ -65,7 +66,7 @@ public class CommentService {
                         .user(tagUser)
                         .content(findUser.getNickname() + "님이 댓글에서 태그했습니다.")
                         .build();
-                alertService.saveAlert(tagAlert);
+                alertRepository.save(tagAlert);
             }
         }
 

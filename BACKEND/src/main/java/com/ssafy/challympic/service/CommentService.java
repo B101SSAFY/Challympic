@@ -76,13 +76,12 @@ public class CommentService {
 
     public List<CommentListResponse> findByPost(int postNo, int userNo){
         List<Comment> commentList = commentRepository.findByPost_No(postNo);
-        List<CommentListResponse> response = commentList.stream() // TODO : 인라인으로 수정 가능
+        return commentList.stream()
                 .map(c -> {
                     boolean IsLiked = commentLikeRepository.findByUser_NoAndComment_No(userNo, c.getNo()).isPresent();
                     return new CommentListResponse(c, IsLiked);
                 })
                .collect(Collectors.toList());
-        return response;
     }
 
     @Transactional

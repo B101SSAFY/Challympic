@@ -243,9 +243,7 @@ public class PostService {
         }
 
         List<PostLike> byPost_no = postLikeRepository.findByPost_No(postNo);
-        for (PostLike postLike : byPost_no) {
-            postLikeRepository.delete(postLike); // TODO: 243 ~ 245 postLikeRepository.deleteAll(byPost_no);로 수정 가능
-        }
+        postLikeRepository.deleteAll(byPost_no);
 
         postRepository.delete(post);
     }
@@ -275,9 +273,7 @@ public class PostService {
     }
 
     public boolean getPostLikeByPostNoAndUserNo(int post_no, int user_no) {
-        // TODO : isPresent()로 바로 return
-        if (postLikeRepository.findByPost_NoAndUser_No(post_no, user_no).isEmpty()) return false;
-        return true;
+        return postLikeRepository.findByPost_NoAndUser_No(post_no, user_no).isPresent();
     }
 
     public List<Post> getPostByTag(String tag_content) {

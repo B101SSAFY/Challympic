@@ -104,7 +104,7 @@ public class ChallengeService {
 
         // 챌린지 제목 태그로 저장
         tagContentList.add(request.getChallenge_title());
-        String tagTitle = "#" + request.getChallenge_title();
+        String tagTitle = request.getChallenge_title();
         tagService.saveTag(tagTitle, true);
 
         // 챌린지 내용 태그 파싱 후 저장
@@ -218,7 +218,7 @@ public class ChallengeService {
     public List<Challenge> findChallengesByTag(String tag_content) {
         List<ChallengeTag> challengeTags = challengeTagRepository.findByTag_Content(tag_content);
         return challengeTags.stream()
-                .map( ct -> ct.getChallenge())
+                .map(ChallengeTag::getChallenge)
                 .collect(Collectors.toList());
     }
 

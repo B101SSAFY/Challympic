@@ -122,7 +122,7 @@ public class SearchService {
         }
 
         return trendChallenge.stream()
-                .map(c -> new SearchTrendResponse(c))
+                .map(SearchTrendResponse::new)
                 .collect(Collectors.toList());
     }
 

@@ -61,7 +61,7 @@ public class TagService {
         postTagRepository.save(postTag);
     }
 
-    // TODO: Transaction 추가
+    @Transactional
     public void deletePostTag(PostTag postTag){ postTagRepository.delete(postTag);}
 
     public List<PostTag> findPostTagList(int post_no) {

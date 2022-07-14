@@ -17,6 +17,10 @@ public interface FollowRepository extends JpaRepository<Follow, Integer> {
 
     List<Follow> findBySrcUser_No(int userNo);
 
+    int countBySrcUser_No(int userNo);
+
     List<Follow> findByDestUser_No(int userNo);
+
+    int countByDestUser_No(int userNo);
 
 }

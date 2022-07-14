@@ -14,9 +14,8 @@ public class MediaService {
     private final MediaRepository mediaRepository;
 
     public Media getMedia(int fileNo){
-        Media media = mediaRepository.findById(fileNo) // TODO: 선언 없이 바로 return
+        return mediaRepository.findById(fileNo)
                 .orElseThrow(() -> new IllegalArgumentException("해당 파일이 없습니다."));
-        return media;
     }
 
     @Transactional

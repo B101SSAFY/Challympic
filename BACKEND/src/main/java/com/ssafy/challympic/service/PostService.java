@@ -1,9 +1,11 @@
 package com.ssafy.challympic.service;
 
 
+import com.ssafy.challympic.api.Dto.Post.PostListShortResponse;
 import com.ssafy.challympic.api.Dto.Post.PostSaveRequest;
 import com.ssafy.challympic.api.Dto.Post.PostUpdateRequest;
 import com.ssafy.challympic.domain.*;
+import com.ssafy.challympic.repository.CommentRepository;
 import com.ssafy.challympic.repository.PostLikeRepository;
 import com.ssafy.challympic.repository.PostRepository;
 import com.ssafy.challympic.util.S3Uploader;
@@ -37,6 +39,8 @@ public class PostService {
 
     private final AlertService alertService;
 
+    private final CommentRepository commentRepository;
+
     public Post getPost(int postNo){
         return postRepository.findById(postNo)
                 .orElseThrow(() -> new IllegalArgumentException("해당 포스트가 없습니다."));
@@ -46,8 +50,7 @@ public class PostService {
         return postRepository.findByChallengeNo(challengeNo);
     }
 
-    // TODO : 변수 필요 없음
-    public List<Post> getRecentPostList(int limit){
+    public List<Post> getRecentPostList(){
         return postRepository.findTop50ByOrderByNoDesc();
     }
 
@@ -260,8 +263,16 @@ public class PostService {
         return reportCnt;
     }
 
-    public List<Post> getPostListByUserNo(int userNo) {
-        return postRepository.findByUserNo(userNo);
+    public List<PostListShortResponse> getPostListByUserNo(int userNo) {
+        List<Post> posts = postRepository.findByUserNo(userNo);
+        List<PostListShortResponse> collect = posts.stream()
+                .map(p -> {
+                    Challenge challenge = challengeService.findChallengeByChallengeNo(p.getChallenge().getNo());
+                    int like_cnt = postLikeRepository.countByPost_No(p.getNo());
+                    int comment_cnt = commentRepository.countByPost_No(p.getNo());
+                    return new PostListShortResponse(p, challenge, like_cnt, comment_cnt);
+                }).collect(Collectors.toList());
+        return collect;
     }
 
     public List<Post> getLikePostListByUserNo(int userNo) {

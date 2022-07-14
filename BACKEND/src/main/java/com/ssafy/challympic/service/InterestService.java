@@ -31,9 +31,9 @@ public class InterestService {
     public int save(int userNo, int tagNo){
 
         User user = userRepository.findById(userNo)
-                .orElseThrow(() -> new NoSuchElementException()); // TODO: 오류 내용 추가
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
         Tag tag = tagRepository.findById(tagNo)
-                .orElseThrow(() -> new NoSuchElementException());
+                .orElseThrow(() -> new IllegalArgumentException("해당 태그가 존재하지 않습니다."));
 
         Interest interest = Interest.builder()
                 .user(user)
@@ -45,18 +45,16 @@ public class InterestService {
 
     public List<InterestListResponse> findByUser(int userNo){
 
-        List<Interest> allByUser_no = interestRepository.findAllByUser_No(userNo);
-        List<InterestListResponse> interests = allByUser_no.stream() // TODO : 선언 없이 바로 return
+        List<Interest> interests = interestRepository.findAllByUser_No(userNo);
+        return interests.stream()
                 .map(i -> new InterestListResponse(i))
                 .collect(Collectors.toList());
-
-        return interests;
     }
 
     @Transactional
     public void delete(int userNo, int tagNo){
         Interest interest = interestRepository.findByUser_NoAndTag_No(userNo, tagNo)
-                        .orElseThrow(() -> new NoSuchElementException()); // TODO: 오류 내용 추가
+                        .orElseThrow(() -> new IllegalArgumentException("해당 관심사가 존재하지 않습니다."));
         interestRepository.delete(interest);
     }
 }

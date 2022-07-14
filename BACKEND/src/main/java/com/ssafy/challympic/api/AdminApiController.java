@@ -24,12 +24,7 @@ public class AdminApiController {
 
     private final AdminService adminService;
     // TODO : 안쓰는 선언 삭제
-    private final CommentLikeService commentLikeService;
-    private final CommentService commentService;
-    private final PostService postService;
-    private final ChallengeService challengeService;
     private final QnAService qnaService;
-    private final SubscriptionService subscriptionService;
 
     @GetMapping("/admin/users")
     public Result userList(){
@@ -65,11 +60,15 @@ public class AdminApiController {
 
     @DeleteMapping("/admin/challenges")
     public Result deleteChallenge(@RequestBody ChallengeRequest challengeRequest){
-        // 하위 포스트 삭제
-        adminService.deletePostByChallenge(challengeRequest.getChallenge_no());
-        // 챌린지 삭제
-        adminService.deleteChallenge(challengeRequest.getChallenge_no());
-        return new Result(true, HttpStatus.OK.value());
+        try{
+            // 하위 포스트 삭제
+            adminService.deletePostByChallenge(challengeRequest.getChallenge_no());
+            // 챌린지 삭제
+            adminService.deleteChallenge(challengeRequest.getChallenge_no());
+            return new Result(true, HttpStatus.OK.value());
+        }catch (Exception e){
+            return new Result(false, HttpStatus.BAD_REQUEST.value());
+        }
     }
 
     @GetMapping("/admin/comments")

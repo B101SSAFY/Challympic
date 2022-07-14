@@ -76,19 +76,11 @@ public class CommentService {
         List<Comment> commentList = commentRepository.findByPost_No(postNo);
         List<CommentListResponse> response = commentList.stream() // TODO : 인라인으로 수정 가능
                 .map(c -> {
-                    boolean IsLiked = !commentLikeRepository.findByUser_NoAndComment_No(userNo, c.getNo()).isEmpty();
+                    boolean IsLiked = commentLikeRepository.findByUser_NoAndComment_No(userNo, c.getNo()).isPresent();
                     return new CommentListResponse(c, IsLiked);
                 })
                .collect(Collectors.toList());
         return response;
-    }
-
-//    public int findCommentLikeCnt(int )
-
-    // TODO : 안쓰는 메서드
-    public Comment findOne(int comment_no){
-        return commentRepository.findById(comment_no)
-                .orElseThrow(()-> new IllegalArgumentException("해당 댓글이 존재하지 않습니다."));
     }
 
     @Transactional
@@ -96,9 +88,7 @@ public class CommentService {
 
         Comment comment = commentRepository.findById(request.getComment_no())
                 .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다."));
-
-        // TODO : instance 필요한가?
-        Comment updateComment = comment.update(request.getComment_content());
+        comment.update(request.getComment_content());
     }
 
     @Transactional
@@ -108,7 +98,6 @@ public class CommentService {
         commentRepository.delete(comment);
     }
 
-    // TODO : transactional 필요한가요?
     @Transactional
     public void report(int comment_no) {
         Comment comment = commentRepository.findById(comment_no)

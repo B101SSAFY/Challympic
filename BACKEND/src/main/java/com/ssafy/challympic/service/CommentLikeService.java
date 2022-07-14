@@ -23,14 +23,10 @@ public class CommentLikeService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public int save(CommentLike commentLike){
-        return commentLikeRepository.save(commentLike).getNo();
-    }
-
     public boolean findCommentLike(CommentLikeRequest request){
         try{
             CommentLike commentLike = commentLikeRepository.findByUser_NoAndComment_No(request.getUser_no(), request.getComment_no()).get();
-            commentLikeRepository.delete(commentLike); // TODO: delete 들어가서 Transactional 추가해야 할 듯. 아래 save도 추가됨.
+            commentLikeRepository.delete(commentLike);
             return false;
         }catch (Exception e){
             User user = userRepository.findById(request.getUser_no())

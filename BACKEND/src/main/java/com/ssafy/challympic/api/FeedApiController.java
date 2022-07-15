@@ -3,22 +3,16 @@ package com.ssafy.challympic.api;
 import com.ssafy.challympic.api.Dto.Feed.FeedChallengeListResponse;
 import com.ssafy.challympic.api.Dto.Feed.FeedPostListResponse;
 import com.ssafy.challympic.api.Dto.User.UserResponse;
-import com.ssafy.challympic.domain.Challenge;
-import com.ssafy.challympic.domain.Post;
-import com.ssafy.challympic.domain.Result;
+import com.ssafy.challympic.api.Dto.Result;
 import com.ssafy.challympic.domain.User;
-import com.ssafy.challympic.domain.defaults.ChallengeType;
 import com.ssafy.challympic.service.*;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor

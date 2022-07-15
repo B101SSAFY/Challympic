@@ -2,7 +2,7 @@ package com.ssafy.challympic.api;
 
 import com.ssafy.challympic.api.Dto.QnA.QnADto;
 import com.ssafy.challympic.api.Dto.QnA.QnARequest;
-import com.ssafy.challympic.domain.Result;
+import com.ssafy.challympic.api.Dto.Result;
 import com.ssafy.challympic.domain.User;
 import com.ssafy.challympic.service.QnAService;
 import com.ssafy.challympic.service.UserService;

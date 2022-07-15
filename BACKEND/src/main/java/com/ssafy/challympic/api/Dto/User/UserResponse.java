@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// TODO: 생성자 사용중, builder로 안바꿔도 될지?
 @Getter
 @NoArgsConstructor
 public class UserResponse {

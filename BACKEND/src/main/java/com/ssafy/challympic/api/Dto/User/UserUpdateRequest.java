@@ -5,7 +5,6 @@ import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
-// TODO: NoArgsConst?
 public class UserUpdateRequest {
 
     private String user_nickname;

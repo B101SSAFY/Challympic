@@ -3,7 +3,6 @@ package com.ssafy.challympic.api.Dto.User;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
-// TODO : Getter?
 @NoArgsConstructor
 public class FollowCntResponse {
     private int followerCnt;

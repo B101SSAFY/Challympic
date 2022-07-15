@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
-@Getter // TODO: request는 NoArgs 필요하지 않나요...?
+@Getter
 public class PostSaveRequest {
 
     private Integer user_no;

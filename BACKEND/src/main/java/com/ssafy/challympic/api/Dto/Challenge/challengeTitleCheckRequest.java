@@ -5,7 +5,6 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-// TODO : 이름 수정필요
-public class ChallengeTitleCheckRequest {
+public class challengeTitleCheckRequest {
     String challenge_title;
 }

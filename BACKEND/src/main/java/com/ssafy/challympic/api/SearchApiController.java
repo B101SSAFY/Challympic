@@ -4,6 +4,7 @@ import com.ssafy.challympic.api.Dto.Activity.ActivityRequest;
 import com.ssafy.challympic.api.Dto.Challenge.SearchTagChallengeResponse;
 import com.ssafy.challympic.api.Dto.Challenge.SearchTrendResponse;
 import com.ssafy.challympic.api.Dto.Post.SearchTagPostResponse;
+import com.ssafy.challympic.api.Dto.Result;
 import com.ssafy.challympic.api.Dto.Search.SearchRecentResponse;
 import com.ssafy.challympic.api.Dto.Tag.TagSearchRequest;
 import com.ssafy.challympic.api.Dto.User.UserNicknameResponse;
@@ -32,7 +33,7 @@ public class SearchApiController {
         List<Tag> tagList = searchService.findTagList();
         List<UserNicknameResponse> userList = searchService.findUserList();
 
-        Map<String, List> data = new HashMap<>(); // TODO: 제네릭
+        Map<String, List> data = new HashMap<>();
 
         data.put("tagList", tagList);
         data.put("userList", userList);
@@ -52,7 +53,7 @@ public class SearchApiController {
             List<SearchTagChallengeResponse> challengeList = searchService.findChallengeListByTagContent(request);
             List<SearchTagPostResponse> postList = searchService.findPostListByTagContent(request);
 
-            Map<String, List> data = new HashMap<>(); // TODO : 제네릭
+            Map<String, List> data = new HashMap<>();
             data.put("challengeList", challengeList);
             data.put("postList", postList);
 

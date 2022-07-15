@@ -1,6 +1,5 @@
-package com.ssafy.challympic.domain;
+package com.ssafy.challympic.api.Dto;
 
-// TODO: 이게 도메인에 있어도 될지... DTO쪽으로 가는게 맞을까요...?
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

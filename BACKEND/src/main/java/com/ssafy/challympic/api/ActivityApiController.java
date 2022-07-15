@@ -3,7 +3,7 @@ package com.ssafy.challympic.api;
 import com.ssafy.challympic.api.Dto.Activity.ActivityRequest;
 import com.ssafy.challympic.api.Dto.Activity.ActivityResponse;
 import com.ssafy.challympic.api.Dto.Activity.TagDto;
-import com.ssafy.challympic.domain.Result;
+import com.ssafy.challympic.api.Dto.Result;
 import com.ssafy.challympic.domain.Tag;
 import com.ssafy.challympic.service.ActivityService;
 import com.ssafy.challympic.service.SearchService;
@@ -25,24 +25,13 @@ public class ActivityApiController {
     private final SearchService searchService;
 
     @PostMapping("/activity")
-    public Result setActivity(@RequestBody ActivityRequest request) { // TODO : Raw Type 모두 수정할 수도 있음. (http://happinessoncode.com/2018/02/08/java-generic-raw-type/)
+    public Result setActivity(@RequestBody ActivityRequest request) {
         activityService.saveActivity(request);
         return new Result(true, HttpStatus.OK.value());
     }
 
-    // TODO : 현재 로직을 Service로 낮춰야 할까요?
     @GetMapping("/activity/{userNo}")
     public Result getActivity(@PathVariable int userNo) {
-        // TODO : 여기 주석 지워도 되나요?
-//        List<Activity> mainUserActivityList = activityService.findActivityListByUserNo(userNo);
-
-//        Map<Integer, List<Activity>> activityMap = new HashMap<>();
-//        List<User> allUserList = userService.findAllUser();
-//        int[][] intersectionCount = new int[allUserList.size()][2];
-//        for(User user : allUserList) {
-//            List<Activity> activityList = activityService.findActivityListByUserNo(user.getUser_no());
-//            activityMap.put(user.getUser_no(), activityList);
-//        }
 
         // 최신 태그 5개 불러오기
         List<Tag> allTagList = tagService.findRecentAllTagList();

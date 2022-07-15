@@ -9,7 +9,7 @@ import com.ssafy.challympic.api.Dto.QnA.QnARequest;
 import com.ssafy.challympic.api.Dto.User.UserListResponse;
 import com.ssafy.challympic.api.Dto.User.UserRequest;
 import com.ssafy.challympic.domain.QnA;
-import com.ssafy.challympic.domain.Result;
+import com.ssafy.challympic.api.Dto.Result;
 import com.ssafy.challympic.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,7 +23,6 @@ import java.util.NoSuchElementException;
 public class AdminApiController {
 
     private final AdminService adminService;
-    // TODO : 안쓰는 선언 삭제
     private final QnAService qnaService;
 
     @GetMapping("/admin/users")

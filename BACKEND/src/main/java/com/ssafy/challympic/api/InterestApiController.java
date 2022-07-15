@@ -3,7 +3,7 @@ package com.ssafy.challympic.api;
 import com.ssafy.challympic.api.Dto.Interest.InterestListResponse;
 import com.ssafy.challympic.api.Dto.Interest.InterestListSaveRequest;
 import com.ssafy.challympic.api.Dto.Interest.InterestSaveRequest;
-import com.ssafy.challympic.domain.Result;
+import com.ssafy.challympic.api.Dto.Result;
 import com.ssafy.challympic.domain.User;
 import com.ssafy.challympic.service.InterestService;
 import com.ssafy.challympic.service.UserService;

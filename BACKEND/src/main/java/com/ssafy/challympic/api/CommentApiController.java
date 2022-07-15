@@ -80,7 +80,7 @@ public class CommentApiController {
 
     @Data
     @AllArgsConstructor
-    static class Result<T>{ // TODO: isLiked data 안에 넣을 수 있는지 프론트와 상의
+    static class Result<T>{ // isLiked data 안에 넣을 수 있는지 프론트와 상의
         private boolean isSuccess;
         private int code;
         private T data;

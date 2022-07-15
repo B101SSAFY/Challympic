@@ -2,7 +2,7 @@ package com.ssafy.challympic.service;
 
 import com.ssafy.challympic.api.Dto.Challenge.ChallengeInfoResponse;
 import com.ssafy.challympic.api.Dto.Challenge.ChallengeResponse;
-import com.ssafy.challympic.api.Dto.Challenge.ChallengeTitleCheckRequest;
+import com.ssafy.challympic.api.Dto.Challenge.challengeTitleCheckRequest;
 import com.ssafy.challympic.api.Dto.Challenge.CreateChallengeRequest;
 import com.ssafy.challympic.api.Dto.Subscription.AddSubscriptionResponse;
 import com.ssafy.challympic.api.Dto.User.ChallengerDto;
@@ -75,8 +75,9 @@ public class ChallengeService {
                 .build();
 
         // 중복 확인
-        // TODO : validation 확인 안되어있음.
-        validateDuplicateChallenge(challenge);
+        if(validateDuplicateChallenge(challenge)) {
+            throw new IllegalStateException("이미 존재하는 챌린지입니다.");
+        }
         // 챌린지 저장
         challengeRepository.save(challenge);
 
@@ -148,27 +149,29 @@ public class ChallengeService {
         return challenge;
     }
 
-    // TODO: void -> boolean, Error Throw보단 boolean으로 return할 수 있도록
-    private void validateDuplicateChallenge(Challenge challenge) {
+    private boolean validateDuplicateChallenge(Challenge challenge) {
         List<Challenge> findChallenges = challengeRepository.findByTitleOrderByEndDesc(challenge.getTitle());
+        if(findChallenges.isEmpty()) return true;
         for(Challenge c : findChallenges) {
             if(c.getEnd().after(new Date())){
-                throw new IllegalStateException("이미 존재하는 챌린지입니다.");
+                return false;
             }
         }
+        return true;
     }
 
-    // TODO : void -> boolean, Error Throw보단 boolean으로 return할 수 있도록
-    public void validateDuplicateTitle(ChallengeTitleCheckRequest request) {
-        List<Challenge> challenges = challengeRepository.findByTitle(request.getChallenge_title()); // TODO : 확인필요 - challenges == null로 나옴.
+    public boolean validateDuplicateTitle(challengeTitleCheckRequest request) {
+        List<Challenge> challenges = challengeRepository.findByTitle(request.getChallenge_title());
 
-        if(challenges.size() != 0){
-            throw new NoSuchElementException("챌린지가 없습니다.");
+        if(challenges.size() == 0){
+            return true;
         }
 
         for(Challenge c : challenges) {
-            if(c.getEnd().after(new Date())) throw new NoSuchElementException("진행중인 챌린지가 없습니다.");
+            if(c.getEnd().after(new Date())) return false;
         }
+
+        return true;
     }
 
     @Transactional

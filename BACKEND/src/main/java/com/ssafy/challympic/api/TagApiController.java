@@ -29,7 +29,7 @@ public class TagApiController {
 //        });
 //    }
 
-    @Data // TODO: DTO로 빼기
+    @Data
     @AllArgsConstructor
     static class Result<T>{
         private boolean isSuccess;
@@ -42,11 +42,7 @@ public class TagApiController {
         }
     }
 
-    static class tagRequest { // TODO: dto로
-        private List<Integer> tag_noList;
-    }
-
-    @Data // TODO: dto로
+    @Data
     static class TagDto{
         private int tag_no;
         private String tag_content;
@@ -66,8 +62,8 @@ public class TagApiController {
                 allTags.add(tag);
             }
         }
-        List<TagDto> TagResponse = allTags.stream() // TODO: service로
-                .map(t -> new TagDto(t))
+        List<TagDto> TagResponse = allTags.stream()
+                .map(TagDto::new)
                 .collect(Collectors.toList());
 
         return new Result(true, HttpStatus.OK.value(), TagResponse);

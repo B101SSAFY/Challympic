@@ -25,7 +25,6 @@ public class Challenge extends BaseTimeEntity {
     @JoinColumn(name = "user_no")
     private User user;
 
-    // TODO: 여기는 BaseTimeEntity처럼 LocalDateTime 안써도 되나요?
     @Column(columnDefinition = "TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     private Date end;

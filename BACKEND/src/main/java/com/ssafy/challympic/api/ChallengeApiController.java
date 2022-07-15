@@ -4,7 +4,7 @@ import com.ssafy.challympic.api.Dto.Challenge.*;
 import com.ssafy.challympic.api.Dto.Subscription.AddSubscriptionResponse;
 import com.ssafy.challympic.api.Dto.Subscription.ListSubscriptionResponse;
 import com.ssafy.challympic.domain.Challenge;
-import com.ssafy.challympic.domain.Result;
+import com.ssafy.challympic.api.Dto.Result;
 import com.ssafy.challympic.service.ChallengeService;
 import com.ssafy.challympic.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
@@ -39,10 +39,8 @@ public class ChallengeApiController {
     }
 
     @PostMapping("/challenge/confirm")
-    public Result ChallengeTitleCheck(@RequestBody ChallengeTitleCheckRequest request) {
-        try{
-            challengeService.validateDuplicateTitle(request); // TODO : boolean으로 수정
-        }catch (Exception e) {
+    public Result ChallengeTitleCheck(@RequestBody challengeTitleCheckRequest request) {
+        if(!challengeService.validateDuplicateTitle(request)){
             return new Result(false, HttpStatus.BAD_REQUEST.value());
         }
         return new Result(true, HttpStatus.OK.value());

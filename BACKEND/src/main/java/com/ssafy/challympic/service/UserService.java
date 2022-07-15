@@ -29,16 +29,14 @@ public class UserService {
      * 이메일 중복 감지
      */
     public boolean validateDuplicateEmail(String email){
-        if (userRepository.findByEmail(email).isEmpty()) return false; // TODO: isPresent()로 바로 return
-        return true;
+        return userRepository.findByEmail(email).isPresent();
     }
 
     /**
      * 닉네임 중복 감지
      */
     public boolean validateDuplicateNickname(String nickname){
-        if (userRepository.findByNickname(nickname).isEmpty()) return false; // TODO: isPresent()로 바로 return
-        return true;
+        return userRepository.findByNickname(nickname).isPresent();
     }
 
     /**
@@ -103,7 +101,7 @@ public class UserService {
      *  프론트 단에서 파일을 받아 확장자에 따라 파일 타입을 결정
      *      - String으로 할지 Enum으로 할지 결정 필요
      * */
-    private String getFileType(MultipartFile files){ // TODO : 이 함수가 PostService에도 존재해서 합칠 수 있을 것 같은 느낌이긴 한데
+    private String getFileType(MultipartFile files){
         String fileName = files.getOriginalFilename();
         String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
 
@@ -126,8 +124,7 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
 
         if(!bCryptPasswordEncoder.matches(request.getUser_pwd(), user.getPwd())){
-            new IllegalArgumentException("기존 비밀번호가 일치하지 않습니다."); // TODO: 사용법이 틀린 것 같은데 어떻게 틀린건지 잘 모르겠습니다. 아마 여기서 throw new Exception을 던지고 return을 없애거나 해야할 것 같은데
-            return 0;
+            throw new IllegalArgumentException("기존 비밀번호가 일치하지 않습니다.");
         }
 
         user.updatePwd(bCryptPasswordEncoder.encode(request.getUser_newpwd()));
@@ -135,7 +132,7 @@ public class UserService {
         return no;
     }
 
-    // TODO: @Transactional
+    @Transactional
     public void deleteUser(int no) {
         User user = userRepository.findById(no)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));

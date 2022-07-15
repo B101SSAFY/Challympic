@@ -14,7 +14,7 @@ import static javax.persistence.FetchType.LAZY;
 public class Challenger {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int challenger_no; // TODO : 어째서.. 이름을 안바꿨을까요...?
+    private int no;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_no")

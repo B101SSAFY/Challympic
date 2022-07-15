@@ -2,6 +2,7 @@ package com.ssafy.challympic.api;
 
 import com.ssafy.challympic.api.Dto.Comment.CommentListResponse;
 import com.ssafy.challympic.api.Dto.Post.*;
+import com.ssafy.challympic.api.Dto.Result;
 import com.ssafy.challympic.api.Dto.User.UserShortListResponse;
 import com.ssafy.challympic.domain.*;
 import com.ssafy.challympic.service.*;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @CrossOrigin("*")

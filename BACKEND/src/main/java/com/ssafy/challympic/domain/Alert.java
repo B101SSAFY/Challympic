@@ -15,7 +15,6 @@ import static javax.persistence.FetchType.LAZY;
 public class Alert extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "alert_no") // TODO : 지워야하지 않을까요?
     private int no;
 
     @ManyToOne(fetch = LAZY)

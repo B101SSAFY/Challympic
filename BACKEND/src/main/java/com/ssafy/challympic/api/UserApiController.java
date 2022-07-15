@@ -1,10 +1,9 @@
 package com.ssafy.challympic.api;
 
+import com.ssafy.challympic.api.Dto.Result;
 import com.ssafy.challympic.api.Dto.User.*;
 import com.ssafy.challympic.domain.*;
 import com.ssafy.challympic.service.*;
-import com.ssafy.challympic.util.S3Uploader;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

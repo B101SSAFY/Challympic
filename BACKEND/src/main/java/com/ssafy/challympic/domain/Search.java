@@ -22,7 +22,6 @@ public class Search extends BaseTimeEntity {
     @JoinColumn(name = "user_no")
     private User user;
 
-    // TODO: 지금 태그가 들어오지 않고 tag_no, tag_content로만 들어오는데 이대로 가도 괜찮겠죠..?
     private int tag_no;
 
     private String tag_content;

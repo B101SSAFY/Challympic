@@ -57,7 +57,7 @@ public class FollowApiController {
     }
 
 
-    @Data // TODO : isFollowing과 cnt data 안에 넣을 수 있는지 프론트와 상의
+    @Data // isFollowing과 cnt data 안에 넣을 수 있는지 프론트와 상의
     @AllArgsConstructor
     static class Result<T>{
         private boolean isSuccess;

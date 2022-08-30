@@ -36,3 +36,5 @@ aws.yml
 
 ### VS Code ###
 .vscode/
+
+Dockerfile

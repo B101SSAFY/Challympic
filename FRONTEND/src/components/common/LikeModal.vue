@@ -93,21 +93,21 @@
           </v-list-item>
         </v-list>
       </div>
-		<v-snackbar
-			v-model="snackbar"
-			:timeout="timeout"
-			color="error"
-			outlined
-			style="font-weight: bold; border: 2px solid; color: transparent"
-		>
-			{{ text }}
+      <v-snackbar
+        v-model="snackbar"
+        :timeout="timeout"
+        color="error"
+        outlined
+        style="font-weight: bold; border: 2px solid; color: transparent"
+      >
+        {{ text }}
 
-			<template v-slot:action="{ attrs }">
-				<v-btn color="red" text v-bind="attrs" @click="snackbar = false">
-					Close
-				</v-btn>
-			</template>
-		</v-snackbar>
+        <template v-slot:action="{ attrs }">
+          <v-btn color="red" text v-bind="attrs" @click="snackbar = false">
+            Close
+          </v-btn>
+        </template>
+      </v-snackbar>
     </v-card>
   </v-dialog>
 </template>
@@ -128,8 +128,8 @@ export default {
       likeList: null,
       snackbar: false,
       defaultPath: "http://d3iu4sf4n4i2qf.cloudfront.net/",
-			text: "로그인이 필요한 서비스입니다.",
-			timeout: 1500,
+      text: "로그인이 필요한 서비스입니다.",
+      timeout: 1500,
     };
   },
   methods: {
@@ -139,18 +139,19 @@ export default {
       return this.defaultPath + file_path + "/" + file_savedname;
     },
     follow(userNo, idx) {
-				if (!this.$store.state.userStore.userInfo) {
-					this.snackbar = true;
-					return;
-				}
-    console.log("좋아요한 애들");
-    console.log( this.likeUserList);
+      if (!this.$store.state.userStore.userInfo) {
+        this.snackbar = true;
+        return;
+      }
+      console.log("좋아요한 애들");
+      console.log(this.likeUserList);
       // 팔로우 API 요청 보내기
       // 해당 유저에 대한 isFollowing 값 변경
       setFollow(this.login_user, userNo, (response) => {
         console.log("setFollow 호출 반환값");
         console.log(response);
-        this.likeUserList[idx].isFollowing = !this.likeUserList[idx].isFollowing;
+        this.likeUserList[idx].isFollowing =
+          !this.likeUserList[idx].isFollowing;
       });
     },
   },

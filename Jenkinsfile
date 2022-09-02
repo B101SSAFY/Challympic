@@ -27,7 +27,7 @@ pipeline {
         }
         stage('nginx deploy') {
             steps {
-                // sh 'docker rm -f challympic-nginx'
+                sh 'docker rm -f challympic-nginx'
                 sh 'docker run --network challympic -d --name challympic-nginx -p 7770:80 -v /etc/letsencrypt:/etc/letsencrypt -u root challympic/nginx'
             }
         }

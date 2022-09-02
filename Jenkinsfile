@@ -46,7 +46,7 @@ pipeline {
         }
         stage('springboot deploy') {
             steps {
-                // sh 'docker rm -f challypic-springboot'
+                sh 'docker rm -f challypic-springboot'
                 sh 'docker run --network challympic -d --name challympic-springboot -p 8880:8880 -u root challympic/springboot'
             }
         }

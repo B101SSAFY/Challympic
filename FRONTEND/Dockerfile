@@ -14,7 +14,7 @@ ADD ./dist ./dist
 RUN rm /etc/nginx/conf.d/default.conf
 
 # host pc 의 nginx.conf 를 복사
-COPY ./challympic.conf /etc/nginx/conf.d
+COPY ./chal.conf /etc/nginx/conf.d
 
 # 7770 포트 오픈
 EXPOSE 7770

@@ -2,7 +2,7 @@
 FROM nginx
 
 # work dir
-WORKDIR /usr/share/nginx/html
+WORKDIR /usr/nginx/html
 
 # work dir 에 dist 폴더 생성 : /usr/nginx/html/dist
 RUN mkdir ./dist

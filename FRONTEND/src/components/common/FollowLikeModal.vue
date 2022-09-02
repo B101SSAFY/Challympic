@@ -72,21 +72,21 @@
           </v-list-item>
         </v-list>
       </div>
-		<v-snackbar
-			v-model="snackbar"
-			:timeout="timeout"
-			color="error"
-			outlined
-			style="font-weight: bold; border: 2px solid; color: transparent"
-		>
-			{{ text }}
+      <v-snackbar
+        v-model="snackbar"
+        :timeout="timeout"
+        color="error"
+        outlined
+        style="font-weight: bold; border: 2px solid; color: transparent"
+      >
+        {{ text }}
 
-			<template v-slot:action="{ attrs }">
-				<v-btn color="red" text v-bind="attrs" @click="snackbar = false">
-					Close
-				</v-btn>
-			</template>
-		</v-snackbar>
+        <template v-slot:action="{ attrs }">
+          <v-btn color="red" text v-bind="attrs" @click="snackbar = false">
+            Close
+          </v-btn>
+        </template>
+      </v-snackbar>
     </v-card>
   </v-dialog>
 </template>
@@ -108,16 +108,16 @@ export default {
       followList: [],
       defaultPath: "http://d3iu4sf4n4i2qf.cloudfront.net/",
       snackbar: false,
-			text: "로그인이 필요한 서비스입니다.",
-			timeout: 1500,
+      text: "로그인이 필요한 서비스입니다.",
+      timeout: 1500,
     };
   },
   methods: {
     follow(userNo, idx) {
-				if (!this.$store.state.userStore.userInfo) {
-					this.snackbar = true;
-					return;
-				}
+      if (!this.$store.state.userStore.userInfo) {
+        this.snackbar = true;
+        return;
+      }
       // 팔로우 API 요청 보내기
       // 해당 유저에 대한 isFollowing 값 변경
       setFollow(this.login_user, userNo, () => {
